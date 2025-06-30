@@ -1,3 +1,5 @@
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
 
 export default function Home() {
@@ -49,6 +51,11 @@ export default function Home() {
           >
             Read our docs
           </a>
+        </div>
+
+        <div>
+          <Badge className="mb-5">this is badge yay</Badge>
+          <Progress value={80} />
         </div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
