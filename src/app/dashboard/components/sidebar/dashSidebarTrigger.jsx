@@ -4,15 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 import {
 	AlignJustify,
-	AlignJustifyIcon,
 	ChevronLeft,
 	ChevronRight,
-	PanelLeftCloseIcon,
-	PanelLeftOpen,
-	PanelLeftOpenIcon,
 } from "lucide-react";
 
-function DashboardTrigger({ className }) {
+function DashSidebarTrigger({ className }) {
 	const {
 		state,
 		open,
@@ -51,4 +47,4 @@ function DashboardTrigger({ className }) {
 	);
 }
 
-export { DashboardTrigger };
+export { DashSidebarTrigger };

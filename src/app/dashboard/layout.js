@@ -1,13 +1,13 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { DashboardSidebar } from "./components/dashboardSidebar";
-import { DashboardTrigger } from "./components/dashboardTrigger";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { DashSidebar } from "./components/sidebar/dashSidebar";
+import { DashSidebarTrigger } from "./components/sidebar/dashSidebarTrigger";
 
 export default function DashboardLayout({ children }) {
   return (
     <SidebarProvider>
-      <DashboardSidebar />
+      <DashSidebar />
       <main className="w-screen flex-initial flex flex-col relative">
-        <DashboardTrigger />
+         <DashSidebarTrigger />
         <section className="flex-none p-3 min-h-12 bg-gray-600 md:hidden">
           <h3 className="text-md font-semibold text-white">App Name</h3>
         </section>
