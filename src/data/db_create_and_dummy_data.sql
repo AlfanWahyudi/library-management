@@ -298,3 +298,15 @@ CREATE TABLE IF NOT EXISTS loan_violations
   deleted_at TIMESTAMP default null,
   primary key (book_loan_id, violation_id)
 );
+
+
+/* 
+ --- Update table 
+*/
+
+-- change year_of_publication column into publication_date on books table
+ALTER TABLE books 
+DROP COLUMN year_of_publication ;
+
+ALTER TABLE books
+ADD COLUMN publication_date date not null;
