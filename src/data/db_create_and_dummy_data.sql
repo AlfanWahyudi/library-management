@@ -308,3 +308,32 @@ DROP COLUMN year_of_publication ;
 
 ALTER TABLE books
 ADD COLUMN publication_date date not null;
+
+
+-- change type from Date to timestamp
+-- book_loans
+ALTER TABLE book_loans
+ALTER COLUMN start_date TYPE timestamp;
+
+
+ALTER TABLE book_loans
+ALTER COLUMN end_date TYPE timestamp;
+
+-- book_reservations
+ALTER TABLE book_reservations
+ALTER COLUMN start_date TYPE timestamp;
+
+ALTER TABLE book_reservations
+ALTER COLUMN end_date TYPE timestamp;
+
+-- block_members
+ALTER TABLE block_members
+ALTER COLUMN start_date TYPE timestamp;
+
+ALTER TABLE block_members
+ALTER COLUMN end_date TYPE timestamp;
+
+
+-- adding primary key to id on block_members column
+ALTER TABLE block_members
+ADD CONSTRAINT pk_block_members PRIMARY KEY (id);
