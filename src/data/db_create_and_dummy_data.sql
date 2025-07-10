@@ -1,3 +1,5 @@
+DROP DATABASE "library-management";
+
 CREATE DATABASE "library-management";
 
 -- Define Enumerations data --
@@ -99,10 +101,8 @@ CREATE TABLE IF NOT EXISTS authors
 (
   id serial,
   full_name varchar(255) not null,
-  email varchar(255) not null unique,
-  birth_date date,
   nationality varchar(255),
-  active_since varchar(255),
+  active_since int,
   about text,
   created_by varchar(25),
   created_at TIMESTAMP,
@@ -120,11 +120,9 @@ CREATE TABLE IF NOT EXISTS books
   isbn varchar(50) not null unique,
   title varchar(255) not null,
   sub_title varchar(255),
-  publisher varchar(255) not null,
-  year_of_publication int not null,
-  copyright varchar(255),
-  editor_name varchar(255),
-  page int not null,
+  publisher varchar(255),
+  publication_date Date,
+  page int,
   language varchar(255),
   edition int,
   created_by varchar(25),
