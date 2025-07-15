@@ -1,4 +1,4 @@
-const postgres = require('postgres');
+import postgres from "postgres"
 
 const sql = postgres('postgres://postgres:123@localhost:5432/library-management', {
 // const sql = postgres('postgres://', {
