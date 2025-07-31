@@ -8,7 +8,7 @@ import { AlertCircleIcon } from "lucide-react";
 import { loginSchema } from "@/schemas/login-schema";
 import InputControl from "@/components/form/input-control";
 import { useInput } from "@/hooks/use-input";
-import { useValidateSpecificSchema } from "@/hooks/use-validate-spesific-schema";
+import { useValidateSpecificSchema } from "@/hooks/use-validate-specific-schema";
 
 export default function LoginPage() {
   const [state, action, isPending] = useActionState(login, {})
