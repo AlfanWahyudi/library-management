@@ -1,8 +1,53 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { login } from "@/actions/auth-action"
+import { useActionState } from "react";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
+import { loginSchema } from "@/schemas/login-schema";
+import InputControl from "@/components/form/input-control";
+import { useInput } from "@/hooks/use-input";
+import { useValidateSpecificSchema } from "@/hooks/use-validate-spesific-schema";
 
 export default function LoginPage() {
+  const [state, action, isPending] = useActionState(login, {})
+  const {
+    value: usernameValue,
+    didEdit: didUsernameEdited,
+    handleInputBlur: handleUsernameBlur,
+    handleInputChange: handleUsernameChange,
+  } = useInput('')
+
+  const {
+    value: passwordValue,
+    didEdit: didPasswordEdited,
+    handleInputBlur: handlePasswordBlur,
+    handleInputChange: handlePasswordChange,
+  } = useInput('')
+
+  const {
+    isValid: usernameIsValid,
+    errors: usernameErrors
+  } = useValidateSpecificSchema({
+    schema: loginSchema.shape['username'],
+    value: usernameValue
+  })
+
+  const {
+    isValid: passwordIsValid,
+    errors: passwordErrors
+  } = useValidateSpecificSchema({
+    schema: loginSchema.shape['password'],
+    value: passwordValue
+  })
+
+  function handleSubmit(e) {
+    if (!usernameIsValid || !passwordIsValid) {
+      e.preventDefault()
+    }
+  }
+
   return (
     <>
       <main className="min-h-screen flex">
@@ -13,27 +58,37 @@ export default function LoginPage() {
           <section className="flex-1 flex">
             <div className="m-auto w-full md:max-w-96">
               <h2 className="mb-10 font-bold text-xl text-center">Login to the app</h2>
-              <form>
+              <Alert className="mb-5" variant="destructive">
+                <AlertCircleIcon />
+                <AlertTitle>Username/Password salah</AlertTitle>
+              </Alert>
+              <form onSubmit={handleSubmit} action={action} noValidate>
                 <div className="flex flex-col gap-6">
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Username</Label>
-                    <Input
-                      id="username"
-                      type="username"
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input id="password" type="password" required />
-                    <a
-                      href="#"
-                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
-                  </div>
-                  <Button>Login</Button>
+                  <InputControl 
+                    label="Username"
+                    name="username"
+                    id="username"
+                    type="text"
+                    value={usernameValue}
+                    onChange={handleUsernameChange}
+                    onBlur={handleUsernameBlur}
+                    hasError={didUsernameEdited && !usernameIsValid}
+                    errorMsg={usernameErrors}
+                  />
+                  <InputControl 
+                    label="Password"
+                    name="password"
+                    id="password"
+                    type="text"
+                    value={passwordValue}
+                    onChange={handlePasswordChange}
+                    onBlur={handlePasswordBlur}
+                    hasError={didPasswordEdited && !passwordIsValid}
+                    errorMsg={passwordErrors}
+                  />
+                  <Button type="submit">
+                    {isPending ? 'Submitted....' : 'Login' }
+                  </Button>
                 </div>
               </form>
             </div>
