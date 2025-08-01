@@ -5,25 +5,14 @@ import { redirect } from 'next/navigation'
 import z from 'zod'
 
 export async function login(prevState, formData) {
-  let errorObj = {
-    formErrors: [],
-    fieldErrors: {
-      username: [],
-      password: []
-    }
-  }
-
   const data = {
     username: formData.get('username'),
     password: formData.get('password')
   }
 
-  const validateFields = loginSchema.safeParse(data)
-  if (!validateFields.success) {
-    const flattenError = z.flattenError(validateFields.error)
-    errorObj = flattenError
-
-    return errorObj
+  const validatedFields = loginSchema.safeParse(data)
+  if (!validatedFields.success) {
+    return z.flattenError(validatedFields.error)
   }
 
   //TODO: validate username and password on db

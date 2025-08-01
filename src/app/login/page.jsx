@@ -12,7 +12,7 @@ import { useValidateSpecificSchema } from "@/hooks/use-validate-specific-schema"
 
 //TODO: cleaning code
 export default function LoginPage() {
-  const [state, action, isPending] = useActionState(login, {})
+  const [state, action, isPending] = useActionState(login, undefined)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   // ---- username field ----
@@ -54,16 +54,10 @@ export default function LoginPage() {
   const passwordHasError = (isSubmitted || didPasswordEdited) && !passwordIsValid
 
   useEffect(() => {
-    const usernameErrorFromServer = state?.properties?.username
-    if (usernameErrorFromServer) {
-      setErrorsUsername(usernameErrorFromServer.errors)
+    if (state) {
+      setErrorsUsername(state.fieldErrors.username)
+      setErrorsPassword(state.fieldErrors.password)
     }
-
-    const passwordErrorFromServer = state?.properties?.password
-    if (passwordErrorFromServer) {
-      setErrorsPassword(passwordErrorFromServer.errors)
-    }
-
   }, [state])
 
   function handleSubmit(e) {
