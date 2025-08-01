@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from "@/components/ui/button";
-import { login } from "@/actions/auth-action"
+import { login } from "@/app/actions/auth"
 import { useActionState, useEffect, useState } from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
@@ -55,8 +55,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (state) {
-      setErrorsUsername(state.fieldErrors.username)
-      setErrorsPassword(state.fieldErrors.password)
+      setErrorsUsername(state.username)
+      setErrorsPassword(state.password)
     }
   }, [state])
 
@@ -98,7 +98,7 @@ export default function LoginPage() {
                   label="Password"
                   name="password"
                   id="password"
-                  type="text"
+                  type="password"
                   value={passwordValue}
                   onChange={handlePasswordChange}
                   onBlur={handlePasswordBlur}
