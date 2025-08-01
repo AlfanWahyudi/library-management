@@ -1,5 +1,6 @@
 "use client";
 
+import { logout } from "@/app/actions/auth";
 import {
 	SidebarFooter,
 	SidebarMenu,
@@ -7,8 +8,11 @@ import {
 	SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { LogOut, CircleUserRound } from "lucide-react";
+import { useActionState } from "react";
 
 function DashSidebarFooter() {
+	const [state, logoutAction, isPending] = useActionState(logout, undefined)
+
 	return (
 		<SidebarFooter>
 			<SidebarMenu>
@@ -24,8 +28,8 @@ function DashSidebarFooter() {
 					</SidebarMenuButton>
 				</SidebarMenuItem>
 				<SidebarMenuItem>
-					<form>
-						<SidebarMenuButton type="button" className="h-auto cursor-pointer">
+					<form action={logoutAction}>
+						<SidebarMenuButton type="submit" className="h-auto cursor-pointer">
 							<LogOut /> <span className="">Logout</span>
 						</SidebarMenuButton>
 					</form>

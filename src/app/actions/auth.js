@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import z from 'zod'
 import bcrypt from 'bcrypt'
 import { createSession } from '@/lib/session'
+import { cookies } from 'next/headers'
 
 export async function login(prevState, formData) {
   const error = {
@@ -56,9 +57,7 @@ export async function login(prevState, formData) {
 }
 
 export async function logout() {
-  // check user first, is already logged in or not
-  // remove session
-  // redirect to login page
+  (await cookies()).delete('session')
   
-  return null
+  redirect('/login')
 }
