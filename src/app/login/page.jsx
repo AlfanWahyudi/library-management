@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { login } from "@/actions/auth-action"
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { loginSchema } from "@/schemas/login-schema";
@@ -10,17 +10,31 @@ import InputControl from "@/components/form/input-control";
 import { useInput } from "@/hooks/use-input";
 import { useValidateSpecificSchema } from "@/hooks/use-validate-specific-schema";
 
+//TODO: cleaning code
 export default function LoginPage() {
   const [state, action, isPending] = useActionState(login, {})
   const [isSubmitted, setIsSubmitted] = useState(false)
 
+  // ---- username field ----
   const {
     value: usernameValue,
     didEdit: didUsernameEdited,
     handleInputBlur: handleUsernameBlur,
     handleInputChange: handleUsernameChange,
   } = useInput('')
+  
+  const {
+    isValid: usernameIsValid,
+    errors: usernameErrors,
+    setErrorsState: setErrorsUsername,
+  } = useValidateSpecificSchema({
+    schema: loginSchema.shape['username'],
+    value: usernameValue
+  })
 
+  const usernameHasError = (isSubmitted || didUsernameEdited) && !usernameIsValid
+
+  // ---- password field ----
   const {
     value: passwordValue,
     didEdit: didPasswordEdited,
@@ -29,23 +43,28 @@ export default function LoginPage() {
   } = useInput('')
 
   const {
-    isValid: usernameIsValid,
-    errors: usernameErrors
-  } = useValidateSpecificSchema({
-    schema: loginSchema.shape['username'],
-    value: usernameValue
-  })
-
-  const {
     isValid: passwordIsValid,
-    errors: passwordErrors
+    errors: passwordErrors,
+    setErrorsState: setErrorsPassword,
   } = useValidateSpecificSchema({
     schema: loginSchema.shape['password'],
     value: passwordValue
   })
 
-  const usernameHasError = (isSubmitted || didUsernameEdited) && !usernameIsValid
   const passwordHasError = (isSubmitted || didPasswordEdited) && !passwordIsValid
+
+  useEffect(() => {
+    const usernameErrorFromServer = state?.properties?.username
+    if (usernameErrorFromServer) {
+      setErrorsUsername(usernameErrorFromServer.errors)
+    }
+
+    const passwordErrorFromServer = state?.properties?.password
+    if (passwordErrorFromServer) {
+      setErrorsPassword(passwordErrorFromServer.errors)
+    }
+
+  }, [state])
 
   function handleSubmit(e) {
     setIsSubmitted(true)

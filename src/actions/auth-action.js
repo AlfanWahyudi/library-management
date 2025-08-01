@@ -2,10 +2,16 @@
 
 import { loginSchema } from '@/schemas/login-schema'
 import { redirect } from 'next/navigation'
+import z from 'zod'
 
 export async function login(prevState, formData) {
-  console.log(formData)
-  console.log(prevState)
+  let errorObj = {
+    formErrors: [],
+    fieldErrors: {
+      username: [],
+      password: []
+    }
+  }
 
   const data = {
     username: formData.get('username'),
@@ -13,10 +19,11 @@ export async function login(prevState, formData) {
   }
 
   const validateFields = loginSchema.safeParse(data)
-
-  //TODO: samakan object pada returnya untuk pesan error dan engga nya
   if (!validateFields.success) {
-    return validateFields.error
+    const flattenError = z.flattenError(validateFields.error)
+    errorObj = flattenError
+
+    return errorObj
   }
 
   //TODO: validate username and password on db

@@ -19,5 +19,6 @@ export function useValidateSpecificSchema({ schema, value }) {
   return {
     isValid: errors.length === 0,
     errors,
+    setErrorsState: setErrors,
   }
 }
