@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { login } from "@/actions/auth-action"
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { loginSchema } from "@/schemas/login-schema";
@@ -12,6 +12,8 @@ import { useValidateSpecificSchema } from "@/hooks/use-validate-specific-schema"
 
 export default function LoginPage() {
   const [state, action, isPending] = useActionState(login, {})
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
   const {
     value: usernameValue,
     didEdit: didUsernameEdited,
@@ -42,7 +44,12 @@ export default function LoginPage() {
     value: passwordValue
   })
 
+  const usernameHasError = (isSubmitted || didUsernameEdited) && !usernameIsValid
+  const passwordHasError = (isSubmitted || didPasswordEdited) && !passwordIsValid
+
   function handleSubmit(e) {
+    setIsSubmitted(true)
+
     if (!usernameIsValid || !passwordIsValid) {
       e.preventDefault()
     }
@@ -71,7 +78,7 @@ export default function LoginPage() {
                   value={usernameValue}
                   onChange={handleUsernameChange}
                   onBlur={handleUsernameBlur}
-                  hasError={didUsernameEdited && !usernameIsValid}
+                  hasError={usernameHasError}
                   errorMsg={usernameErrors}
                 />
                 <InputControl 
@@ -82,7 +89,7 @@ export default function LoginPage() {
                   value={passwordValue}
                   onChange={handlePasswordChange}
                   onBlur={handlePasswordBlur}
-                  hasError={didPasswordEdited && !passwordIsValid}
+                  hasError={passwordHasError}
                   errorMsg={passwordErrors}
                 />
                 <Button type="submit">
