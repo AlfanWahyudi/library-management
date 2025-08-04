@@ -8,6 +8,8 @@ import bcrypt from 'bcrypt'
 import { createSession } from '@/lib/session'
 import { cookies } from 'next/headers'
 
+
+//TODO: business logic nya pindahin ke service class
 export async function login(prevState, formData) {
   const error = {
     form: [],
@@ -51,7 +53,20 @@ export async function login(prevState, formData) {
     return error
   }
 
-  await createSession(user.id)
+  const userRole = await sql`
+    select *
+    from user_roles ur 
+    join roles r 
+    on ur.role_code = r.code 
+    where ur.user_id  = ${user.id}
+  `
+
+  await createSession({
+    userId: user.id,
+    fullName: user.full_name,
+    roleCode: userRole[0].role_code,
+    roleName: userRole[0].name
+  })
 
   redirect('/dashboard')
 }
