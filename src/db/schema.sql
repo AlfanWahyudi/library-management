@@ -337,3 +337,46 @@ ALTER COLUMN end_date TYPE timestamp;
 -- adding primary key to id on block_members column
 ALTER TABLE block_members
 ADD CONSTRAINT pk_block_members PRIMARY KEY (id);
+
+
+
+-- drop timestamps columns on roles table
+ALTER TABLE roles
+DROP COLUMN created_by,
+DROP COLUMN created_at,
+DROP COLUMN updated_by,
+DROP COLUMN updated_at;
+
+
+-- add updated_at, updated_by columns into user_roles table
+ALTER TABLE user_roles
+ADD COLUMN updated_by varchar(25),
+ADD COLUMN updated_at TIMESTAMP;
+
+
+-- drop timestamps columns on operations table
+ALTER TABLE operations
+DROP COLUMN created_by,
+DROP COLUMN created_at,
+DROP COLUMN updated_by,
+DROP COLUMN updated_at;
+
+-- drop timestamps columns on resources table
+ALTER TABLE resources
+DROP COLUMN created_by,
+DROP COLUMN created_at,
+DROP COLUMN updated_by,
+DROP COLUMN updated_at;
+
+-- drop timestamps columns on permissions table
+ALTER TABLE permissions
+DROP COLUMN created_by,
+DROP COLUMN created_at,
+DROP COLUMN updated_by,
+DROP COLUMN updated_at;
+
+
+-- add updated_at, updated_by columns into role_permissions table
+ALTER TABLE role_permissions
+ADD COLUMN updated_by varchar(25),
+ADD COLUMN updated_at TIMESTAMP;
