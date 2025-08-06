@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { decrypt } from "./lib/session";
+import SessionDAL from "./dal/session-dal";
 
 const protectedRoutes = ['/dashboard']
 const publicRoutes = ['/login', 'signup', '/']
@@ -11,16 +12,15 @@ export default async function middleware(req) {
   const isProtectedRoute = protectedRoutes.includes(path)
   const isPublicRoute = publicRoutes.includes(path)
 
-  const cookie = (await cookies()).get('session')?.value
-  const session = await decrypt(cookie)
+  const session = await SessionDAL.verify()
 
-  if (isProtectedRoute && !session?.userId) {
+  if (isProtectedRoute && !session.isAuth) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))
   }
 
   if (
     isPublicRoute &&
-    session?.userId &&
+    session.isAuth &&
     !req.nextUrl.pathname.startsWith('/dashboard')
   ) {
     return NextResponse.redirect(new URL('/dashboard', req.nextUrl))
