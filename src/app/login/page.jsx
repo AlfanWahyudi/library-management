@@ -77,10 +77,14 @@ export default function LoginPage() {
         <section className="flex-1 flex">
           <div className="m-auto w-full md:max-w-96">
             <h2 className="mb-10 font-bold text-xl text-center">Login to the app</h2>
-            <Alert className="mb-5" variant="destructive">
-              <AlertCircleIcon />
-              <AlertTitle>Username/Password salah</AlertTitle>
-            </Alert>
+            {
+              state?.form && (
+                <Alert className="mb-5" variant="destructive">
+                  <AlertCircleIcon />
+                  <AlertTitle>{state?.form}</AlertTitle>
+                </Alert>
+              )
+            }
             <form onSubmit={handleSubmit} action={action} noValidate>
               <div className="flex flex-col gap-6">
                 <InputControl 

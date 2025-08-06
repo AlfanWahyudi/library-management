@@ -1,18 +1,18 @@
 'use server'
 
-import sql from '@/lib/db'
 import { loginSchema } from '@/schemas/login-schema'
 import { redirect } from 'next/navigation'
 import z from 'zod'
-import bcrypt from 'bcrypt'
 import { createSession } from '@/lib/session'
 import { cookies } from 'next/headers'
+import UserDAL from '@/dal/user-dal'
+import UserRoleDAL from '@/dal/user-role-dal'
+import UserService from '@/services/user-service'
 
 
-//TODO: business logic nya pindahin ke service class
 export async function login(prevState, formData) {
   const error = {
-    form: [],
+    form: null,
     username: [],
     password: []
   }
@@ -33,39 +33,21 @@ export async function login(prevState, formData) {
     return error
   }
 
-  const data = await sql`
-    select 
-      * 
-    from users
-    where username = ${fd.username}
-  `
+  const user = await UserDAL.getByUsername(fd.username)
 
-  if (data.length === 0) {
-    error.form.push('Username/Password salah.')
+  const isMatch = await UserService.checkCredential({ user: user, password: fd.password })
+  if (!isMatch) {
+    error.form = 'Username/Password salah.'
     return error
   }
 
-  const user = data[0]
-
-  const match = await bcrypt.compare(fd.password, user.password)
-  if (!match) {
-    error.form.push('Username/Password salah.')
-    return error
-  }
-
-  const userRole = await sql`
-    select *
-    from user_roles ur 
-    join roles r 
-    on ur.role_code = r.code 
-    where ur.user_id  = ${user.id}
-  `
+  const userRole = await UserRoleDAL.getById({ userId: user.id })
 
   await createSession({
     userId: user.id,
     fullName: user.full_name,
-    roleCode: userRole[0].role_code,
-    roleName: userRole[0].name
+    roleCode: userRole[0]?.role.code,
+    roleName: userRole[0]?.role.name
   })
 
   redirect('/dashboard')

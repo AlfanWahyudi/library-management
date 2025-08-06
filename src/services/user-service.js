@@ -1,12 +1,18 @@
-import UserDAL from '@/dal/user-dal'
 import 'server-only'
 
-export default UserService = {
-  verify: async (username) => {
-    const user = await UserDAL.getByUsername(username)
-    
-    if (user) {
+import bcrypt from 'bcrypt'
 
+const UserService = {
+  checkCredential: async ({ user, password }) => {
+    let isMatch = false
+
+    if (user) {
+      isMatch = await bcrypt.compare(password, user.password)
     }
+
+    return isMatch
   }
 }
+
+
+export default UserService
