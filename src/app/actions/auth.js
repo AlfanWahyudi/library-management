@@ -1,6 +1,6 @@
 'use server'
 
-import sql from '@/db'
+import sql from '@/lib/db'
 import { loginSchema } from '@/schemas/login-schema'
 import { redirect } from 'next/navigation'
 import z from 'zod'
