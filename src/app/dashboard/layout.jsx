@@ -7,7 +7,7 @@ export default function DashboardLayout({ children }) {
     <SidebarProvider>
       <DashSidebar />
       <main className="w-screen flex-initial flex flex-col relative">
-         <DashSidebarTrigger />
+        <DashSidebarTrigger />
         <section className="flex-none p-3 min-h-12 bg-gray-600 md:hidden">
           <h3 className="text-md font-semibold text-white">App Name</h3>
         </section>
