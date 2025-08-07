@@ -21,6 +21,7 @@ const rightContentItem = (
 export default function DashboardPage() {
   return (
     <>
+      <h1 className="sr-only">Dashboard Page</h1>
       <DashHeader 
         breadcrumbItems={breadcrumbItems} 
         pageTitle='Dashboard'
