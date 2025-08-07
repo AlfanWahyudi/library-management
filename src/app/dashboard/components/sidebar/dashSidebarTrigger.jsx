@@ -19,7 +19,7 @@ function DashSidebarTrigger({ className }) {
 		toggleSidebar,
 	} = useSidebar();
 
-	let cssClasses = `size-7 rounded bg-sidebar text-dark absolute z-10 hover:bg-white hover:text-dark`;
+	let cssClasses = `size-7 rounded bg-gray-300 text-dark absolute z-10 hover:bg-gray-500 hover:text-dark`;
 	let icon = null;
 
 	if (isMobile) {
