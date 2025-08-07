@@ -17,11 +17,12 @@ import {
 } from "@/components/ui/collapsible";
 
 import { LayoutDashboard, Book, Users, Scale, ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 const menus = [
 	{
 		title: "Dashboard",
-		url: "#",
+		url: "dashboard/",
 		icon: LayoutDashboard,
 	},
 	{
@@ -34,8 +35,8 @@ const menus = [
 				url: "#",
 			},
 			{
-				title: "Penulis",
-				url: "#",
+				title: "Pengarang",
+				url: "/dashboard/pengarang",
 			},
 			{
 				title: "Reservasi Buku",
@@ -85,9 +86,9 @@ function DashSidebarContent() {
 										{item.subMenus.map((sub) => (
 											<SidebarMenuSubItem key={sub.title}>
 												<SidebarMenuSubButton asChild>
-													<a href={sub.url} title={sub.title}>
+													<Link href={sub.url} title={sub.title}>
 														<span>{sub.title}</span>
-													</a>
+													</Link>
 												</SidebarMenuSubButton>
 											</SidebarMenuSubItem>
 										))}
