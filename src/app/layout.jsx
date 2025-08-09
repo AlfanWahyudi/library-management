@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${openSans.variable} antialiased`}  
     >
-      <body>
+      <body className="overflow-x-hidden max-w-screen">
         {children}
       </body>
     </html>
