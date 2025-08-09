@@ -26,11 +26,11 @@ function DashSidebarTrigger({ className }) {
 		cssClasses += " top-2 right-0";
 		icon = <AlignJustify className="w-10" />;
 	} else {
-		cssClasses += " top-3 left-[-1rem] hover:";
+		cssClasses += " top-3 left-[2rem] hover:";
 		icon = <ChevronRight className="w-10" />;
 
 		if (state === "expanded") {
-			cssClasses += " border-none shadow-none left-[-2.5rem]";
+			cssClasses += " border-none left-[14rem] shadow-none";
 			icon = <ChevronLeft className="w-10" />;
 		}
 	}

@@ -5,6 +5,7 @@ import { Sidebar, useSidebar } from "@/components/ui/sidebar";
 import { DashSidebarHeader } from "./dashSidebarHeader";
 import { DashSidebarContent } from "./dashSidebarContent";
 import { DashSidebarFooter } from "./dashSidebarFooter";
+import { DashSidebarTrigger } from "./dashSidebarTrigger";
 
 function DashSidebar() {
 	const {
@@ -18,7 +19,8 @@ function DashSidebar() {
 	} = useSidebar();
 
 	return (
-		<Sidebar collapsible="icon">
+		<Sidebar collapsible="icon" className='relative'>
+			<DashSidebarTrigger />
 			<DashSidebarHeader />
 			<DashSidebarContent />
 			<DashSidebarFooter />
