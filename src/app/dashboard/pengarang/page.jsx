@@ -14,7 +14,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
-
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 const breadcrumbItems = [
   {
     path: '/dashboard',
@@ -141,6 +151,53 @@ export default function PengarangPage() {
       />
       <section id="pengarang-content">
         <section id="pengarang-data-table">
+          <section className="mb-7">
+            <section className="mb-4 flex gap-3 justify-between">
+              <Input className="w-100" placeholder="Cari data..." />
+              <Button>Download PDF</Button>
+            </section>
+            <section className="flex justify-between">
+              <article className="flex text-sm flex-wrap gap-3">
+                <Select>
+                  <SelectTrigger className="rounded-full">
+                    <SelectValue placeholder="Nama" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Select>
+                  <SelectTrigger className="rounded-full">
+                    <SelectValue placeholder="Kebangsaan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Select>
+                  <SelectTrigger className="rounded-full">
+                    <SelectValue placeholder="Kebangsaan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Select>
+                  <SelectTrigger className="rounded-full">
+                    <SelectValue placeholder="Kebangsaan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </article>
+              <Button variant='destructive' disabled>Hapus Filter</Button>
+            </section>
+          </section>
           <article className="overflow-hidden rounded-md border">
             <Table>
               <TableHeader>
@@ -184,23 +241,55 @@ export default function PengarangPage() {
               </TableBody>
             </Table>
           </article>
-          <article className="flex items-center justify-end space-x-2 py-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
+          <article className="flex justify-between py-4">
+            <section className="flex text-sm items-center gap-3">
+              <p>Rows per page</p>
+              <Select>
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue placeholder="10" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <p>1-10 of 20</p>
+            </section>
+            <Pagination className="m-0 w-fit">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious href="#" />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#" isActive>1</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">2</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">3</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">4</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">5</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink href="#">7</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext href="#" />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </article>
         </section>
       </section>
