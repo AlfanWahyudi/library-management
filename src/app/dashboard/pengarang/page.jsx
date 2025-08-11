@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import DashHeader from "../components/dash-header";
-import { createColumnHelper, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { createColumnHelper, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -25,6 +24,10 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import AppDataTable from "@/components/datatable/app-data-table";
+import FilteringSelect from "@/components/datatable/filtering-select";
+import SearchDataTable from "@/components/datatable/search-data-table";
+import AppFilterDataTable from "@/components/datatable/app-filter-data-table";
 const breadcrumbItems = [
   {
     path: '/dashboard',
@@ -37,7 +40,8 @@ const breadcrumbItems = [
 
 const rightContentItem = (
   <>
-    <Button variant='outline'>Tambah pengarang</Button>
+    <Button variant='outline'>Download PDF</Button>
+    <Button>Tambah pengarang</Button>
   </>
 )
 
@@ -150,148 +154,15 @@ export default function PengarangPage() {
         rightContentItem={rightContentItem}
       />
       <section id="pengarang-content">
-        <section id="pengarang-data-table">
-          <section className="mb-7">
-            <section className="mb-4 flex gap-3 justify-between">
-              <Input className="w-100" placeholder="Cari data..." />
-              <Button>Download PDF</Button>
-            </section>
-            <section className="flex justify-between">
-              <article className="flex text-sm flex-wrap gap-3">
-                <Select>
-                  <SelectTrigger className="rounded-full">
-                    <SelectValue placeholder="Nama" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="rounded-full">
-                    <SelectValue placeholder="Kebangsaan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="rounded-full">
-                    <SelectValue placeholder="Kebangsaan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="rounded-full">
-                    <SelectValue placeholder="Kebangsaan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </article>
-              <Button variant='destructive' disabled>Hapus Filter</Button>
-            </section>
-          </section>
-          <article className="overflow-hidden rounded-md border">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                        </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length 
-                  ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && 'selected'}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={defaultColumns.length} className='h-24 text-center'>
-                        No results.
-                      </TableCell>
-                    </TableRow>
-                  )}
-              </TableBody>
-            </Table>
-          </article>
-          <article className="flex justify-between py-4">
-            <section className="flex text-sm items-center gap-3">
-              <p>Rows per page</p>
-              <Select>
-                <SelectTrigger className="w-[70px]">
-                  <SelectValue placeholder="10" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <p>1-10 of 20</p>
-            </section>
-            <Pagination className="m-0 w-fit">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious href="#" />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#" isActive>1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">2</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">3</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">4</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">5</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">7</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext href="#" />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </article>
-        </section>
+        <AppFilterDataTable>
+          <FilteringSelect placeHolder="Nama"></FilteringSelect>
+          <FilteringSelect placeHolder="Kebangsaan"></FilteringSelect>
+          <FilteringSelect placeHolder="Tanggal"></FilteringSelect>
+          <FilteringSelect placeHolder="Nama"></FilteringSelect>
+          <FilteringSelect placeHolder="Kebangsaan"></FilteringSelect>
+          <FilteringSelect placeHolder="Tanggal"></FilteringSelect>
+        </AppFilterDataTable>
+        <AppDataTable table={table} />
       </section>
     </>
   )
