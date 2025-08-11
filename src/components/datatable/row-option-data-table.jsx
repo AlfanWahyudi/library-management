@@ -7,9 +7,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-export default function RowOptionDataTable() {
+export default function RowOptionDataTable({
+  className
+}) {
+  const cssClasses = 'flex text-sm items-center gap-3 ' + className 
+
   return (
-    <section className="flex text-sm items-center gap-3">
+    <section className={cssClasses}>
       <p>Rows per page</p>
       <Select>
         <SelectTrigger className="w-[70px]">

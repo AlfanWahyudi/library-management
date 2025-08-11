@@ -8,9 +8,13 @@ import {
   PaginationPrevious
 } from "@/components/ui/pagination"
 
-export default function PaginationDataTable() {
+export default function PaginationDataTable({
+  className,
+}) {
+  const cssClasses = 'm-0 w-fit ' + className
+
   return (
-    <Pagination className="m-0 w-fit">
+    <Pagination className={cssClasses}>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious href="#" />

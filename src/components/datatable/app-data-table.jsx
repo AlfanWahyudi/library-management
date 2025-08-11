@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { flexRender } from "@tanstack/react-table";
 import RowOptionDataTable from "./row-option-data-table";
 import PaginationDataTable from "./pagination-data-table";
+import { Separator } from "../ui/separator";
 
 export default function AppDataTable({ table }) {
   return (
@@ -47,7 +48,8 @@ export default function AppDataTable({ table }) {
             )}
         </TableBody>
       </Table>
-      <article className="flex justify-between py-4">
+      <Separator className='mt-2' />
+      <article className="flex flex-wrap gap-5 justify-center lg:justify-between py-3 px-2">
         <RowOptionDataTable />
         <PaginationDataTable />
       </article>

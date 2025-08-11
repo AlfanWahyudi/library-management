@@ -106,7 +106,6 @@ const defaultColumns = [
 //TODO: buat tampilan dan harus berfungsi ya. 
 // Untuk filtering, paginasi, searching, nampilin jumlah data, dan sorting column nya. 
 // Tampilan bikin rapih
-//TODO: terakhir buatkan datable ini ke dalam component terpisah
 export default function PengarangPage() {
   const [authors, setAuthors] = useState([
     {

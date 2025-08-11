@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectGroup, SelectTrigger, SelectValue } from "
 export default function FilteringSelect({ placeHolder }) {
   return (
     <Select>
-      <SelectTrigger className="rounded-full">
+      <SelectTrigger className="rounded-full text-sm">
         <SelectValue placeholder={placeHolder} />
       </SelectTrigger>
       <SelectContent>
