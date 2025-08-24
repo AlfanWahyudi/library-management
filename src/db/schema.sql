@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS block_members_forever
   created_by varchar(25),
   created_at TIMESTAMP,
   primary key (id)
-)
+);
 
 --  - book_reservations -> id, member_id, book_id, start_date, end_date, is_completed, is_cancelled, created_by, created_at, updated_by, updated_at, deleted_by, deleted_at
 CREATE TABLE IF NOT EXISTS book_reservations
@@ -303,9 +303,6 @@ CREATE TABLE IF NOT EXISTS loan_violations
 */
 
 -- change year_of_publication column into publication_date on books table
-ALTER TABLE books 
-DROP COLUMN year_of_publication ;
-
 ALTER TABLE books
 ADD COLUMN publication_date date not null;
 
@@ -380,3 +377,23 @@ DROP COLUMN updated_at;
 ALTER TABLE role_permissions
 ADD COLUMN updated_by varchar(25),
 ADD COLUMN updated_at TIMESTAMP;
+
+-- change varchar length for all code columns 
+ALTER TABLE resources
+ALTER COLUMN code TYPE varchar(25);
+
+ALTER TABLE operations
+ALTER COLUMN code TYPE varchar(25);
+
+ALTER TABLE permissions
+ALTER COLUMN resource_code TYPE varchar(25),
+ALTER COLUMN Operation_code TYPE varchar(25);
+
+ALTER TABLE roles
+ALTER COLUMN code TYPE varchar(25);
+
+ALTER TABLE role_permissions
+ALTER COLUMN role_code TYPE varchar(25);
+
+ALTER TABLE user_roles
+ALTER COLUMN role_code TYPE varchar(25);
