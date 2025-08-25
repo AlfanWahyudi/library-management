@@ -408,3 +408,11 @@ ALTER TYPE genderEnum RENAME VALUE 'M' TO 'm';
 ALTER TYPE ViolationLevel RENAME VALUE 'Minor' TO 'minor';
 ALTER TYPE ViolationLevel RENAME VALUE 'Moderate' TO 'moderate';
 ALTER TYPE ViolationLevel RENAME VALUE 'High' TO 'high';
+
+
+-- add timestamps columns on roles table
+ALTER TABLE roles
+ADD COLUMN created_by varchar(25),
+ADD COLUMN created_at TIMESTAMP,
+ADD COLUMN updated_by varchar(25),
+ADD COLUMN updated_at TIMESTAMP;
