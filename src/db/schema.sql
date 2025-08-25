@@ -397,3 +397,14 @@ ALTER COLUMN role_code TYPE varchar(25);
 
 ALTER TABLE user_roles
 ALTER COLUMN role_code TYPE varchar(25);
+
+
+-- change enum (genderEnum) values
+ALTER TYPE genderEnum RENAME VALUE 'F' TO 'f';
+ALTER TYPE genderEnum RENAME VALUE 'M' TO 'm';
+
+
+-- change enum (ViolationLevel) values
+ALTER TYPE ViolationLevel RENAME VALUE 'Minor' TO 'minor';
+ALTER TYPE ViolationLevel RENAME VALUE 'Moderate' TO 'moderate';
+ALTER TYPE ViolationLevel RENAME VALUE 'High' TO 'high';
