@@ -6,7 +6,6 @@ import z from 'zod'
 import { createSession } from '@/lib/session'
 import { cookies } from 'next/headers'
 import UserDAL from '@/dal/user-dal'
-import UserRoleDAL from '@/dal/user-role-dal'
 import UserService from '@/services/user-service'
 
 
@@ -41,13 +40,12 @@ export async function login(prevState, formData) {
     return error
   }
 
-  const userRole = await UserRoleDAL.getById({ userId: user.id })
+  const roles = await UserDAL.getRoles({ id: user.id })
 
   await createSession({
     userId: user.id,
     fullName: user.full_name,
-    roleCode: userRole[0]?.role.code,
-    roleName: userRole[0]?.role.name
+    roles,
   })
 
   redirect('/dashboard')

@@ -1,6 +1,5 @@
 import 'server-only'
 
-
 import sql from '@/lib/db'
 
 const UserDAL = {
@@ -27,6 +26,17 @@ const UserDAL = {
     return users.length === 0
       ? null
       : users[0]
+  },
+
+  getRoles: async ({ id }) => {
+    return await sql`
+      select 
+        r.id,
+        r.name
+      from user_roles ur 
+      join roles r ON ur.role_id = r.id 
+      where ur.user_id = ${id}
+    `
   },
 
   update: async ({ username, email, fullName, gender, address }) => {

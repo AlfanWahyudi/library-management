@@ -4,7 +4,7 @@ import { cache } from "react"
 
 const SessionDAL = {
   verify: cache(async () => {
-    const result = {
+    let result = {
       isAuth: false
     }
 
@@ -12,14 +12,9 @@ const SessionDAL = {
     const session = await decrypt(cookie)
     if (session?.userId) {
       result.isAuth = true
-      result.userId = session.userId 
-      result.fullName = session.fullName 
-      result.role = {
-        name: session.roleName,
-        code: session.roleCode,
-      }
-    }
 
+      result = { ...result, ...session }
+    }
     return result
   })
 }

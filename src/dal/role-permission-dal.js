@@ -6,13 +6,15 @@ import { tblName as permissionTblName } from './permission-dal'
 const tblName = 'role_permissions'
 
 const RolePermissionDAL = {
-  checkPermission: async ({ roleCode, resourceCode, operationCode }) => {
+  hasAccess: async ({ roleId, permissionName }) => {
     const data = await sql`
       select 
-        *
-      from ${tblName} rp
-      join ${permissionTblName} p on rp.permission_id = p.id
-      where rp.role_code = ${roleCode} and p.resource_code = ${resourceCode} and p.operation_code = ${operationCode}
+        rp.role_id ,
+        rp.permission_id,
+        p.name as permission_name
+      from role_permissions rp 
+      join permissions p on p.id = rp.permission_id
+      where rp.role_id = ${roleId} and p.name = ${permissionName}
     `
     return data.length > 0
   }
