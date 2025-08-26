@@ -19,7 +19,16 @@ import {
 
 
 
-export default function BookPage() {
+export default function BookPage({}) {
+  // check permission untuk akses halaman ini
+  // redirect ke error page karena tidak memiliki izin buka halaman ini
+
+  // get data dari service class (business logic)
+
+  // simpan data ke setiap component
+
+  // jangan lupa hide jika tidak punya permission. pada semua komponen action di halaman ini
+
   return (
     <>
       <section className="flex align-middle">

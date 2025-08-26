@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import DashHeader from "../components/dash-header";
 import { createColumnHelper, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +28,7 @@ import AppDataTable from "@/components/datatable/app-data-table";
 import FilteringSelect from "@/components/datatable/filtering-select";
 import SearchDataTable from "@/components/datatable/search-data-table";
 import AppFilterDataTable from "@/components/datatable/app-filter-data-table";
+import { useRouter, useSearchParams } from "next/navigation";
 const breadcrumbItems = [
   {
     path: '/dashboard',
@@ -106,8 +107,22 @@ const defaultColumns = [
 //TODO: buat tampilan dan harus berfungsi ya. 
 // Untuk filtering, paginasi, searching, nampilin jumlah data, dan sorting column nya. 
 // Tampilan bikin rapih
-export default function PengarangPage() {
-  const [authors, setAuthors] = useState([
+export default function AuthorPage() {
+  // const { page  = '1', sort = 'asc', query = '' } = await searchParams
+  const router = useRouter()
+  const params = useSearchParams()
+  
+  const search = params.get('search')
+  console.log(search)
+  
+  useEffect(() => {
+    const urlParam = new URLSearchParams()
+    urlParam.set('page', 3)
+
+    router.replace(`?${urlParam.toString()}`)
+  }, [])
+
+  const [data, setData] = useState([
     {
       id: 1,
       fullName: 'Asti Musman',
@@ -137,11 +152,18 @@ export default function PengarangPage() {
     },
   ])
 
-  const table = useReactTable({ 
-    columns: defaultColumns, 
-    data: authors,
+  const [columns] = useState([...defaultColumns])
+
+  const table = useReactTable({  
+    data,
+    columns, 
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
+    getPaginationRowModel: getPaginationRowModel(),
+    defaultColumn: {
+      size: 50,
+      minSize: 50,
+      maxSize: 150,
+    },
   })
 
   return (

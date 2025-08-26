@@ -17,54 +17,56 @@ import {
 } from "@/components/ui/collapsible";
 
 import { LayoutDashboard, Book, Users, Scale, ChevronDown } from "lucide-react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 const menus = [
 	{
 		title: "Dashboard",
-		url: "dashboard/",
+		path: "/dashboard",
 		icon: LayoutDashboard,
 	},
 	{
 		title: "Buku",
-		url: "#",
 		icon: Book,
 		subMenus: [
 			{
 				title: "Daftar Buku",
-				url: "#",
+				path: "/dashboard/books",
 			},
 			{
 				title: "Pengarang",
-				url: "/dashboard/pengarang",
+				path: "/dashboard/authors",
 			},
 			{
 				title: "Reservasi Buku",
-				url: "#",
+				path: "/dashboard/book-reservations",
 			},
 			{
 				title: "Peminjaman Buku",
-				url: "#",
+				path: "/dashboard/book-loans",
 			},
 			{
 				title: "Pelanggaran Peminjaman Buku",
-				url: "#",
+				path: "/dashboard/loan-violations",
 			},
 		],
 	},
 	{
 		title: "Pelanggaran & Sanksi",
-		url: "#",
+		path: "/dashboard/violation-sanction",
 		icon: Scale,
 	},
 	{
 		title: "Anggota",
-		url: "#",
+		path: "/dashboard/members",
 		icon: Users,
 	},
 ];
 
 function DashSidebarContent() {
+	const pathname = usePathname()
+
 	const sidebarMenu = (
 		<SidebarMenu>
 			{menus.map((item) => {
@@ -85,8 +87,14 @@ function DashSidebarContent() {
 									<SidebarMenuSub>
 										{item.subMenus.map((sub) => (
 											<SidebarMenuSubItem key={sub.title}>
-												<SidebarMenuSubButton asChild>
-													<Link href={sub.url} title={sub.title}>
+												<SidebarMenuSubButton 
+													isActive={pathname === sub.path} 
+													asChild
+												>
+													<Link 
+														href={sub.path} 
+														title={sub.title}
+													>
 														<span>{sub.title}</span>
 													</Link>
 												</SidebarMenuSubButton>
@@ -100,11 +108,17 @@ function DashSidebarContent() {
 				} else {
 					menuItem = (
 						<SidebarMenuItem key={item.title}>
-							<SidebarMenuButton asChild>
-								<a href={item.url} title={item.title}>
+							<SidebarMenuButton 
+								isActive={pathname === item.path} 
+								asChild
+							>
+								<Link 
+									href={item.path} 
+									title={item.title}
+								>
 									<item.icon />
 									<span>{item.title}</span>
-								</a>
+								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					);
