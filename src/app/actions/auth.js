@@ -1,12 +1,12 @@
 'use server'
 
-import { loginSchema } from '@/schemas/login-schema'
+import { loginSchema } from '@/lib/schemas/login-schema'
 import { redirect } from 'next/navigation'
 import z from 'zod'
-import { createSession } from '@/lib/session'
+import { createSession } from '@/lib/utils/session'
 import { cookies } from 'next/headers'
-import UserDAL from '@/dal/user-dal'
-import UserService from '@/services/user-service'
+import UserDAL from '@/lib/dal/user-dal'
+import UserService from '@/lib/services/user-service'
 
 
 export async function login(prevState, formData) {

@@ -1,4 +1,4 @@
-import AuthorViewDAL from "@/dal/dbview/author-view-dal";
+import AuthorViewDAL from "@/lib/dal/dbview/author-view-dal";
 import AuthorDataTable from "./author-datatable";
 
 export default async function AuthorPage({ searchParams }) {

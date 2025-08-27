@@ -1,7 +1,6 @@
 import 'server-only'
 
-import sql from '@/lib/db'
-import { tblName as permissionTblName } from './permission-dal'
+import sql from '@/lib/config/db'
 
 const tblName = 'role_permissions'
 

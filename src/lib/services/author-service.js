@@ -1,7 +1,7 @@
 import 'server-only'
 
-import AuthorDAL from "@/dal/author-dal"
-import Permission from "@/lib/permission"
+import AuthorDAL from "@/lib/dal/author-dal"
+import Permission from "@/lib/utils/permission"
 
 const resourceCode = 'AUT'
 

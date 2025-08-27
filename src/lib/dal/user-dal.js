@@ -1,6 +1,6 @@
 import 'server-only'
 
-import sql from '@/lib/db'
+import sql from '@/lib/config/db'
 
 const UserDAL = {
   getById: async (id) => {

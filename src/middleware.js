@@ -1,7 +1,5 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { decrypt } from "./lib/session";
-import SessionDAL from "./dal/session-dal";
+import SessionDAL from "./lib/dal/session-dal";
 
 const protectedRoutes = ['/dashboard']
 const publicRoutes = ['/login', 'signup', '/']

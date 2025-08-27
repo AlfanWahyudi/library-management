@@ -5,7 +5,7 @@ import { login } from "@/app/actions/auth"
 import { useActionState, useEffect, useState } from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
-import { loginSchema } from "@/schemas/login-schema";
+import { loginSchema } from "@/lib/schemas/login-schema";
 import InputControl from "@/components/form/input-control";
 import { useInput } from "@/hooks/use-input";
 import { useValidateSpecificSchema } from "@/hooks/use-validate-specific-schema";

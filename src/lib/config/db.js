@@ -1,7 +1,7 @@
 import postgres from "postgres"
-import { DB } from "@/lib/constants"
+import dbConstant from "@/lib/constants/db-const"
 
-const sql = postgres(DB.POSTGRES.CONN, {
+const sql = postgres(dbConstant.POSTGRES.CONN, {
 // const sql = postgres('postgres://', {
   // host                 : 'localhost',            // Postgres ip address[es] or domain name[s]
   // port                 : 5432,          // Postgres server port[s]

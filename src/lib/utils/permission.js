@@ -1,10 +1,10 @@
 import 'server-only'
 
-import RolePermissionDAL from '@/dal/role-permission-dal'
-import SessionDAL from '@/dal/session-dal'
+import RolePermissionDAL from '@/lib/dal/role-permission-dal'
+import SessionDAL from '@/lib/dal/session-dal'
 
 const Permission = {
-  verify: async ({ resourceCode, operationCode }) => {
+  isAllowed: async ({ name }) => {
     const result = {
       success: false,
       message: `Sorry, you don’t have permission to access this feature.`
@@ -12,10 +12,9 @@ const Permission = {
 
     const session = await SessionDAL.verify()
     if (session.isAuth) {
-      const hasPermission = await RolePermissionDAL.checkPermission({
-        roleCode: session.role.code,
-        resourceCode,
-        operationCode
+      const hasPermission = await RolePermissionDAL.hasAccess({
+        roleId: session.role.code,
+        name
       })
 
       if (hasPermission) {

@@ -1,4 +1,4 @@
-import sql from "@/lib/db"
+import sql from "@/lib/config/db"
 
 const UserRoleDAL = {
   getById: async ({ userId }) => {
