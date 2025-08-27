@@ -80,50 +80,21 @@ const defaultColumns = [
 //TODO: buat tampilan dan harus berfungsi ya. 
 // Untuk filtering, paginasi, searching, nampilin jumlah data, dan sorting column nya. 
 // Tampilan bikin rapih
-export default function AuthorDataTable({}) {
+export default function AuthorDataTable({ authorItemsPaginated }) {
 
   const router = useRouter()
   const params = useSearchParams()
   
   const search = params.get('search')
-  console.log(search)
   
   useEffect(() => {
     const urlParam = new URLSearchParams()
     urlParam.set('page', 3)
 
-    router.replace(`?${urlParam.toString()}`)
+    // router.replace(`?${urlParam.toString()}`)
   }, [])
 
-  const [data, setData] = useState([
-    {
-      id: 1,
-      fullName: 'Asti Musman',
-      nationality: 'Indonesia',
-      activeSince: null,
-      about: null,
-      createdAt: '2025-06-05 15:50:01',
-      updatedAt: '2025-06-05 15:50:01'
-    },
-    {
-      id: 1,
-      fullName: 'Wahidah Murriska',
-      nationality: 'Indonesia',
-      activeSince: null,
-      about: 'Memiliki pengalaman kerja sebagai English translator di Perpustakaan Ganesa, Sukoharjo (2015), English teacher di Erje Privat (2016), dan Writer di Sanggar Bahasa Yogyakarta (2017). Latar belakang pendidikannya adalah Sastra Inggris, Fakultas Ilmu Budaya, Universitas Sebelas Maret, dan Ilmu Linguistik, Fakultas Ilmu Budaya, Universitas Gadjah Mada',
-      createdAt: '2025-06-05 15:50:01',
-      updatedAt: '2025-06-05 15:50:01'
-    },
-    {
-      id: 1,
-      fullName: 'Greg McKeown',
-      nationality: 'Inggris',
-      activeSince: null,
-      about: null,
-      createdAt: '2025-06-05 15:50:01',
-      updatedAt: '2025-06-05 15:50:01'
-    },
-  ])
+  const [data, setData] = useState([...authorItemsPaginated.data])
 
   const [columns] = useState([...defaultColumns])
 

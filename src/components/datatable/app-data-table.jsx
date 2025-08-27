@@ -4,7 +4,12 @@ import RowOptionDataTable from "./row-option-data-table";
 import PaginationDataTable from "./pagination-data-table";
 import { Separator } from "../ui/separator";
 
+
+//TODO: colspan untuk data kosong masih belum sesuai, columns count nya tidak sesuai
 export default function AppDataTable({ table }) {
+
+  console.log(table.getAllColumns.length)
+  
   return (
     <article className="overflow-hidden rounded-md border">
       <Table>
@@ -41,7 +46,7 @@ export default function AppDataTable({ table }) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={defaultColumns.length} className='h-24 text-center'>
+                <TableCell colSpan={table.getAllColumns.length} className='h-24 text-center'>
                   No results.
                 </TableCell>
               </TableRow>
