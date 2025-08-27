@@ -11,4 +11,3 @@ SELECT
 FROM authors a 
 JOIN book_authors ba ON ba.author_id = a.id 
 GROUP BY a.id
-ORDER BY a.updated_at asc, a.full_name asc
