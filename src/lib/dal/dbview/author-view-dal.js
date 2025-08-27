@@ -1,6 +1,8 @@
 import 'server-only'
 
 import sql from '@/lib/config/db'
+import { createAuthorDTO } from '@/lib/dto/author-dto'
+import { createDataTableResDTO } from '@/lib/dto/datatable-res-dto'
 
 const tableName = 'authors_view'
 
@@ -12,26 +14,15 @@ const AuthorViewDAL = {
     orderDir = 'asc',
     search = '', 
   }) => {
-
-    const result = {
-      data: [],
-      meta: {
-        page,
-        search,
-        orderBy,
-        orderDir,
-        limit,
-        page_count: 0,
-        items_count: 0,
-        filtered_count: 0,
-      }
-    }
+    const dataTable = createDataTableResDTO({})
+    dataTable.meta.page = page
+    dataTable.meta.limit = limit
 
     const totalItems = (await sql`select * from ${ sql(tableName) }`.raw()).length
     const totalPage = Math.ceil(totalItems / limit)
 
-    result.meta.page_count = totalPage
-    result.meta.items_count = totalItems
+    dataTable.meta.pageCount = totalPage
+    dataTable.meta.itemsCount = totalItems
 
     if (page <= totalPage) {
       const offset = (page - 1) * limit
@@ -48,22 +39,11 @@ const AuthorViewDAL = {
         limit ${limit} offset ${offset}
       `
       
-      result.meta.filtered_count = data.length
-      result.data = data.map((item) => {
-        return {
-          id: item.id,
-          fullName: item.full_name,
-          bookCount: item.book_count !== null && parseInt(item.book_count),
-          nationality: item.nationality,
-          activeSince: item.active_since,
-          about: item.about,
-          createdAt: item.created_at.toString(),
-          updatedAt: item.updated_at.toString()
-        }
-      })
+      dataTable.meta.filteredCount = data.length
+      dataTable.data = data.map((item) => createAuthorDTO(item))
     }
 
-    return result
+    return dataTable
   }
 }
 
