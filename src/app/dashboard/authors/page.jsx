@@ -1,24 +1,18 @@
-import AuthorViewDAL from "@/lib/dal/dbview/author-view-dal";
 import AuthorDataTable from "./author-datatable";
+import AuthorService from "@/lib/services/author-service";
 
 export default async function AuthorPage({ searchParams }) {
-  const { 
-    page, 
-    limit, 
-    search, 
-    order_by: orderBy, 
-    order_dir: orderDir 
-  } = await searchParams
+  const param = await searchParams
 
   const paginate = {
-    page: page !== undefined ? parseInt(page) : 1,
-    limit: limit !== undefined ? parseInt(limit) : 10,
-    search: search !== undefined ? search : '',
-    orderBy: orderBy !== undefined ? orderBy : 'updated_at',
-    orderDir: orderDir !== undefined ? orderDir : 'asc',
+    page: param.page !== undefined ? parseInt(param.page) : 1,
+    limit: param.limit !== undefined ? parseInt(param.limit) : 10,
+    search: param.search !== undefined ? param.search : '',
+    orderBy: param.orderBy !== undefined ? param.orderBy : 'updated_at',
+    orderDir: param.orderDir !== undefined ? param.orderDir : 'asc',
   }
 
-  const data = await AuthorViewDAL.listPaginated({...paginate})
+  const data = await AuthorService.getAllPaginated(paginate)
 
   console.log(data)
 
