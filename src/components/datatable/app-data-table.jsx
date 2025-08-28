@@ -7,9 +7,6 @@ import { Separator } from "../ui/separator";
 
 //TODO: colspan untuk data kosong masih belum sesuai, columns count nya tidak sesuai
 export default function AppDataTable({ table }) {
-
-  console.log(table.getAllColumns.length)
-  
   return (
     <article className="overflow-hidden rounded-md border">
       <Table>

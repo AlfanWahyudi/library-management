@@ -81,18 +81,41 @@ const defaultColumns = [
 // Untuk filtering, paginasi, searching, nampilin jumlah data, dan sorting column nya. 
 // Tampilan bikin rapih
 export default function AuthorDataTable({ authorItemsPaginated }) {
-
   const router = useRouter()
-  const params = useSearchParams()
-  
-  const search = params.get('search')
-  
-  useEffect(() => {
-    const urlParam = new URLSearchParams()
-    urlParam.set('page', 3)
+  const searchParams = useSearchParams()
 
-    // router.replace(`?${urlParam.toString()}`)
-  }, [])
+  const [tableOpt, setTableOpt] = useState({
+    page: parseInt(searchParams.get('page')) || 1,
+    limit: parseInt(searchParams.get('limit')) || 10,
+    search: searchParams.get('search') || '',
+    orderBy: searchParams.get('orderBy') || 'updated_at',
+    orderDir: searchParams.get('orderDir') || 'desc',
+  })
+
+  useEffect(() => {
+    const updatedParams = new URLSearchParams()
+    updatedParams.set('page', tableOpt.page)
+    updatedParams.set('limit', tableOpt.limit)
+    updatedParams.set('search', tableOpt.search)
+    updatedParams.set('orderBy', tableOpt.orderBy)
+    updatedParams.set('orderDir', tableOpt.orderDir)
+
+    // adding other params
+    for (const [key, value] of searchParams.entries()) {
+      if (
+        key !== 'page' ||
+        key !== 'limit' ||
+        key !== 'search' ||
+        key !== 'orderBy' ||
+        key !== 'orderDir'
+      ) {
+        updatedParams.set(key, value)
+      }
+    }
+
+    router.replace(`?${updatedParams.toString()}`) //update current url
+
+  }, [tableOpt])
 
   const [data, setData] = useState([...authorItemsPaginated.data])
 

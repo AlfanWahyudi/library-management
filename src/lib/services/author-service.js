@@ -36,7 +36,7 @@ const AuthorService = {
     search, 
   }) => {
     const searchFields = ['full_name']
-    
+
     return await getPaginatedList({
       page,
       limit,
