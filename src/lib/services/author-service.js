@@ -1,6 +1,7 @@
 import 'server-only'
 
 import AuthorViewDTO from '../dto/dbview/author-view-dto'
+import { getPaginatedList } from '../utils/datatable'
 
 const resourceCode = 'AUT'
 
@@ -27,7 +28,6 @@ const AuthorService = {
   //   return await AuthorDAL.getAll()
   // },
 
-
   getAllPaginated: async ({
     page, 
     limit, 
@@ -35,34 +35,18 @@ const AuthorService = {
     orderDir,
     search, 
   }) => {
-
-    const result = {
-      data: [],
-      meta: {
-        page,
-        limit,
-        pageCount: 0,
-        itemsCount: 0,
-        filteredCount: 0,
-      }
-    }
-
-    const totalItems = (await AuthorViewDTO.getAll()).length
-    const totalPage = Math.ceil(totalItems/limit)
-
-    result.meta.itemsCount = totalItems
-    result.meta.pageCount = totalPage
-
-    if (page <= totalPage) {
-      const searchFields = ['full_name']
-      const data = await AuthorViewDTO.getAllPaginated({page, limit, orderBy, orderDir, search, searchFields})
-
-      result.data = [...data]
-      result.meta.filteredCount = data.length
-    }
-
-    return result
-
+    const searchFields = ['full_name']
+    
+    return await getPaginatedList({
+      page,
+      limit,
+      orderBy,
+      orderDir,
+      search,
+      searchFields,
+      getTotalItems: async () => (await AuthorViewDTO.getAll()).length,
+      getData: async () => await AuthorViewDTO.getAllPaginated({page, limit, orderBy, orderDir, search, searchFields})
+    })
   }
 }
 
