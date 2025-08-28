@@ -9,5 +9,5 @@ SELECT
 	a.created_at,
 	a.updated_at
 FROM authors a 
-JOIN book_authors ba ON ba.author_id = a.id 
-GROUP BY a.id
+LEFT JOIN book_authors ba ON ba.author_id = a.id 
+GROUP BY a.id 
