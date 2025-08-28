@@ -14,20 +14,28 @@ const AuthorViewDAL = {
     limit, 
     orderBy,
     orderDir,
-    search
+    search,
+    searchFields = [],
   }) => {
+    if (
+      (search === null || search === undefined) &&
+      searchFields.length === 0 
+    ) {
+      throw new Error('search and searchFields properties must not be empty.')
+    }
+
     const offset = (page - 1) * limit
     const data = await sql`
-      select
+      SELECT
         *
-      from ${ sql(tableName) }
+      FROM ${ sql(tableName) }
       ${
         search.trim() !== ''
-          ? sql`where full_name like ${'%' + search + '%'}`
+          ? sql`WHERE CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
           : sql``
       }
-      order by ${sql(orderBy)} ${orderDir === 'asc' ? sql`asc` : sql`desc`}
-      limit ${limit} offset ${offset}
+      ORDER BY ${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
+      LIMIT ${limit} OFFSET ${offset}
     `
     return data
   }

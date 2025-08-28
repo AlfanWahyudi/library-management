@@ -54,7 +54,8 @@ const AuthorService = {
     result.meta.pageCount = totalPage
 
     if (page <= totalPage) {
-      const data = await AuthorViewDTO.getAllPaginated({page, limit, orderBy, orderDir, search})
+      const searchFields = ['full_name']
+      const data = await AuthorViewDTO.getAllPaginated({page, limit, orderBy, orderDir, search, searchFields})
 
       result.data = [...data]
       result.meta.filteredCount = data.length
