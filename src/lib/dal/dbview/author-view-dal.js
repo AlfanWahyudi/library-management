@@ -1,6 +1,7 @@
 import 'server-only'
 
 import sql from '@/lib/config/db'
+import { getPaginatedList } from '@/lib/utils/datatable'
 
 const tableName = 'authors_view'
 
@@ -17,27 +18,16 @@ const AuthorViewDAL = {
     search,
     searchFields = [],
   }) => {
-    if (
-      (search === null || search === undefined) &&
-      searchFields.length === 0 
-    ) {
-      throw new Error('search and searchFields properties must not be empty.')
-    }
 
-    const offset = page * limit
-    const data = await sql`
-      SELECT
-        *
-      FROM ${ sql(tableName) }
-      ${
-        search.trim() !== ''
-          ? sql`WHERE CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
-          : sql``
-      }
-      ORDER BY ${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
-      LIMIT ${limit} OFFSET ${offset}
-    `
-    return data
+    return await getPaginatedList({
+      page,
+      limit,
+      orderBy,
+      orderDir,
+      search,
+      searchFields,
+      tableName
+    })
   }
 }
 

@@ -107,8 +107,6 @@ const searchingFieldItems = [
   },
 ]
 
-
-//TODO: Error - nomor baris dan jumlah seluruh data pada paginasi belum sesuai ketika filtering dijalankan
 //TODO: bikin state management baru dengan redux, biar codingan jadi rapih
 //TODO: Tampilan Tamble bikin rapih
 //TODO: rapihkan codingannya

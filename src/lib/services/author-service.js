@@ -37,16 +37,7 @@ const AuthorService = {
     searchFields = [],
   }) => {
 
-    return await getPaginatedList({
-      page,
-      limit,
-      orderBy,
-      orderDir,
-      search,
-      searchFields,
-      getTotalItems: async () => (await AuthorViewDTO.getAll()).length,
-      getData: async () => await AuthorViewDTO.getAllPaginated({page, limit, orderBy, orderDir, search, searchFields})
-    })
+    return await AuthorViewDTO.getAllPaginated({page, limit, orderBy, orderDir, search, searchFields})
   }
 }
 

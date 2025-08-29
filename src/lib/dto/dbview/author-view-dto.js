@@ -32,8 +32,10 @@ const AuthorViewDTO = {
     search,
     searchFields = [],
   }) => {
-    const data = await AuthorViewDAL.getAllPaginated({page, limit, orderBy, orderDir, search, searchFields})
-    return mapResArrToDTO(data)
+    const authorsPaginated = await AuthorViewDAL.getAllPaginated({page, limit, orderBy, orderDir, search, searchFields})
+    authorsPaginated.data = mapResArrToDTO(authorsPaginated.data)
+
+    return authorsPaginated
   }
 }
 

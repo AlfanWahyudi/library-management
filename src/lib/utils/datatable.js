@@ -1,4 +1,5 @@
 import 'server-only'
+import sql from '../config/db'
 
 
 export const getPaginatedList = async ({
@@ -8,32 +9,49 @@ export const getPaginatedList = async ({
   orderDir,
   search,
   searchFields,
-  getTotalItems,
-  getData
+  tableName
 }) => {
-    const result = {
-      data: [],
-      meta: {
-        page,
-        limit,
-        pageCount: 0,
-        itemsCount: 0,
-        filteredCount: 0,
-      }
+  if (
+    (search === null || search === undefined) &&
+    searchFields.length === 0 
+  ) {
+    throw new Error('search and searchFields properties must not be empty.')
+  }
+
+  const data = await sql`
+    SELECT
+      *
+    FROM ${sql(tableName)}
+    ${
+      search.trim() !== ''
+        ? sql`WHERE CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
+        : sql``
     }
+  `
+  const itemsCount = data.length
+  const pageCount = Math.ceil(itemsCount/limit)
 
-    const totalItems = await getTotalItems()
-    const totalPage = Math.ceil(totalItems/limit)
-
-    result.meta.itemsCount = totalItems
-    result.meta.pageCount = totalPage
-
-    if (page <= totalPage) {
-      const data = await getData({page, limit, orderBy, orderDir, search, searchFields})
-
-      result.data = [...data]
-      result.meta.filteredCount = data.length
+  const offset = page * limit
+  const dataWithLimit = await sql`
+    SELECT
+      *
+    FROM ${sql(tableName)}
+    ${
+      search.trim() !== ''
+        ? sql`WHERE CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
+        : sql``
     }
-
-    return result
+    ORDER BY ${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
+    LIMIT ${limit} OFFSET ${offset}
+  `
+  return {
+    data: dataWithLimit,
+    meta: {
+      page,
+      limit,
+      dataCount: dataWithLimit.length,
+      pageCount,
+      itemsCount,
+    }
+  }
 }
