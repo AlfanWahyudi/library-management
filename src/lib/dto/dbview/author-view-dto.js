@@ -7,8 +7,8 @@ const mapResToDTO = (authorViewData) => {
     nationality: authorViewData.nationality, 
     activeSince: authorViewData.active_since ? parseInt(authorViewData.active_since) : null, 
     about: authorViewData.about, 
-    createdAt: new Date(authorViewData.created_at).toDateString(), 
-    updatedAt: new Date(authorViewData.updated_at).toDateString(), 
+    createdAt: new Date(authorViewData.created_at), 
+    updatedAt: new Date(authorViewData.updated_at), 
     bookCount: authorViewData.book_count ? parseInt(authorViewData.book_count) : null,
   }
 }

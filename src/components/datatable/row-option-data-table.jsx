@@ -7,28 +7,43 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+//TODO: error options nya, ketika input dari url dengan limit yang engga ada di pageSizeItems, 
+// angka nya tidak muncul di placeholder select nya
+
+//TODO: rapihkan codingan nya
 export default function RowOptionDataTable({
-  className
+  table,
+  pageSizeItems = [10, 25, 50, 100],
+  className,
+  ...props
 }) {
   const cssClasses = 'flex text-sm items-center gap-3 ' + className 
+
+  const { pageIndex, pageSize } = table.getState().pagination
+  const currRowsCount = table.getRowModel().rows.length
+
+  const currFirstRow = pageIndex * pageSize + 1
+  const currLastRow = (currFirstRow + currRowsCount) - 1
 
   return (
     <section className={cssClasses}>
       <p>Rows per page</p>
-      <Select>
+      <Select
+        value={pageSize}
+        onValueChange={value => table.setPageSize(Number(value))}
+      >
         <SelectTrigger className="w-[70px]">
-          <SelectValue placeholder="10" />
+          <SelectValue placeholder={pageSize} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="10">10</SelectItem>
-            <SelectItem value="25">25</SelectItem>
-            <SelectItem value="50">50</SelectItem>
-            <SelectItem value="100">100</SelectItem>
+            {pageSizeItems.map((pageSize => (
+              <SelectItem key={pageSize} value={pageSize}>{pageSize}</SelectItem>
+            )))}
           </SelectGroup>
         </SelectContent>
       </Select>
-      <p>1-10 of 20</p>
+      <p>{currFirstRow}-{currLastRow} of {table.getRowCount()}</p>
     </section>
   )
 }

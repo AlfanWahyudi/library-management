@@ -1,9 +1,8 @@
 "use client"
 
-
 import { Button } from "@/components/ui/button";
 import { createColumnHelper, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,37 +20,44 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const columnHelper = createColumnHelper()
 
-const defaultColumns = [
+const columnsDef = [
   columnHelper.accessor('fullName', {
+    id: 'full_name',
     header: () => 'Nama Lengkap',
-    cell: info => info.getValue(),
+    cell: props => props.getValue(),
   }),
-  columnHelper.accessor('nationality', {
+  columnHelper.accessor(row => `${row.nationality || '-'}`, {
+    id: 'nationality',
     header: () => 'Kebangsaan',
-    cell: info => info.getValue(),
+    cell: props => props.getValue(),
   }),
-  columnHelper.accessor('activeSince', {
+  columnHelper.accessor(row => `${row.activeSince || '-'}`, {
+    id: 'active_since',
     header: () => 'Aktif Sejak',
-    cell: info => info.getValue(),
+    cell: props => props.getValue(),
   }),
-  columnHelper.accessor('about', {
+  columnHelper.accessor(row => `${row.about || '-'}`, {
+    id: 'about',
     header: () => 'Tentang',
-    cell: info => info.getValue(),
+    cell: props => props.getValue(),
   }),
-  columnHelper.accessor('createdAt', {
+  columnHelper.accessor(row => `${new Date(row.createdAt).toISOString() || '-'}`, {
+    id: 'created_at',
     header: () => 'Dibuat Tanggal',
-    cell: info => info.getValue(),
+    cell: props => props.getValue(),
   }),
-  columnHelper.accessor('updatedAt', {
+  columnHelper.accessor(row => `${new Date(row.updatedAt).toISOString() || '-'}`, {
+    id: 'updated_at',
     header: () => 'Diperbaharui Tanggal',
-    cell: info => info.getValue(),
+    
+    cell: props => props.getValue(),
   }),
   columnHelper.display({
     id: 'actions',
     header: () => 'Aksi',
     cell: ({ row }) => {
       const payment = row.original
- 
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -78,24 +84,45 @@ const defaultColumns = [
 
 //TODO: Pahami penggunaan TanStack Table library nya. pahami bagian yang utama aja, sesuai dengan yg ingin dibikin
 //TODO: buat tampilan dan harus berfungsi ya. 
-// Untuk filtering, paginasi, searching, nampilin jumlah data, dan sorting column nya. 
-// Tampilan bikin rapih
+//TODO: Untuk filtering, paginasi, searching, nampilin jumlah data, dan sorting column nya. 
+//TODO: Tampilan Tamble bikin rapih
+//TODO: rapihkan codingannya
 export default function AuthorDataTable({ authorItemsPaginated }) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  const { data: authorData, meta: authorMeta } = authorItemsPaginated
+
   const [tableOpt, setTableOpt] = useState({
-    page: parseInt(searchParams.get('page')) || 1,
-    limit: parseInt(searchParams.get('limit')) || 10,
     search: searchParams.get('search') || '',
     orderBy: searchParams.get('orderBy') || 'updated_at',
     orderDir: searchParams.get('orderDir') || 'desc',
   })
 
+  const [pagination, setPagination] = useState({
+    pageIndex: parseInt(searchParams.get('page')) || 0, //initial page index
+    pageSize: parseInt(searchParams.get('limit')) || 10, //default page size
+  });
+
+
+  const table = useReactTable({  
+    data: [...authorData],
+    columns: columnsDef, 
+    manualFiltering: true, //turn off client-side filtering
+    manualPagination: true, //turn off client-side pagination
+    manualSorting: true, //turn off client-side sorting
+    getCoreRowModel: getCoreRowModel(),
+    rowCount: authorMeta.itemsCount, //pass in the total row count so the table knows how many pages there are (pageCount calculated internally if not provided)
+    onPaginationChange: setPagination, //update the pagination state when internal APIs mutate the pagination state
+    state: {
+      pagination,
+    },
+  })
+
   useEffect(() => {
     const updatedParams = new URLSearchParams()
-    updatedParams.set('page', tableOpt.page)
-    updatedParams.set('limit', tableOpt.limit)
+    updatedParams.set('page', pagination.pageIndex)
+    updatedParams.set('limit', pagination.pageSize)
     updatedParams.set('search', tableOpt.search)
     updatedParams.set('orderBy', tableOpt.orderBy)
     updatedParams.set('orderDir', tableOpt.orderDir)
@@ -103,10 +130,10 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     // adding other params
     for (const [key, value] of searchParams.entries()) {
       if (
-        key !== 'page' ||
-        key !== 'limit' ||
-        key !== 'search' ||
-        key !== 'orderBy' ||
+        key !== 'page' &&
+        key !== 'limit' &&
+        key !== 'search' &&
+        key !== 'orderBy' &&
         key !== 'orderDir'
       ) {
         updatedParams.set(key, value)
@@ -114,24 +141,7 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     }
 
     router.replace(`?${updatedParams.toString()}`) //update current url
-
-  }, [tableOpt])
-
-  const [data, setData] = useState([...authorItemsPaginated.data])
-
-  const [columns] = useState([...defaultColumns])
-
-  const table = useReactTable({  
-    data,
-    columns, 
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    defaultColumn: {
-      size: 50,
-      minSize: 50,
-      maxSize: 150,
-    },
-  })
+  }, [tableOpt, pagination, searchParams])
 
   return (
     <section id="pengarang-content">

@@ -24,7 +24,7 @@ const AuthorViewDAL = {
       throw new Error('search and searchFields properties must not be empty.')
     }
 
-    const offset = (page - 1) * limit
+    const offset = page * limit
     const data = await sql`
       SELECT
         *

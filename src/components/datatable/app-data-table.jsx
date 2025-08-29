@@ -3,9 +3,11 @@ import { flexRender } from "@tanstack/react-table";
 import RowOptionDataTable from "./row-option-data-table";
 import PaginationDataTable from "./pagination-data-table";
 import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
 
 
 //TODO: colspan untuk data kosong masih belum sesuai, columns count nya tidak sesuai
+//TODO: rapihkan codingannya
 export default function AppDataTable({ table }) {
   return (
     <article className="overflow-hidden rounded-md border">
@@ -52,8 +54,32 @@ export default function AppDataTable({ table }) {
       </Table>
       <Separator className='mt-2' />
       <article className="flex flex-wrap gap-5 justify-center lg:justify-between py-3 px-2">
-        <RowOptionDataTable />
-        <PaginationDataTable />
+        <RowOptionDataTable table={table} />
+        {/* <PaginationDataTable /> */}
+        <Button
+          onClick={() => table.firstPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<<'}
+        </Button>
+        <Button
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<'}
+        </Button>
+        <Button
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>'}
+        </Button>
+        <Button
+          onClick={() => table.lastPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>>'}
+        </Button>
       </article>
     </article>
   )
