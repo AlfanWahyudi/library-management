@@ -11,50 +11,68 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
+import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react"
 import AppDataTable from "@/components/datatable/app-data-table";
 import AppFilterDataTable from "@/components/datatable/app-filter-data-table";
 import { useRouter, useSearchParams } from "next/navigation";
 
-
+const SortHeaderTable = ({ column, headerName }) => {
+  return (
+    <Button
+      variant="ghost"
+      onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+    >
+      {headerName}
+      {
+        column.getIsSorted()
+          ? column.getIsSorted() === 'asc'
+            ? <ArrowUp className="ml -2 h-4 w-4" />
+            : <ArrowDown className="ml -2 h-4 w-4" />
+          : undefined
+      }
+    </Button>
+  )
+}
 
 const columnHelper = createColumnHelper()
 
 const columnsDef = [
   columnHelper.accessor('fullName', {
     id: 'full_name',
-    header: () => 'Nama Lengkap',
+    header: ({ column }) => SortHeaderTable({column, headerName: 'Nama Lengkap'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${row.nationality || '-'}`, {
     id: 'nationality',
     header: () => 'Kebangsaan',
+    header: ({ column }) => SortHeaderTable({column, headerName: 'Kebangsaan'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${row.activeSince || '-'}`, {
     id: 'active_since',
     header: () => 'Aktif Sejak',
+    header: ({ column }) => SortHeaderTable({column, headerName: 'Aktif Sejak'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${row.about || '-'}`, {
     id: 'about',
-    header: () => 'Tentang',
+    header: ({ column }) => SortHeaderTable({column, headerName: 'Tentang'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${new Date(row.createdAt).toISOString() || '-'}`, {
     id: 'created_at',
-    header: () => 'Dibuat Tanggal',
+    header: ({ column }) => SortHeaderTable({column, headerName: 'Tanggal Dibuat'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${new Date(row.updatedAt).toISOString() || '-'}`, {
     id: 'updated_at',
-    header: () => 'Diperbaharui Tanggal',
-    
+    header: ({ column }) => SortHeaderTable({column, headerName: 'Tanggal Diperbaharui'}),
     cell: props => props.getValue(),
   }),
   columnHelper.display({
     id: 'actions',
     header: () => 'Aksi',
+    enableSorting: false,
     cell: ({ row }) => {
       const payment = row.original
 
@@ -93,10 +111,8 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
 
   const { data: authorData, meta: authorMeta } = authorItemsPaginated
 
-  const [tableOpt, setTableOpt] = useState({
+  const [filtering, setFiltering] = useState({
     search: searchParams.get('search') || '',
-    orderBy: searchParams.get('orderBy') || 'updated_at',
-    orderDir: searchParams.get('orderDir') || 'desc',
   })
 
   const [pagination, setPagination] = useState({
@@ -104,6 +120,14 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     pageSize: parseInt(searchParams.get('limit')) || 10, //default page size
   });
 
+  const [sorting, setSorting] = useState([
+    {
+      id: searchParams.get('orderBy') || 'updated_at',
+      desc: searchParams.get('orderDir') 
+        ? searchParams.get('orderDir').toLowerCase() === 'desc'
+        : true,
+    }
+  ])
 
   const table = useReactTable({  
     data: [...authorData],
@@ -114,8 +138,10 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     getCoreRowModel: getCoreRowModel(),
     rowCount: authorMeta.itemsCount, //pass in the total row count so the table knows how many pages there are (pageCount calculated internally if not provided)
     onPaginationChange: setPagination, //update the pagination state when internal APIs mutate the pagination state
+    onSortingChange: setSorting,
     state: {
       pagination,
+      sorting,
     },
   })
 
@@ -123,9 +149,9 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     const updatedParams = new URLSearchParams()
     updatedParams.set('page', pagination.pageIndex)
     updatedParams.set('limit', pagination.pageSize)
-    updatedParams.set('search', tableOpt.search)
-    updatedParams.set('orderBy', tableOpt.orderBy)
-    updatedParams.set('orderDir', tableOpt.orderDir)
+    updatedParams.set('search', filtering.search)
+    updatedParams.set('orderBy', sorting[0].id)
+    updatedParams.set('orderDir', sorting[0].desc ? 'desc' : 'asc')
 
     // adding other params
     for (const [key, value] of searchParams.entries()) {
@@ -141,7 +167,7 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     }
 
     router.replace(`?${updatedParams.toString()}`) //update current url
-  }, [tableOpt, pagination, searchParams])
+  }, [filtering, pagination, sorting, searchParams])
 
   return (
     <section id="pengarang-content">
