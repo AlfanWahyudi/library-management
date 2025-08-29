@@ -7,9 +7,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-//TODO: error options nya, ketika input dari url dengan limit yang engga ada di pageSizeItems, 
-// angka nya tidak muncul di placeholder select nya
-
 //TODO: rapihkan codingan nya
 export default function RowOptionDataTable({
   table,
@@ -29,10 +26,9 @@ export default function RowOptionDataTable({
     <section className={cssClasses}>
       <p>Rows per page</p>
       <Select
-        value={pageSize}
         onValueChange={value => table.setPageSize(Number(value))}
       >
-        <SelectTrigger className="w-[70px]">
+        <SelectTrigger className="w-[75px]">
           <SelectValue placeholder={pageSize} />
         </SelectTrigger>
         <SelectContent>
