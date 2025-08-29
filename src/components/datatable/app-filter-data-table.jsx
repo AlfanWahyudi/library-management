@@ -2,12 +2,12 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import SearchDataTable from "./search-data-table";
 
-export default function AppFilterDataTable({ children }) {
+export default function AppFilterDataTable({ searchingFieldItems, table, children }) {
   return (
     <>
       <Separator className="my-4" />
         <section className="mb-4 flex flex-wrap gap-3 justify-between">
-          <SearchDataTable />
+          <SearchDataTable searchingFieldItems={searchingFieldItems} table={table} />
           <article className="text-sm flex flex-wrap gap-3">
             {children}
             {children && <Button variant="link" className="text-destructive" disabled>Hapus Filter</Button>}

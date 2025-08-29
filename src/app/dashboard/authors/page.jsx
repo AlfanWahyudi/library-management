@@ -2,7 +2,7 @@ import AuthorDataTable from "./author-datatable";
 import AuthorService from "@/lib/services/author-service";
 
 export default async function AuthorPage({ searchParams }) {
-  const { page, limit, search, orderBy, orderDir } = await searchParams
+  const { page, limit, search, searchFields, orderBy, orderDir } = await searchParams
 
   let items = {
     data: [],
@@ -21,7 +21,8 @@ export default async function AuthorPage({ searchParams }) {
       limit: parseInt(limit),
       search,
       orderBy,
-      orderDir
+      orderDir,
+      searchFields: searchFields.split(',')
     })
     items = {...authors}
   }

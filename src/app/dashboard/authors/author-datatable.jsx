@@ -100,9 +100,16 @@ const columnsDef = [
 ]
 
 
-//TODO: Pahami penggunaan TanStack Table library nya. pahami bagian yang utama aja, sesuai dengan yg ingin dibikin
-//TODO: buat tampilan dan harus berfungsi ya. 
-//TODO: Untuk filtering, paginasi, searching, nampilin jumlah data, dan sorting column nya. 
+const searchingFieldItems = [
+  {
+    id: 'full_name',
+    name: 'Nama Lengkap'
+  },
+]
+
+
+//TODO: Error - nomor baris dan jumlah seluruh data pada paginasi belum sesuai ketika filtering dijalankan
+//TODO: bikin state management baru dengan redux, biar codingan jadi rapih
 //TODO: Tampilan Tamble bikin rapih
 //TODO: rapihkan codingannya
 export default function AuthorDataTable({ authorItemsPaginated }) {
@@ -111,9 +118,7 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
 
   const { data: authorData, meta: authorMeta } = authorItemsPaginated
 
-  const [filtering, setFiltering] = useState({
-    search: searchParams.get('search') || '',
-  })
+  const [searchFilter, setSearchFilter] = useState(searchParams.get('search') || '')
 
   const [pagination, setPagination] = useState({
     pageIndex: parseInt(searchParams.get('page')) || 0, //initial page index
@@ -139,9 +144,11 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     rowCount: authorMeta.itemsCount, //pass in the total row count so the table knows how many pages there are (pageCount calculated internally if not provided)
     onPaginationChange: setPagination, //update the pagination state when internal APIs mutate the pagination state
     onSortingChange: setSorting,
+    onGlobalFilterChange: setSearchFilter,
     state: {
       pagination,
       sorting,
+      globalFilter: searchFilter
     },
   })
 
@@ -149,7 +156,8 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     const updatedParams = new URLSearchParams()
     updatedParams.set('page', pagination.pageIndex)
     updatedParams.set('limit', pagination.pageSize)
-    updatedParams.set('search', filtering.search)
+    updatedParams.set('search', searchFilter)
+    updatedParams.set('searchFields', searchingFieldItems.map(item => item.id).join(','))
     updatedParams.set('orderBy', sorting[0].id)
     updatedParams.set('orderDir', sorting[0].desc ? 'desc' : 'asc')
 
@@ -167,11 +175,11 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     }
 
     router.replace(`?${updatedParams.toString()}`) //update current url
-  }, [filtering, pagination, sorting, searchParams])
+  }, [searchFilter, pagination, sorting, searchParams])
 
   return (
     <section id="pengarang-content">
-      <AppFilterDataTable>
+      <AppFilterDataTable searchingFieldItems={searchingFieldItems} table={table}>
       </AppFilterDataTable>
       <AppDataTable table={table} />
     </section>
