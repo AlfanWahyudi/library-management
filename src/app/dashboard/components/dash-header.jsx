@@ -1,9 +1,9 @@
-import AppBreadcrumb from "@/components/app-breadcrumb";
+import PrimaryBreadcrumb from "@/components/primary-breadcrumb";
 
 export default function DashHeader({ breadcrumbItems, pageTitle, rightContentItem  }) {
   return (
     <section className="grid gap-1 mb-3">
-      <AppBreadcrumb items={breadcrumbItems} />
+      <PrimaryBreadcrumb items={breadcrumbItems} />
       <section className="md:flex md:flex-row-reverse md:align-middle">
         <div className='mb-3 md:m-0 flex gap-3'>
           {rightContentItem}

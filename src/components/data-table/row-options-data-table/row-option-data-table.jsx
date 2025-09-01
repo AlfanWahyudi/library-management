@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select"
 
 //TODO: rapihkan codingan nya
-export default function AppRowOptionDataTable({
+export default function RowOptionDataTable({
   table,
   pageSizeItems = [10, 25, 50, 100],
   className,

@@ -1,14 +1,14 @@
 "use client"
 
-import AppInputErrorItem from "../app-input-error-item";
+import InputErrorItem from "../input-error-item";
 
-export default function AppInputErrorList({ messages = [] }) {
+export default function InputErrorList({ messages = [] }) {
   return (
     <ul className="flex flex-col gap-1">
       {
         messages.map(message => (
           <li key={message}>
-            <AppInputErrorItem text={message} />
+            <InputErrorItem text={message} />
           </li>
         ))
       }

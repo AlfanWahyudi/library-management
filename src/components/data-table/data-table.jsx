@@ -2,14 +2,14 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { flexRender } from "@tanstack/react-table";
-import AppRowOptionDataTable from "../app-row-options-data-table";
-import AppPaginationDataTable from "../app-pagination-data-table";
+import RowOptionDataTable from "./row-options-data-table";
+import PaginationDataTable from "./pagination-data-table";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 
 
 //TODO: rapihkan codingannya
-export default function AppDataTable({ table }) {
+export default function DataTable({ table }) {
   return (
     <article className="overflow-hidden rounded-md border">
       <Table>
@@ -55,7 +55,7 @@ export default function AppDataTable({ table }) {
       </Table>
       <Separator className='mt-2' />
       <article className="flex flex-wrap gap-5 justify-center lg:justify-between py-3 px-2">
-        <AppRowOptionDataTable table={table} />
+        <RowOptionDataTable table={table} />
         {/* <PaginationDataTable /> */}
         <Button
           onClick={() => table.firstPage()}

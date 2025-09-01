@@ -1,10 +1,10 @@
 "use client"
 
-import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
-import SearchDataTable from "../app-search-data-table";
+import { Button } from "../../ui/button";
+import { Separator } from "../../ui/separator";
+import SearchDataTable from "../search-data-table";
 
-export default function AppFilterWrapperDataTable({ searchingFieldItems, table, children }) {
+export default function FilterWrapperDataTable({ searchingFieldItems, table, children }) {
   return (
     <>
       <Separator className="my-4" />

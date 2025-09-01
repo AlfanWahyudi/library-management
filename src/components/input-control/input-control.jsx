@@ -2,9 +2,9 @@
 
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import AppInputErrorList from "../app-input-error-list";
+import InputErrorList from "./input-error-list";
 
-export default function AppInputControl({ 
+export default function InputControl({ 
   name, 
   label, 
   hasError = false,
@@ -16,7 +16,7 @@ export default function AppInputControl({
       <Label htmlFor={name}>{label}</Label>
       <Input name={name} {...props} />
       {
-        (hasError) && <AppInputErrorList messages={[...errorMsg]} />
+        (hasError) && <InputErrorList messages={[...errorMsg]} />
       }
     </div>
   )

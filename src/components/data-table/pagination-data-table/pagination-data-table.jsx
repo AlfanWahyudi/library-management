@@ -10,7 +10,7 @@ import {
   PaginationPrevious
 } from "@/components/ui/pagination"
 
-export default function AppPaginationDataTable({
+export default function PaginationDataTable({
   className,
 }) {
   const cssClasses = 'm-0 w-fit ' + className

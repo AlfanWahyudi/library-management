@@ -4,7 +4,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import Link from "next/link";
 import React from "react";
 
-export default function AppBreadcrumb({ items = [] }) {
+export default function PrimaryBreadcrumb({ items = [] }) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
