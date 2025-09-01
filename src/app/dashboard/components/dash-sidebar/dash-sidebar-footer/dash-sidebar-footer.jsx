@@ -10,7 +10,7 @@ import {
 import { LogOut, CircleUserRound } from "lucide-react";
 import { useActionState } from "react";
 
-function DashSidebarFooter() {
+export default function DashSidebarFooter() {
 	const [state, logoutAction, isPending] = useActionState(logout, undefined)
 
 	return (
@@ -38,5 +38,3 @@ function DashSidebarFooter() {
 		</SidebarFooter>
 	);
 }
-
-export { DashSidebarFooter };

@@ -2,12 +2,12 @@
 
 import { Sidebar, useSidebar } from "@/components/ui/sidebar";
 
-import { DashSidebarHeader } from "./dashSidebarHeader";
-import { DashSidebarContent } from "./dashSidebarContent";
-import { DashSidebarFooter } from "./dashSidebarFooter";
-import { DashSidebarTrigger } from "./dashSidebarTrigger";
+import DashSidebarHeader from "./dash-sidebar-header";
+import DashSidebarContent from "./dash-sidebar-content";
+import DashSidebarFooter from "./dash-sidebar-footer";
+import DashSidebarTrigger from "./dash-sidebar-trigger";
 
-function DashSidebar() {
+export default function DashSidebar() {
 	const {
 		state,
 		open,
@@ -27,5 +27,3 @@ function DashSidebar() {
 		</Sidebar>
 	);
 }
-
-export { DashSidebar };

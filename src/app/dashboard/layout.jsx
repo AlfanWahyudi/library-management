@@ -1,5 +1,5 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { DashSidebar } from "./components/sidebar/dashSidebar";
+import DashSidebar from "./components/dash-sidebar";
 
 export default function DashboardLayout({ children }) {
   return (

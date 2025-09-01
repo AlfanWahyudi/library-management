@@ -10,7 +10,7 @@ import {
 	SquareLibrary,
 } from "lucide-react";
 
-function DashSidebarHeader() {
+export default function DashSidebarHeader() {
   return (
     <SidebarHeader>
       <SidebarMenu>
@@ -24,5 +24,3 @@ function DashSidebarHeader() {
     </SidebarHeader>
   )
 }
-
-export { DashSidebarHeader }

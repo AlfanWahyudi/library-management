@@ -64,7 +64,7 @@ const menus = [
 	},
 ];
 
-function DashSidebarContent() {
+export default function DashSidebarContent() {
 	const pathname = usePathname()
 
 	const sidebarMenu = (
@@ -131,5 +131,3 @@ function DashSidebarContent() {
 
 	return <SidebarContent className="p-2">{sidebarMenu}</SidebarContent>;
 }
-
-export { DashSidebarContent };

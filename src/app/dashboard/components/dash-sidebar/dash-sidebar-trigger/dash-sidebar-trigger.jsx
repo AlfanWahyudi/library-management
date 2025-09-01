@@ -8,7 +8,7 @@ import {
 	ChevronRight,
 } from "lucide-react";
 
-function DashSidebarTrigger({ className }) {
+export default function DashSidebarTrigger({ className }) {
 	const {
 		state,
 		open,
@@ -46,5 +46,3 @@ function DashSidebarTrigger({ className }) {
 		</Button>
 	);
 }
-
-export { DashSidebarTrigger };

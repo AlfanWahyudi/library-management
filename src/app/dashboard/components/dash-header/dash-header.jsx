@@ -1,3 +1,5 @@
+"use client"
+
 import PrimaryBreadcrumb from "@/components/primary-breadcrumb";
 
 export default function DashHeader({ breadcrumbItems, pageTitle, rightContentItem  }) {
