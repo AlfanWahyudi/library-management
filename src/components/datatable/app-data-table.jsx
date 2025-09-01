@@ -7,7 +7,6 @@ import { Button } from "../ui/button";
 import { ArrowUpDown } from "lucide-react";
 
 
-//TODO: colspan untuk data kosong masih belum sesuai, columns count nya tidak sesuai
 //TODO: rapihkan codingannya
 export default function AppDataTable({ table }) {
   return (
@@ -46,7 +45,7 @@ export default function AppDataTable({ table }) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={table.getAllColumns.length} className='h-24 text-center'>
+                <TableCell colSpan={table.options.columns.length} className='h-24 text-center'>
                   No results.
                 </TableCell>
               </TableRow>
