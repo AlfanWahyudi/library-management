@@ -1,8 +1,10 @@
+"use client"
+
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import FieldErrorsList from "./error/field-errors-list";
+import AppInputErrorList from "../app-input-error-list";
 
-export default function InputControl({ 
+export default function AppInputControl({ 
   name, 
   label, 
   hasError = false,
@@ -14,7 +16,7 @@ export default function InputControl({
       <Label htmlFor={name}>{label}</Label>
       <Input name={name} {...props} />
       {
-        (hasError) && <FieldErrorsList messages={[...errorMsg]} />
+        (hasError) && <AppInputErrorList messages={[...errorMsg]} />
       }
     </div>
   )

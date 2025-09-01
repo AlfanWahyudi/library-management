@@ -1,6 +1,8 @@
+"use client"
+
 import { Select, SelectContent, SelectGroup, SelectTrigger, SelectValue } from "../ui/select";
 
-export default function FilteringSelect({ placeHolder }) {
+export default function AppFilterDataTable({ placeHolder }) {
   return (
     <Select>
       <SelectTrigger className="rounded-full text-sm">

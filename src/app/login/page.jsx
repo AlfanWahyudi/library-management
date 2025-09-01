@@ -6,7 +6,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { loginSchema } from "@/lib/schemas/login-schema";
-import InputControl from "@/components/form/input-control";
+import AppInputControl from "@/components/app-input-control";
 import { useInput } from "@/hooks/use-input";
 import { useValidateSpecificSchema } from "@/hooks/use-validate-specific-schema";
 
@@ -87,7 +87,7 @@ export default function LoginPage() {
             }
             <form onSubmit={handleSubmit} action={action} noValidate>
               <div className="flex flex-col gap-6">
-                <InputControl 
+                <AppInputControl 
                   label="Username"
                   name="username"
                   id="username"
@@ -98,7 +98,7 @@ export default function LoginPage() {
                   hasError={usernameHasError}
                   errorMsg={usernameErrors}
                 />
-                <InputControl 
+                <AppInputControl 
                   label="Password"
                   name="password"
                   id="password"

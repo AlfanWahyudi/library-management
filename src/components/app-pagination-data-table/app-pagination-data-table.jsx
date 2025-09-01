@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Pagination, 
   PaginationContent, 
@@ -8,7 +10,7 @@ import {
   PaginationPrevious
 } from "@/components/ui/pagination"
 
-export default function PaginationDataTable({
+export default function AppPaginationDataTable({
   className,
 }) {
   const cssClasses = 'm-0 w-fit ' + className

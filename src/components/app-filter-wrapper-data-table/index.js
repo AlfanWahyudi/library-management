@@ -1,0 +1,1 @@
+export { default } from "./app-filter-wrapper-data-table"

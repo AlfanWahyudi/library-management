@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react"
-import AppDataTable from "@/components/datatable/app-data-table";
-import AppFilterDataTable from "@/components/datatable/app-filter-data-table";
+import AppDataTable from "@/components/app-data-table";
+import AppFilterWrapperDataTable from "@/components/app-filter-wrapper-data-table";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const SortHeaderTable = ({ column, headerName }) => {
@@ -177,8 +177,8 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
 
   return (
     <section id="pengarang-content">
-      <AppFilterDataTable searchingFieldItems={searchingFieldItems} table={table}>
-      </AppFilterDataTable>
+      <AppFilterWrapperDataTable searchingFieldItems={searchingFieldItems} table={table}>
+      </AppFilterWrapperDataTable>
       <AppDataTable table={table} />
     </section>
   )

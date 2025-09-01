@@ -1,7 +1,9 @@
+"use client"
+
 import { useInput } from "@/hooks/use-input";
 import { Input } from "../ui/input";
 
-export default function SearchDataTable({ searchingFieldItems, table }) {
+export default function AppSearchDataTable({ searchingFieldItems, table }) {
   const {
     value,
     handleInputChange

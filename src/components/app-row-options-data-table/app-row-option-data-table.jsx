@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Select,
   SelectContent,
@@ -8,7 +10,7 @@ import {
 } from "@/components/ui/select"
 
 //TODO: rapihkan codingan nya
-export default function RowOptionDataTable({
+export default function AppRowOptionDataTable({
   table,
   pageSizeItems = [10, 25, 50, 100],
   className,
