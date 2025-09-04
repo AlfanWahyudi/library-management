@@ -1,8 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { createColumnHelper, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
+import { createColumnHelper } from "@tanstack/react-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +13,10 @@ import {
 import { MoreHorizontal } from "lucide-react"
 import DataTable from "@/components/data-table";
 import FilterWrapperDataTable from "@/components/data-table/filter-wrapper-data-table";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import SortIndicatorTable from "@/components/data-table/sort-indicator-table";
+import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table";
+import { createDataTableParamsDTO } from "@/lib/dto/datatable-params-dto";
 
 const columnHelper = createColumnHelper()
 
@@ -90,73 +91,23 @@ const searchingFieldItems = [
   },
 ]
 
-//TODO: bikin state management baru dengan redux, biar codingan jadi rapih
+//TODO: bikin state management baru dengan context api, biar codingan jadi rapih
 //TODO: Tampilan Tamble bikin rapih
 //TODO: rapihkan codingannya
 export default function AuthorDataTable({ authorItemsPaginated }) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-
   const { data: authorData, meta: authorMeta } = authorItemsPaginated
 
-  const [searchFilter, setSearchFilter] = useState(searchParams.get('search') || '')
-
-  const [pagination, setPagination] = useState({
-    pageIndex: parseInt(searchParams.get('page')) || 0, //initial page index
-    pageSize: parseInt(searchParams.get('limit')) || 10, //default page size
-  });
-
-  const [sorting, setSorting] = useState([
-    {
-      id: searchParams.get('orderBy') || 'updated_at',
-      desc: searchParams.get('orderDir') 
-        ? searchParams.get('orderDir').toLowerCase() === 'desc'
-        : true,
-    }
-  ])
-
-  const table = useReactTable({  
-    data: [...authorData],
-    columns: columnsDef, 
-    manualFiltering: true, //turn off client-side filtering
-    manualPagination: true, //turn off client-side pagination
-    manualSorting: true, //turn off client-side sorting
-    getCoreRowModel: getCoreRowModel(),
-    rowCount: authorMeta.itemsCount, //pass in the total row count so the table knows how many pages there are (pageCount calculated internally if not provided)
-    onPaginationChange: setPagination, //update the pagination state when internal APIs mutate the pagination state
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setSearchFilter,
-    state: {
-      pagination,
-      sorting,
-      globalFilter: searchFilter
-    },
+  const {
+    table
+  } = useServerSideDataTable({
+    router: useRouter(),
+    columnsDef,
+    metaSource: authorMeta,
+    dataSource: authorData,
+    defaultParamsVal: createDataTableParamsDTO({
+      searchFields: searchingFieldItems.map(item => item.id).join(',') 
+    }),
   })
-
-  useEffect(() => {
-    const updatedParams = new URLSearchParams()
-    updatedParams.set('page', pagination.pageIndex)
-    updatedParams.set('limit', pagination.pageSize)
-    updatedParams.set('search', searchFilter)
-    updatedParams.set('searchFields', searchingFieldItems.map(item => item.id).join(','))
-    updatedParams.set('orderBy', sorting[0].id)
-    updatedParams.set('orderDir', sorting[0].desc ? 'desc' : 'asc')
-
-    // adding other params
-    for (const [key, value] of searchParams.entries()) {
-      if (
-        key !== 'page' &&
-        key !== 'limit' &&
-        key !== 'search' &&
-        key !== 'orderBy' &&
-        key !== 'orderDir'
-      ) {
-        updatedParams.set(key, value)
-      }
-    }
-
-    router.replace(`?${updatedParams.toString()}`) //update current url
-  }, [searchFilter, pagination, sorting, searchParams])
 
   return (
     <section id="pengarang-content">
