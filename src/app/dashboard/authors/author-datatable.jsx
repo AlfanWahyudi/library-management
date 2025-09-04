@@ -11,62 +11,45 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import DataTable from "@/components/data-table";
 import FilterWrapperDataTable from "@/components/data-table/filter-wrapper-data-table";
 import { useRouter, useSearchParams } from "next/navigation";
-
-const SortHeaderTable = ({ column, headerName }) => {
-  return (
-    <Button
-      variant="ghost"
-      onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-    >
-      {headerName}
-      {
-        column.getIsSorted()
-          ? column.getIsSorted() === 'asc'
-            ? <ArrowUp className="ml -2 h-4 w-4" />
-            : <ArrowDown className="ml -2 h-4 w-4" />
-          : undefined
-      }
-    </Button>
-  )
-}
+import SortIndicatorTable from "@/components/data-table/sort-indicator-table";
 
 const columnHelper = createColumnHelper()
 
 const columnsDef = [
   columnHelper.accessor('fullName', {
     id: 'full_name',
-    header: ({ column }) => SortHeaderTable({column, headerName: 'Nama Lengkap'}),
+    header: ({ column }) => SortIndicatorTable({column, headerName: 'Nama Lengkap'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${row.nationality || '-'}`, {
     id: 'nationality',
     header: () => 'Kebangsaan',
-    header: ({ column }) => SortHeaderTable({column, headerName: 'Kebangsaan'}),
+    header: ({ column }) => SortIndicatorTable({column, headerName: 'Kebangsaan'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${row.activeSince || '-'}`, {
     id: 'active_since',
     header: () => 'Aktif Sejak',
-    header: ({ column }) => SortHeaderTable({column, headerName: 'Aktif Sejak'}),
+    header: ({ column }) => SortIndicatorTable({column, headerName: 'Aktif Sejak'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${row.about || '-'}`, {
     id: 'about',
-    header: ({ column }) => SortHeaderTable({column, headerName: 'Tentang'}),
+    header: ({ column }) => SortIndicatorTable({column, headerName: 'Tentang'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${new Date(row.createdAt).toISOString() || '-'}`, {
     id: 'created_at',
-    header: ({ column }) => SortHeaderTable({column, headerName: 'Tanggal Dibuat'}),
+    header: ({ column }) => SortIndicatorTable({column, headerName: 'Tanggal Dibuat'}),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${new Date(row.updatedAt).toISOString() || '-'}`, {
     id: 'updated_at',
-    header: ({ column }) => SortHeaderTable({column, headerName: 'Tanggal Diperbaharui'}),
+    header: ({ column }) => SortIndicatorTable({column, headerName: 'Tanggal Diperbaharui'}),
     cell: props => props.getValue(),
   }),
   columnHelper.display({
