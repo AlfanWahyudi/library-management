@@ -51,11 +51,13 @@ export default function useServerSideDataTable({
   })
 
   useEffect(() => {
+    const searchFields = searchParams.get(queryParamsConst.SEARCH_FIELDS) || defaultParamsVal.searchFields
+
     const updatedParams = new URLSearchParams()
     updatedParams.set(queryParamsConst.PAGE, pagination.pageIndex)
     updatedParams.set(queryParamsConst.LIMIT, pagination.pageSize)
     updatedParams.set(queryParamsConst.SEARCH, searchFilter)
-    updatedParams.set(queryParamsConst.SEARCH_FIELDS, defaultParamsVal.searchFields)
+    updatedParams.set(queryParamsConst.SEARCH_FIELDS, searchFields)
     updatedParams.set(queryParamsConst.ORDER_BY, sorting[0].id)
     updatedParams.set(queryParamsConst.ORDER_DIR, sorting[0].desc ? 'desc' : 'asc')
 
@@ -73,7 +75,7 @@ export default function useServerSideDataTable({
     }
 
     router.replace(`?${updatedParams.toString()}`) //update current url
-  }, [searchFilter, pagination, sorting, searchParams])
+  }, [router, defaultParamsVal.searchFields, searchFilter, pagination, sorting, searchParams])
 
 
   return {
