@@ -1,4 +1,4 @@
-import { createDataTableParamsDTO } from "@/lib/dto/datatable-params-dto";
+import { createDataTableParamsDTO } from "@/lib/dto/data-table/data-table-params-dto";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

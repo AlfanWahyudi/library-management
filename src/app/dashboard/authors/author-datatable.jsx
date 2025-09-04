@@ -16,7 +16,7 @@ import FilterWrapperDataTable from "@/components/data-table/filter-wrapper-data-
 import { useRouter } from "next/navigation";
 import SortIndicatorTable from "@/components/data-table/sort-indicator-table";
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table";
-import { createDataTableParamsDTO } from "@/lib/dto/datatable-params-dto";
+import { createDataTableParamsDTO } from "@/lib/dto/data-table/data-table-params-dto";
 
 const columnHelper = createColumnHelper()
 

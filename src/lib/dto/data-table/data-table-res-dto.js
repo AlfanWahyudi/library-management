@@ -1,4 +1,4 @@
-import { createDataTableMetaDTO } from "./datatable-meta-dto";
+import { createDataTableMetaDTO } from "./data-table-meta-dto";
 
 export function createDataTableResDTO({ data = [], meta = {} }) {
   return {
