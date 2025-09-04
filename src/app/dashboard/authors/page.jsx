@@ -1,4 +1,4 @@
-import AuthorDataTable from "./author-datatable";
+import AuthorDataTable from "./author-data-table";
 import AuthorService from "@/lib/services/author-service";
 
 export default async function AuthorPage({ searchParams }) {
