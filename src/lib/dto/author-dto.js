@@ -1,22 +1,27 @@
-export function createAuthorDTO({
-  id = null, 
-  full_name, 
-  nationality = null, 
-  active_since = null, 
-  about = null, 
-  created_at = null, 
-  updated_at = null, 
-  book_count = null
-}) {
+export const createAuthorDTO = ({
+  id = null,
+  fullName,
+  nationality = null,
+  activeSince = null,
+  about = null,
+  createdAt = null,
+  updatedAt = null,
+  bookCount = null
+}) => {
+  if (typeof(fullName) !== 'string') throw new Error('fullName property must be a string')
 
   return {
-    id: id ? parseInt(id) : null,
-    fullName: full_name,
-    nationality: nationality, 
-    activeSince: active_since ? parseInt(active_since) : null, 
-    about: about, 
-    createdAt: created_at, 
-    updatedAt: updated_at, 
-    bookCount: book_count ? parseInt(book_count) : null,
+    id: id && parseInt(id),
+    fullName: fullName,
+    nationality: nationality && nationality.toString(), 
+    about: about && about.toString(), 
+    activeSince: activeSince && parseInt(activeSince), 
+    createdAt: createdAt && new Date(createdAt), 
+    updatedAt: updatedAt && new Date(updatedAt), 
+    bookCount: bookCount && parseInt(bookCount),
   }
+}
+
+export const createArrAuthorDTO = (authorArr = []) => {
+  return authorArr.map((author) => createAuthorDTO(author))
 }

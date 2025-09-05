@@ -16,7 +16,6 @@ import FilterWrapperDataTable from "@/components/data-table/filter-wrapper-data-
 import { useRouter } from "next/navigation";
 import SortIndicatorTable from "@/components/data-table/sort-indicator-table";
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table";
-import { createDataTableParamsDTO } from "@/lib/dto/data-table/data-table-params-dto";
 
 const columnHelper = createColumnHelper()
 
@@ -104,9 +103,14 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
     columnsDef,
     metaSource: authorMeta,
     dataSource: authorData,
-    defaultParamsVal: createDataTableParamsDTO({
-      searchFields: searchingFieldItems.map(item => item.id).join(',') 
-    }),
+    defaultParamsVal: {
+      search: '', 
+      searchFields: searchingFieldItems.map(item => item.id).join(','),
+      page: 0, 
+      limit: 10, 
+      orderBy: 'updated_at', 
+      orderDir: 'desc'  
+    },
   })
 
   return (

@@ -1,16 +1,23 @@
-import { createDataTableParamsDTO } from "@/lib/dto/data-table/data-table-params-dto";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import queryParamsConst from '@/lib/constants/query-params-const'
 
+//TODO: bikin factory pattern nya dengan function aja untuk object defaultParamsVal 
 export default function useServerSideDataTable({
   router,
   columnsDef,
   dataSource,
   metaSource,
-  defaultParamsVal = createDataTableParamsDTO(),
+  defaultParamsVal = {
+    search: '', 
+    searchFields: '',
+    page: 0, 
+    limit: 10, 
+    orderBy: 'updated_at', 
+    orderDir: 'desc'  
+  },
   tanstackTableOpt = {},
 }) {
   const searchParams = useSearchParams()
