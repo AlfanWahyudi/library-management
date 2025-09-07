@@ -11,11 +11,11 @@ const AuthorViewDAL = {
   },
 
   getAllPaginated: async ({ 
-    page, 
-    limit, 
-    orderBy,
-    orderDir,
-    search,
+    page = 0, 
+    limit = 10, 
+    orderBy = 'updated_at',
+    orderDir = 'desc',
+    search = '',
     searchFields = [],
   }) => {
 
