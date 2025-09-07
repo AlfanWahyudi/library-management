@@ -2,6 +2,7 @@ import 'server-only'
 
 import sql from '@/lib/config/db'
 import { getPaginatedList } from '@/lib/utils/datatable'
+import { createAuthorViewModel } from '@/lib/models/author-view-model'
 
 const tableName = 'authors_view'
 
@@ -18,8 +19,7 @@ const AuthorViewDAL = {
     search = '',
     searchFields = [],
   }) => {
-
-    return await getPaginatedList({
+    const paginatedItems = await getPaginatedList({
       page,
       limit,
       orderBy,
@@ -28,6 +28,10 @@ const AuthorViewDAL = {
       searchFields,
       tableName
     })
+
+    paginatedItems.data = paginatedItems.data.map((item) => createAuthorViewModel({...item}))
+
+    return paginatedItems
   }
 }
 

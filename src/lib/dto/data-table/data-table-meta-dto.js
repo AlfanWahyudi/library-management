@@ -1,3 +1,5 @@
+import 'server-only'
+
 export function createDataTableMetaDTO({ 
   page = 0,
   limit = 0,

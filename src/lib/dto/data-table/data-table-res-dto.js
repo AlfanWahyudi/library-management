@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { createDataTableMetaDTO } from "./data-table-meta-dto";
 
 export function createDataTableResDTO({ data = [], meta = {} }) {
