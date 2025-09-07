@@ -1,51 +1,26 @@
 "use client"
 
-import {
-  Pagination, 
-  PaginationContent, 
-  PaginationEllipsis, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious
-} from "@/components/ui/pagination"
+import RowOptionDataTable from "./row-option-data-table"
+import NavigatePageContent from "./navigate-page-content"
+import PaginateLabel from "./paginate-label"
 
 export default function PaginationDataTable({
-  className,
+  table,
+  rowPerPageOptions = [10, 25, 50, 100],
 }) {
-  const cssClasses = 'm-0 w-fit ' + className
+  const { pageIndex, pageSize } = table.getState().pagination
+  const currRowsCount = table.getRowModel().rows.length
+
+  const currFirstRow = pageIndex * pageSize + 1
+  const currLastRow = (currFirstRow + currRowsCount) - 1
 
   return (
-    <Pagination className={cssClasses}>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href="#" />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#" isActive>1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">2</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">4</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">5</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">7</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+    <article className="flex flex-wrap gap-5 justify-center text-sm lg:justify-between px-3 py-2">
+      <RowOptionDataTable table={table} rowPerPageOptions={rowPerPageOptions} />
+      <section className="flex items-center gap-5">
+        <PaginateLabel currFirstRow={currFirstRow} currLastRow={currLastRow} totalData={table.getRowCount()} />
+        <NavigatePageContent table={table} />
+      </section>
+    </article>
   )
 }

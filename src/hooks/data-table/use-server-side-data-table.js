@@ -1,3 +1,5 @@
+'use client'
+
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

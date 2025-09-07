@@ -12,17 +12,12 @@ import {
 //TODO: rapihkan codingan nya
 export default function RowOptionDataTable({
   table,
-  pageSizeItems = [10, 25, 50, 100],
+  rowPerPageOptions,
   className,
-  ...props
 }) {
-  const cssClasses = 'flex text-sm items-center gap-3 ' + className 
+  const cssClasses = 'flex items-center gap-3 ' + className 
 
-  const { pageIndex, pageSize } = table.getState().pagination
-  const currRowsCount = table.getRowModel().rows.length
-
-  const currFirstRow = pageIndex * pageSize + 1
-  const currLastRow = (currFirstRow + currRowsCount) - 1
+  const { pageSize } = table.getState().pagination
 
   return (
     <section className={cssClasses}>
@@ -35,13 +30,12 @@ export default function RowOptionDataTable({
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {pageSizeItems.map((pageSize => (
-              <SelectItem key={pageSize} value={pageSize}>{pageSize}</SelectItem>
+            {rowPerPageOptions.map((perPage => (
+              <SelectItem key={perPage} value={perPage}>{perPage}</SelectItem>
             )))}
           </SelectGroup>
         </SelectContent>
       </Select>
-      <p>{currFirstRow}-{currLastRow} of {table.getRowCount()}</p>
     </section>
   )
 }

@@ -2,7 +2,7 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { flexRender } from "@tanstack/react-table";
-import RowOptionDataTable from "./row-options-data-table";
+import RowOptionDataTable from "./pagination-data-table/row-option-data-table";
 import PaginationDataTable from "./pagination-data-table";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
@@ -54,34 +54,7 @@ export default function DataTable({ table }) {
         </TableBody>
       </Table>
       <Separator className='mt-2' />
-      <article className="flex flex-wrap gap-5 justify-center lg:justify-between py-3 px-2">
-        <RowOptionDataTable table={table} />
-        {/* <PaginationDataTable /> */}
-        <Button
-          onClick={() => table.firstPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<<'}
-        </Button>
-        <Button
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<'}
-        </Button>
-        <Button
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>'}
-        </Button>
-        <Button
-          onClick={() => table.lastPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>>'}
-        </Button>
-      </article>
+      <PaginationDataTable table={table} />
     </article>
   )
 }

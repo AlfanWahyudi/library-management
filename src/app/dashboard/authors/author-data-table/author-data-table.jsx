@@ -90,14 +90,13 @@ const searchingFieldItems = [
   },
 ]
 
-//TODO: bikin state management baru dengan context api, biar codingan jadi rapih
 //TODO: Tampilan Tamble bikin rapih
 //TODO: rapihkan codingannya
 export default function AuthorDataTable({ authorItemsPaginated }) {
   const { data: authorData, meta: authorMeta } = authorItemsPaginated
 
   const {
-    table
+    table: authorTable
   } = useServerSideDataTable({
     router: useRouter(),
     columnsDef,
@@ -114,10 +113,10 @@ export default function AuthorDataTable({ authorItemsPaginated }) {
   })
 
   return (
-    <section id="pengarang-content">
-      <FilterWrapperDataTable searchingFieldItems={searchingFieldItems} table={table}>
+    <section>
+      <FilterWrapperDataTable searchingFieldItems={searchingFieldItems} table={authorTable}>
       </FilterWrapperDataTable>
-      <DataTable table={table} />
+      <DataTable table={authorTable} />
     </section>
   )
 }
