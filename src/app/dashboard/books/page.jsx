@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
+import BookBreadcrumb from "./components/breadcrumb";
 
 
 export default function BookPage({}) {
@@ -31,6 +31,7 @@ export default function BookPage({}) {
 
   return (
     <>
+      <BookBreadcrumb />
       <section className="flex align-middle">
         {/* for header section */}
         <div className="flex-1 flex items-center">
