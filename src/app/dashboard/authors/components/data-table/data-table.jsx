@@ -25,8 +25,8 @@ const columnsDef = [
     header: ({ column }) => SortIndicatorTable({column, headerName: 'Nama Lengkap'}),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => `${row.nationality || '-'}`, {
-    id: 'nationality',
+  columnHelper.accessor(row => row.country.name, {
+    id: 'country_name',
     header: () => 'Kebangsaan',
     header: ({ column }) => SortIndicatorTable({column, headerName: 'Kebangsaan'}),
     cell: props => props.getValue(),
@@ -87,6 +87,10 @@ const searchingFieldItems = [
   {
     id: 'full_name',
     name: 'Nama Lengkap'
+  },
+  {
+    id: 'country_name',
+    name: 'Kebangsaan'
   },
 ]
 

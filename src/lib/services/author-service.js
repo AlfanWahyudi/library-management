@@ -1,8 +1,9 @@
 import 'server-only'
 
 import AuthorViewDAL from '../dal/dbview/author-view-dal'
-import { createArrAuthorDTO, createAuthorDTO } from '../dto/author-dto'
+import { createAuthorDTO } from '../dto/author-dto'
 import { createDataTableResDTO } from '../dto/data-table/data-table-res-dto'
+import { createCountryDto } from '../dto/country-dto'
 
 const resourceCode = 'AUT'
 
@@ -39,7 +40,10 @@ const AuthorService = {
   }) => {
 
     const items = await AuthorViewDAL.getAllPaginated({ page, limit, orderBy, orderDir, search, searchFields})
-    const dataMapped = createArrAuthorDTO(items.data)
+    const dataMapped = items.data.map((author) => {
+      const country = createCountryDto({ code: author.countryCode, name: author.countryName  })
+      return createAuthorDTO({...author, country})
+    })
 
     return createDataTableResDTO({
       data: dataMapped,

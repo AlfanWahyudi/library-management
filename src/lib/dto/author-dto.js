@@ -3,7 +3,7 @@ import 'server-only'
 export const createAuthorDTO = ({
   id = null,
   fullName,
-  nationality = null,
+  country,
   activeSince = null,
   about = null,
   createdAt = null,
@@ -11,11 +11,12 @@ export const createAuthorDTO = ({
   bookCount = null
 }) => {
   if (typeof(fullName) !== 'string') throw new Error('fullName property must be a string')
+  if (typeof(country) !== 'object') throw new Error('country property must be an object')
 
   return {
     id,
     fullName,
-    nationality, 
+    country, 
     about, 
     activeSince, 
     createdAt, 
