@@ -13,10 +13,15 @@ export function useInput(defaultVal) {
   function handleInputBlur() {
     setDidEdit(true)
   }
+  
+  function resetValue() {
+    setEnteredValue(defaultVal)
+  }
 
   return {
     value: enteredValue,
     didEdit,
+    resetValue,
     handleInputBlur,
     handleInputChange,
   }

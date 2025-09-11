@@ -3,11 +3,12 @@ import ContentHead from "../components/content-head";
 import AuthorBreadcrumb from "./components/breadcrumb";
 import AuthorDataTable from "./components/data-table";
 import AuthorService from "@/lib/services/author-service";
+import AuthorSheetSave from "./components/sheet-save";
 
 const rightContentItem = (
   <>
     <Button variant='outline'>Download PDF</Button>
-    <Button>Tambah pengarang</Button>
+    <AuthorSheetSave />
   </>
 )
 
@@ -50,20 +51,3 @@ export default async function AuthorPage({ searchParams }) {
     </>
   )
 }
-
-{/* <Sheet>
-  <SheetTrigger asChild>
-    <Button variant="outline">Open</Button>
-  </SheetTrigger>
-  <SheetContent>
-    <SheetHeader>
-      <SheetTitle>Title</SheetTitle>
-    </SheetHeader>
-    <section>
-      <h2>Sheet main content section</h2>
-    </section>
-    <SheetFooter>
-      <h2>Footer sheet section</h2>
-    </SheetFooter>
-  </SheetContent>
-</Sheet> */}
