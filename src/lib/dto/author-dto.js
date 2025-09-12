@@ -10,6 +10,7 @@ export const createAuthorDTO = ({
   updatedAt = null,
   bookCount = null
 }) => {
+
   if (typeof(fullName) !== 'string') throw new Error('fullName property must be a string')
   if (typeof(country) !== 'object') throw new Error('country property must be an object')
 

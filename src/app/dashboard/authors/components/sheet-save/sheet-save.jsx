@@ -17,11 +17,6 @@ export default function AuthorSheetSave({
   const [state, action, isPending] = useActionState(saveAuthor, undefined)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
-  function handleSubmit(evt) {
-    console.log(fullNameVal, nationVal, activeSinceVal, aboutVal)
-    setIsSubmitted(true)
-  }
-
   const {
     value: fullNameVal,
     didEdit: didFullNameEdit,
@@ -31,11 +26,11 @@ export default function AuthorSheetSave({
   } = useInput('')
 
   const {
-    value: nationVal,
-    didEdit: didNationEdit,
-    resetValue: resetNation,
-    handleInputBlur: handleNationBlur,
-    handleInputChange: handleNationChange
+    value: countryCode,
+    didEdit: didCountryEdit,
+    resetValue: resetCountry,
+    handleInputBlur: handleCountryBlur,
+    handleInputChange: handleCountryChange
   } = useInput('')
 
   const {
@@ -59,7 +54,13 @@ export default function AuthorSheetSave({
     resetFullName()
     resetActiveSince()
     resetAbout()
-    resetNation()
+    resetCountry()
+  }
+
+
+  function handleSubmit(evt) {
+    console.log(fullNameVal, countryCode, activeSinceVal, aboutVal)
+    setIsSubmitted(true)
   }
 
   return (
@@ -84,13 +85,13 @@ export default function AuthorSheetSave({
               onChange={handleFullNameChange}
             />
             <InputControl
-              name="nationality"
-              id="nationality"
+              name="countryCode"
+              id="countryCode"
               label="Kebangsaan"
               type="text"
-              value={nationVal}
-              onBlur={handleNationBlur}
-              onChange={handleNationChange}
+              value={countryCode}
+              onBlur={handleCountryBlur}
+              onChange={handleCountryChange}
             />
             <InputControl
               name="activeSince"

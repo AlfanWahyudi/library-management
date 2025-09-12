@@ -2,17 +2,29 @@
 
 import { revalidatePath } from "next/cache"
 import routeConst from "@/lib/constants/route-const"
+import AuthorService from "@/lib/services/author-service"
 
 const saveAuthor = async (prevState, formData) => {
   //TODO: validate serverside
-  //TODO: save author data
   //TODO: role permission
   const fullName = formData.get('fullName')
-  const nationality = formData.get('nationality')
-  const activeSince = formData.get('activeSince')
-  const about = formData.get('about')
+  const countryCode = formData.get('countryCode')
+  const activeSince = formData.get('activeSince').trim() === '' 
+    ? null 
+    : parseInt(formData.get('activeSince'))
 
-  console.log(fullName, nationality, activeSince, about)
+  const about = formData.get('about').trim() === '' 
+    ? null 
+    : formData.get('about')
+
+  console.log('-- start - save author action --')
+  console.log(fullName, countryCode, activeSince, about)
+  console.log('-- end - save author action --')
+
+  const author = await AuthorService.create({ fullName, countryCode, activeSince, about })
+
+  console.log('--- new author data that has been added ---')
+  console.log(author)
 
   revalidatePath(routeConst.authors.url) // show the updated data
 }
