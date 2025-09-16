@@ -6,7 +6,7 @@ const tableName = 'countries'
 
 const CountryDAL = {
   getByCode: async({ code }) => {
-    code = parseInt(code)
+    code = code.toString().toUpperCase()
 
     const countries = await sql`
       SELECT * FROM ${ sql(tableName) }
