@@ -12,7 +12,9 @@ const saveAuthor = async ({ data }) => {
     throw new Error('Gagal menambahkan data pengarang, mohon dicoba lagi nanti.');
   }
 
-  return await res.json()
+  const resJson = await res.json()
+
+  return resJson.data
 }
 
 
