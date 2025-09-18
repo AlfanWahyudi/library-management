@@ -62,7 +62,7 @@ const AuthorService = {
     const country = await CountryDAL.getByCode({ code: countryCode })
 
     if (country === null) {
-      throw new Error('countryCode property is not valid.')
+      throw new Error('countryCode property is not found.')
     }
 
     const author = await AuthorDAL.create({ fullName, countryCode, about, activeSince })

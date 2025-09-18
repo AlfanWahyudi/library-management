@@ -4,20 +4,17 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetClose, SheetTitle,
 import { Button } from "@/components/ui/button"
 import InputControl from "@/components/input-control";
 import TextareaControl from "@/components/textarea-control";
-import { useActionState } from "react";
-import { saveAuthor } from "../../actions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { authorSchema } from "@/lib/schemas/author-schema";
+import { authorClientSchema } from "@/lib/schemas/author-schema";
+import AlertMain from "@/components/alert-main";
+import useFetch from "@/hooks/use-fetch";
+import { saveAuthor } from "@/lib/http/author-http";
 
-
-
-//TODO: display an error message (server)
-//TODO: display success message
-//TODO: hide sheet if success add data
+//TODO: hide sheet, display modal success, refresh datatable nya lagi setelah berhasil menambahkan data pengarang
+//TODO: input kebangsaan ganti jadi select, dan list options nya ngambil ke DB
 export default function AuthorSheetSave({
 }) {
-  const [state, action, isPending] = useActionState(saveAuthor, undefined)
   const { 
     register, 
     handleSubmit, 
@@ -34,31 +31,48 @@ export default function AuthorSheetSave({
       activeSince: null,
       about: null,
     },
-    resolver: zodResolver(authorSchema)
+    resolver: zodResolver(authorClientSchema)
   })
 
-  const onSubmit = (data, e) => {
 
-    //TODO: save new author data to api
-    console.log(data)
-    console.log(e)
+  const {
+    error,
+    isPending,
+    runFetch,
+    reset: resetFetch,
+    fetchedData,
+  } = useFetch({ initialValue: undefined })
+
+
+  const onSubmit = async (data, e) => {
+    await runFetch({ fetchFn: async() => await saveAuthor({data}) })
   }
-
+  
   function handleOpenSheet() {
     reset()
+    resetFetch()
   }
-
+  
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button onClick={handleOpenSheet}>Tambah pengarang</Button>
       </SheetTrigger>
       <SheetContent className="w-[400px] sm:max-w-full sm:w-lg">
-        <form className="flex-1 flex flex-col" onSubmit={handleSubmit(onSubmit)} action={action} noValidate>
+        <form className="flex-1 flex flex-col" onSubmit={handleSubmit(onSubmit)} noValidate>
           <SheetHeader>
             <SheetTitle>Tambah pengarang</SheetTitle>
           </SheetHeader>
           <div className="grid flex-1 auto-rows-min gap-6 px-4">
+            {fetchedData && (
+              <AlertMain title='Success menambahkan data pengarang' variant="success">
+              </AlertMain>  
+            )}
+            {error !== '' && (
+              <AlertMain title='Error form tambah pengarang' variant="error">
+                <p>{error}</p>
+              </AlertMain>  
+            )}
             <InputControl
               {...register('fullName')}
               id="fullName"
