@@ -17,6 +17,18 @@ const CountryDAL = {
       ? null
       : createCountry({...countries[0]})
   },
+
+  getAll: async ({ 
+    orderDir = 'ASC',
+    orderBy = 'name'
+  }) => {
+    const countries = await sql`
+      SELECT * FROM ${ sql(tableName) }
+      ORDER BY ${ sql(orderBy) } ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
+      `
+
+    return countries.map((country) => createCountry({...country}))
+  }
 }
 
 export default CountryDAL

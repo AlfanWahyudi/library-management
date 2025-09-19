@@ -10,6 +10,14 @@ const CountryService = {
     return country !== null
       ? createCountryDto({...country})
       : null
+  },
+
+  getAll: async ({
+    orderDir = 'ASC',
+    orderBy = 'name'
+  }) => {
+    const countries = await CountryDAL.getAll({ orderBy, orderDir })
+    return countries.map((country) => createCountryDto({...country}))
   }
 }
 
