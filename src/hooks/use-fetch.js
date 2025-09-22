@@ -5,14 +5,16 @@ export default function useFetch({ initialValue }) {
   const [ fetchedData, setFetchedData ] = useState(initialValue)
   const [ isPending, setIsPending ] = useState(false)
 
-  const runFetch = async ({ fetchFn }) => {
+  const runFetch = async ({ fetchFn, onError = () => {}, onSuccess = () => {} }) => {
     try {
       setError('')
       setIsPending(true)
       const res = await fetchFn()
       setFetchedData(res)
+      onSuccess(fetchedData)
     } catch (err) {
       setError(err.message)
+      onError(error)
     } finally {
       setIsPending(false)
     }

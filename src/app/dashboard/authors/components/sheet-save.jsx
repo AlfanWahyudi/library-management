@@ -2,14 +2,6 @@
 
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetClose, SheetTitle, SheetFooter } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import InputControl from "@/components/input/input-control";
-import TextareaControl from "@/components/textarea/textarea-control";
-import { useForm } from "react-hook-form";
-import { zodResolver } from '@hookform/resolvers/zod';
-import { authorClientSchema } from "@/lib/schemas/author-schema";
-import AlertMain from "@/components/alert-main";
-import useFetch from "@/hooks/use-fetch";
-import { saveAuthor } from "@/lib/http/author-http";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -20,20 +12,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useEffect, useState } from "react";
-import { getAllCountry } from "@/lib/http/country-http";
+import { useState } from "react";
+import AuthorForm from "./form";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
-//TODO: gunakan react hook pada select component nya
+//TODO: Jangan tutup mmodal nya ketika click diluar modal component. close modal nya hanya dengan click tombol "tutup dan X"
+//TODO: Pisahkan komponen untuk Alert nya ya
 export default function AuthorSheetSave({
 }) {
   const router = useRouter()
@@ -41,64 +25,13 @@ export default function AuthorSheetSave({
   const [ openAlert, setOpenAlert ] = useState(false)
   const [ openForm, setOpenForm ] = useState(false)
 
-  const { 
-    register, 
-    handleSubmit, 
-    reset,
-    formState: { errors },
-  } = useForm({
-    // by setting validateCriteriaMode to 'all',
-    // all validation errors for single field will display at once
-    criteriaMode: 'all',
-    defaultValues: {
-      fullName: '',
-      countryCode: '',
-      activeSince: null,
-      about: null,
-    },
-    resolver: zodResolver(authorClientSchema)
-  })
-
-  const {
-    error,
-    isPending,
-    runFetch,
-    reset: resetFetch,
-    fetchedData,
-  } = useFetch({ initialValue: undefined })
-
-  const {
-    error: countryErr,
-    runFetch: runFetchCountry,
-    fetchedData: countries,
-  } = useFetch({ initialValue: [] })
-
-  useEffect(() => {
-    const fetchingData = async () => {
-      await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
-    }
-
-    if (openForm) {
-      fetchingData()
-    }
-  }, [openForm])
-
-  const onSubmit = async (data, e) => {
-    await runFetch({ fetchFn: async() => await saveAuthor({data}) })
-    
-    if (!error) {
-      setOpenAlert(true)
-      router.refresh()
-    }
-  }
-  
-  function handleOpenSheet() {
-    reset()
-    resetFetch()
-  }
-
   function handleAlertAction() {
     setOpenForm(false)
+  }
+
+  function handleSuccess() {
+    setOpenAlert(true)
+    router.refresh()
   }
 
   return (
@@ -108,7 +41,7 @@ export default function AuthorSheetSave({
           <AlertDialogHeader>
             <AlertDialogTitle>Tambah Pengarang</AlertDialogTitle>
             <AlertDialogDescription>
-              Pengarang {fetchedData?.fullName} berhasil ditambahkan.
+              Data pengarang berhasil ditambahkan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -118,80 +51,13 @@ export default function AuthorSheetSave({
       </AlertDialog>
       <Sheet open={openForm} onOpenChange={setOpenForm}>
         <SheetTrigger asChild>
-          <Button onClick={handleOpenSheet}>Tambah pengarang</Button>
+          <Button>Tambah pengarang</Button>
         </SheetTrigger>
         <SheetContent className="w-[400px] sm:max-w-full sm:w-lg">
-          <form className="flex-1 flex flex-col" onSubmit={handleSubmit(onSubmit)} noValidate>
-            <SheetHeader>
-              <SheetTitle>Tambah pengarang</SheetTitle>
-            </SheetHeader>
-            <div className="grid flex-1 auto-rows-min gap-6 px-4">
-              {error !== '' && (
-                <AlertMain title='Error form tambah pengarang' variant="error">
-                  <p>{error}</p>
-                </AlertMain>  
-              )}
-              {countryErr && (
-                <AlertMain title='Error menampilkan daftar negara pada field kebangsaan' variant="error">
-                  <p>{countryErr}</p>
-                </AlertMain>  
-              )}
-              <InputControl
-                {...register('fullName')}
-                id="fullName"
-                label="Nama Lengkap"
-                type="text"
-                isRequired={true}
-                hasError={errors['fullName'] !== undefined}
-                errorMsg={[errors.fullName?.message]}
-              />
-              <Select>
-                <SelectTrigger className="w-[100%]" disabled={countryErr}>
-                  <SelectValue placeholder='Pilih negara' />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map((country => (
-                    <SelectItem key={country.code} value={country.code}>
-                      {country.name}
-                    </SelectItem>
-                  )))}
-                </SelectContent>
-              </Select>
-              {/* <InputControl
-                {...register('countryCode')}
-                id="countryCode"
-                label="Kebangsaan"
-                type="text"
-                isRequired={true}
-                hasError={errors['countryCode'] !== undefined}
-                errorMsg={[errors.countryCode?.message]}
-              /> */}
-              <InputControl
-                {...register('activeSince')}
-                id="activeSince"
-                label="Aktif Sejak"
-                type="number"
-                hasError={errors['activeSince'] !== undefined}
-                errorMsg={[errors.activeSince?.message]}
-              />
-              <TextareaControl
-                {...register('about')}
-                id="about"
-                label="Tentang"
-                rows={10}
-                hasError={errors['about'] !== undefined}
-                errorMsg={[errors.about?.message]}
-              />
-            </div>
-            <SheetFooter>
-              <Button type="submit">
-                {isPending ? 'Submitted...' : 'Simpan'}
-              </Button>
-              <SheetClose asChild>
-                <Button type="button" variant="outline">Tutup</Button>
-              </SheetClose>
-            </SheetFooter>
-          </form>
+          <AuthorForm 
+            openForm={openForm}
+            cbSuccess={handleSuccess}
+          />
         </SheetContent>
       </Sheet>
     </>
