@@ -22,7 +22,8 @@ import SelectControlForm from "@/components/form/select-control-form";
 //TODO: Tampilkan isi form sesuai dengan Update, dan Detail Author nya
 export default function AuthorForm({
   openForm,
-  cbSuccess
+  cbSuccess,
+  title,
 }) {
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
@@ -80,7 +81,7 @@ export default function AuthorForm({
       noValidate
     >
       <SheetHeader>
-        <SheetTitle>Tambah pengarang</SheetTitle>
+        <SheetTitle>{title}</SheetTitle>
       </SheetHeader>
       <div className="grid flex-1 auto-rows-min gap-6 px-4">
         {authorError !== '' && (

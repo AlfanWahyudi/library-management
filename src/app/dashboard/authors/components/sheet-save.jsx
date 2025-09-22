@@ -57,6 +57,7 @@ export default function AuthorSheetSave({
           <AuthorForm 
             openForm={openForm}
             cbSuccess={handleSuccess}
+            title='Tambah pengarang'
           />
         </SheetContent>
       </Sheet>
