@@ -20,9 +20,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllCountry } from "@/lib/http/country-http";
 
-//TODO: input kebangsaan ganti jadi select, dan list options nya ngambil ke DB
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+//TODO: gunakan react hook pada select component nya
 export default function AuthorSheetSave({
 }) {
   const router = useRouter()
@@ -35,7 +46,6 @@ export default function AuthorSheetSave({
     handleSubmit, 
     reset,
     formState: { errors },
-
   } = useForm({
     // by setting validateCriteriaMode to 'all',
     // all validation errors for single field will display at once
@@ -56,6 +66,22 @@ export default function AuthorSheetSave({
     reset: resetFetch,
     fetchedData,
   } = useFetch({ initialValue: undefined })
+
+  const {
+    error: countryErr,
+    runFetch: runFetchCountry,
+    fetchedData: countries,
+  } = useFetch({ initialValue: [] })
+
+  useEffect(() => {
+    const fetchingData = async () => {
+      await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
+    }
+
+    if (openForm) {
+      fetchingData()
+    }
+  }, [openForm])
 
   const onSubmit = async (data, e) => {
     await runFetch({ fetchFn: async() => await saveAuthor({data}) })
@@ -105,6 +131,11 @@ export default function AuthorSheetSave({
                   <p>{error}</p>
                 </AlertMain>  
               )}
+              {countryErr && (
+                <AlertMain title='Error menampilkan daftar negara pada field kebangsaan' variant="error">
+                  <p>{countryErr}</p>
+                </AlertMain>  
+              )}
               <InputControl
                 {...register('fullName')}
                 id="fullName"
@@ -114,7 +145,19 @@ export default function AuthorSheetSave({
                 hasError={errors['fullName'] !== undefined}
                 errorMsg={[errors.fullName?.message]}
               />
-              <InputControl
+              <Select>
+                <SelectTrigger className="w-[100%]" disabled={countryErr}>
+                  <SelectValue placeholder='Pilih negara' />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map((country => (
+                    <SelectItem key={country.code} value={country.code}>
+                      {country.name}
+                    </SelectItem>
+                  )))}
+                </SelectContent>
+              </Select>
+              {/* <InputControl
                 {...register('countryCode')}
                 id="countryCode"
                 label="Kebangsaan"
@@ -122,7 +165,7 @@ export default function AuthorSheetSave({
                 isRequired={true}
                 hasError={errors['countryCode'] !== undefined}
                 errorMsg={[errors.countryCode?.message]}
-              />
+              /> */}
               <InputControl
                 {...register('activeSince')}
                 id="activeSince"
