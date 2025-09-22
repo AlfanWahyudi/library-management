@@ -6,8 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Eye, SquarePen, Trash } from "lucide-react"
 import SortIndicatorTable from "@/components/data-table/sort-indicator-table";
 import { formatDateTime } from "@/lib/utils/datetime";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
+import ActionFieldAuthor from "./action-field";
+
+
+
+
 
 const columnHelper = createColumnHelper()
+
 
 const columnsDefAuthor = [
   columnHelper.accessor('fullName', {
@@ -48,21 +56,7 @@ const columnsDefAuthor = [
     enableSorting: false,
     cell: ({ row }) => {
       const author = row.original
-
-      // TODO: Feat View, Update, dan Delete
-      return (
-        <div className="flex justify-center">
-          <Button type="button" variant='ghost' size='icon' className='size-7'>
-            <Eye />
-          </Button>
-          <Button type="button" variant='ghost' size='icon' className='size-7'>
-            <SquarePen />
-          </Button>
-          <Button type="button" variant='ghost' size='icon' className='size-7'>
-            <Trash />
-          </Button>
-        </div>
-      )
+      return <ActionFieldAuthor author={author} />
     },
   })
 ]

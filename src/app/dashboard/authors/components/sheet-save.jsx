@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useState } from "react";
 import AuthorForm from "./form";
+import SheetContentMain from "@/components/sheet/sheet-content-main";
 
 
 //TODO: Jangan tutup mmodal nya ketika click diluar modal component. close modal nya hanya dengan click tombol "tutup dan X"
@@ -53,13 +54,13 @@ export default function AuthorSheetSave({
         <SheetTrigger asChild>
           <Button>Tambah pengarang</Button>
         </SheetTrigger>
-        <SheetContent className="w-[400px] sm:max-w-full sm:w-lg">
+        <SheetContentMain>
           <AuthorForm 
             openForm={openForm}
             cbSuccess={handleSuccess}
             title='Tambah pengarang'
           />
-        </SheetContent>
+        </SheetContentMain>
       </Sheet>
     </>
   )

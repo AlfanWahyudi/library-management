@@ -1,7 +1,7 @@
 'use client';
 
 
-import { SheetHeader, SheetClose, SheetTitle, SheetFooter } from "@/components/ui/sheet"
+import { SheetClose, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,11 +19,18 @@ import SelectControlForm from "@/components/form/select-control-form";
 
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
-//TODO: Tampilkan isi form sesuai dengan Update, dan Detail Author nya
+//TODO: Tampilkan isi form sesuai dengan Update, dan Detail Author nya,
+//TODO: Feat Update
+//TODO: Feat Delete
+//TODO: display selected kebangsaan
+//TODO: Styling untuk input yang digunakan pada Detail View
 export default function AuthorForm({
   openForm,
-  cbSuccess,
+  cbSuccess = () => {},
+  author = null,
   title,
+  viewOnly = false,
+  children
 }) {
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
@@ -50,6 +57,7 @@ export default function AuthorForm({
     error: countryErr,
     runFetch: runFetchCountry,
     fetchedData: countries,
+    reset: resetCountries,
   } = useFetch({ initialValue: [] })
 
 
@@ -60,6 +68,8 @@ export default function AuthorForm({
 
     if (openForm) {
       fetchingData()
+    } else {
+      resetCountries()
     }
   }, [openForm])
 
@@ -77,7 +87,7 @@ export default function AuthorForm({
     <MainContentForm 
       useFormProp={form} 
       onSubmitForm={onSubmit} 
-      className="flex-1 flex flex-col" 
+      className="flex-1 flex flex-col"
       noValidate
     >
       <SheetHeader>
@@ -94,12 +104,14 @@ export default function AuthorForm({
             <p>{countryErr}</p>
           </AlertMain>  
         )}
-        <InputControlForm 
-          useFormProp={form}
-          name="fullName"
-          label="Nama Lengkap"
-          isRequired={true}
-        />
+        {!viewOnly && (
+          <InputControlForm 
+            useFormProp={form}
+            name="fullName"
+            label="Nama Lengkap"
+            isRequired={true}
+          />
+        )}
         <SelectControlForm 
           useFormProp={form}
           name="countryCode"
@@ -107,25 +119,37 @@ export default function AuthorForm({
           isRequired={true}
           placeholder="Pilih kebangsaan"
           items={countries.map((country) => ({ val: country.code, label: country.name }))}
-          disabled={countryErr}
+          disabled={countryErr || viewOnly}
         />
         <InputControlForm 
           useFormProp={form}
           name="activeSince"
           label="Aktif Sejak"
           type="number"
+          disabled={viewOnly}
+          value={author?.activeSince}
         />
         <TextareaControlForm 
           useFormProp={form}
           name="about"
           label="Tentang"
           rows={10}
+          disabled={viewOnly}
+          value={author?.about}
         />
       </div>
+      {children}
       <SheetFooter>
-        <Button type="submit">
-          {isPending ? 'Submitted...' : 'Simpan'}
-        </Button>
+        {!viewOnly && (
+          <Button type="submit">
+            {isPending ? 'Submitted...' : 'Simpan'}
+          </Button>
+        )}
+        {viewOnly && (
+          <Button type="submit" variant='destructive' disabled>
+            {isPending ? 'Submitted...' : 'Hapus'}
+          </Button>
+        )}
         <SheetClose asChild>
           <Button type="button" variant="outline">Tutup</Button>
         </SheetClose>
