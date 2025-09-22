@@ -19,7 +19,7 @@ import SheetContentMain from "@/components/sheet/sheet-content-main";
 
 //TODO: Jangan tutup mmodal nya ketika click diluar modal component. close modal nya hanya dengan click tombol "tutup dan X"
 //TODO: Pisahkan komponen untuk Alert nya ya
-export default function AuthorSheetSave({
+export default function SaveSheetAuthor({
 }) {
   const router = useRouter()
 

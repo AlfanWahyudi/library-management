@@ -3,12 +3,12 @@ import ContentHead from "../components/content-head";
 import AuthorBreadcrumb from "./components/breadcrumb";
 import AuthorDataTable from "./components/data-table";
 import AuthorService from "@/lib/services/author-service";
-import AuthorSheetSave from "./components/sheet-save";
+import SaveSheetAuthor from "./components/save-sheet";
 
 const rightContentItem = (
   <>
     <Button variant='outline'>Download PDF</Button>
-    <AuthorSheetSave />
+    <SaveSheetAuthor />
   </>
 )
 
