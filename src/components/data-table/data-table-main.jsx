@@ -2,14 +2,12 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { flexRender } from "@tanstack/react-table";
-import RowOptionDataTable from "./pagination-data-table/row-option-data-table";
-import PaginationDataTable from "./pagination-data-table";
+import PaginationDataTable from "./pagination/pagination-data-table";
 import { Separator } from "../ui/separator";
-import { Button } from "../ui/button";
 
 
 //TODO: rapihkan codingannya
-export default function DataTable({ table }) {
+export default function DataTableMain({ table }) {
   return (
     <article className="overflow-hidden rounded-md border">
       <Table>

@@ -1,6 +1,6 @@
 "use client"
 
-import InputErrorItem from "../input-error-item";
+import InputErrorItem from "./input-error-item";
 
 export default function InputErrorList({ messages = [] }) {
   return (

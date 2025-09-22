@@ -1,8 +1,8 @@
 'use client'
 
-import InputErrorList from "../input-control/input-error-list"
-import { Label } from "../ui/label"
-import { Textarea } from "../ui/textarea"
+import InputErrorList from "@/components/input/input-error-list"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function TextareaControl({ 
   name, 

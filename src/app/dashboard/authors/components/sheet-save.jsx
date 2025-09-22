@@ -2,8 +2,8 @@
 
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetClose, SheetTitle, SheetFooter } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import InputControl from "@/components/input-control";
-import TextareaControl from "@/components/textarea-control";
+import InputControl from "@/components/input/input-control";
+import TextareaControl from "@/components/textarea/textarea-control";
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authorClientSchema } from "@/lib/schemas/author-schema";

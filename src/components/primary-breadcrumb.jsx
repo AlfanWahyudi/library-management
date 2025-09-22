@@ -1,7 +1,6 @@
 "use client"
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { useBreadcrumb } from "@/hooks/use-breadcrumb";
 import { isRouteModelValid } from "@/lib/models/route-model";
 import { BreadcrumbContext } from "@/store/breadcrumb-context";
 import Link from "next/link";

@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
-import DataTable from "@/components/data-table";
+import DataTable from "@/components/data-table/data-table-main";
 import FilterWrapperDataTable from "@/components/data-table/filter-wrapper-data-table";
 import { useRouter } from "next/navigation";
 import SortIndicatorTable from "@/components/data-table/sort-indicator-table";
