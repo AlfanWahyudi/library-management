@@ -22,7 +22,6 @@ import SelectControlForm from "@/components/form/select-control-form";
 //TODO: Feat Update
 //TODO: Feat Delete
 //TODO: Styling untuk input yang digunakan pada Detail View
-//TODO: perbaiki validasi zod untuk activeSince, empty string masih dianggap tidak sebuah nilai, harus nya field ini nullable
 export default function AuthorForm({
   openForm,
   cbSuccess = () => {},

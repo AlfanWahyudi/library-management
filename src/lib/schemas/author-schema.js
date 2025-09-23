@@ -11,10 +11,13 @@ export const authorClientSchema = z.object({
     .toUpperCase()
     .length(2, 'Kode negara tidak sesuai, harus 2 huruf (Alpha-2 code)'),
   activeSince: z // integer, nullable. tidak boleh minus
-    .coerce.number()
-    .positive(0, 'Aktif sejak harus berupa angka positif')
-    .nullable()
-    .default(null),
+    .transform((val) => {
+      const num = parseInt(val, 10);
+      return val.trim() === "" || isNaN(num) ? null : num;
+    })
+    .refine((val) => val === null || val > 0, { 
+      error: "Aktif sejak harus berupa angka positif" 
+    }),
   about: z // string, nullable
     .string()
     .trim()
@@ -34,10 +37,13 @@ export const authorServerSchema = z.object({
     .toUpperCase()
     .length(2),
   activeSince: z // integer, nullable. tidak boleh minus
-    .coerce.number()
-    .positive(0)
-    .nullable()
-    .default(null),
+    .transform((val) => {
+      const num = parseInt(val, 10);
+      return isNaN(num) ? null : num;
+    })
+    .refine((val) => val === null || val > 0, { 
+      error: "activeSince must be a null or positive" 
+    }),
   about: z // string, nullable
     .string()
     .trim()
