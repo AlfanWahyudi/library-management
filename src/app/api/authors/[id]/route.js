@@ -3,7 +3,6 @@ import { authorServerSchema } from "@/lib/schemas/author-schema"
 import AuthorService from "@/lib/services/author-service"
 import { NextResponse } from "next/server"
 
-//TODO: Testing lewat postman
 export async function PUT(req, { params }) {
   try {
     const { id } = await params

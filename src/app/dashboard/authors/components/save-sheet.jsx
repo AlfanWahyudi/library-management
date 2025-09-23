@@ -52,7 +52,7 @@ export default function SaveSheetAuthor({
       </AlertDialog>
       <Sheet open={openForm} onOpenChange={setOpenForm}>
         <SheetTrigger asChild>
-          <Button>Tambah pengarang</Button>
+          <Button size='sm'>Tambah pengarang</Button>
         </SheetTrigger>
         <SheetContentMain>
           <AuthorForm 

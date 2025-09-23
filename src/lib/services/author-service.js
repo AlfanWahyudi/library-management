@@ -66,7 +66,7 @@ const AuthorService = {
     }
 
     if (id !== null) {
-      const author = await AuthorDAL.findById({ id })
+      const author = await AuthorDAL.findById({ id: parseInt(id) })
 
       if (author === null) {
         throw new Error('author id is not found.')

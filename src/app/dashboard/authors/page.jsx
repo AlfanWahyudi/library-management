@@ -7,7 +7,7 @@ import SaveSheetAuthor from "./components/save-sheet";
 
 const rightContentItem = (
   <>
-    <Button variant='outline'>Download PDF</Button>
+    <Button variant='outline' size='sm'>Download PDF</Button>
     <SaveSheetAuthor />
   </>
 )

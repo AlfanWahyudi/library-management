@@ -16,6 +16,7 @@ import MainContentForm from "@/components/form/main-content-form";
 import InputControlForm from "@/components/form/input-control-form";
 import TextareaControlForm from "@/components/form/textarea-control-form";
 import SelectControlForm from "@/components/form/select-control-form";
+import { Loader2Icon } from "lucide-react";
 
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
@@ -73,12 +74,25 @@ export default function AuthorForm({
 
 
   const onSubmit = async (data, e) => {
-    await runFetchAuthor({ 
-      fetchFn: async() => await saveAuthor({data}), 
-      onSuccess: () => {
-        cbSuccess()
-      },
-    })
+    const id = author !== null ? author.id : null
+
+    if (!viewOnly) {
+      await runFetchAuthor({ 
+        fetchFn: async() => await saveAuthor({data, id}), 
+        onSuccess: () => {
+          cbSuccess()
+        },
+      })
+    } else {
+      //TODO: handle delete author nya
+    }
+  }
+
+  let errFormTitle = 'Error menyimpan data pengarang baru'
+  if (viewOnly) {
+    errFormTitle = 'Error menghapus data pengarang'
+  } else if (!viewOnly && author !== null) {
+    errFormTitle = 'Error memperbarui data pengarang'
   }
 
   return (
@@ -93,7 +107,7 @@ export default function AuthorForm({
       </SheetHeader>
       <div className="grid flex-1 auto-rows-min gap-6 px-4">
         {authorError !== '' && (
-          <AlertMain title='Error form tambah pengarang' variant="error">
+          <AlertMain title={errFormTitle} variant="error">
             <p>{authorError}</p>
           </AlertMain>  
         )}
@@ -137,17 +151,30 @@ export default function AuthorForm({
       {children}
       <SheetFooter>
         {!viewOnly && (
-          <Button type="submit">
-            {isPending ? 'Submitted...' : 'Simpan'}
+          <Button type="submit" size='sm' disabled={isPending}>
+            {isPending && <Loader2Icon className="animate-spin" />}
+            {isPending 
+              ? 'Mohon tunggu'
+              : 'Simpan'
+            }
           </Button>
         )}
         {viewOnly && (
-          <Button type="submit" variant='destructive' disabled>
-            {isPending ? 'Submitted...' : 'Hapus'}
+          <Button 
+            type="submit" 
+            size='sm' 
+            variant='destructive' 
+            disabled={isPending}
+          >
+            {isPending && <Loader2Icon className="animate-spin" />}
+            {isPending 
+              ? 'Mohon tunggu' 
+              : 'Hapus'
+            }
           </Button>
         )}
         <SheetClose asChild>
-          <Button type="button" variant="outline">Tutup</Button>
+          <Button type="button" size='sm' variant="outline">Tutup</Button>
         </SheetClose>
       </SheetFooter>
     </MainContentForm>
