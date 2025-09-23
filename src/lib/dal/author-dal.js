@@ -16,7 +16,7 @@ const AuthorDAL = {
 
     return authors.length === 0 
       ? null
-      : createCountry({...authors[0]})
+      : createAuthor({...authors[0]})
   },
 
   save: async ({
