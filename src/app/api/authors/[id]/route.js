@@ -41,5 +41,33 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
+  try {
+    const { id } = await params
+    
+    // delete data service class
 
+    return NextResponse.json(
+      createSuccessRes({ message: 'Author successfully deleted.' })
+    )
+    
+  } catch (err) {
+    console.error(err)
+    
+    if (err instanceof ZodError) {
+      return NextResponse.json(
+        createErrorRes({
+          error: 'Validation failed.',
+          details: err.issues
+        }),
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      createErrorRes({
+        error: err.toString(),
+      }),
+      { status: 500 }
+    )
+  }
 }

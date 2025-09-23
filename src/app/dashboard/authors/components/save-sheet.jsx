@@ -1,20 +1,12 @@
 'use client'
 
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetClose, SheetTitle, SheetFooter } from "@/components/ui/sheet"
+import { Sheet, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { useState } from "react";
 import AuthorForm from "./form";
 import SheetContentMain from "@/components/sheet/sheet-content-main";
+import AlertDialogInfo from "@/components/alert-dialog/alert-dialog-info";
 
 
 //TODO: Jangan tutup mmodal nya ketika click diluar modal component. close modal nya hanya dengan click tombol "tutup dan X"
@@ -37,19 +29,15 @@ export default function SaveSheetAuthor({
 
   return (
     <>
-      <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Tambah Pengarang</AlertDialogTitle>
-            <AlertDialogDescription>
-              Data pengarang berhasil ditambahkan.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => handleAlertAction()}>Oke</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertDialogInfo
+        title='Tambah Pengarang'
+        open={openAlert}
+        onOpenChange={setOpenAlert}
+        cbAfterActionClicked={() => handleAlertAction()}
+      >
+        Data pengarang berhasil ditambahkan.
+      </AlertDialogInfo>
+
       <Sheet open={openForm} onOpenChange={setOpenForm}>
         <SheetTrigger asChild>
           <Button size='sm'>Tambah pengarang</Button>

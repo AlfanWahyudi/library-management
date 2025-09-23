@@ -1,6 +1,5 @@
 'use client';
 
-
 import { SheetClose, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
@@ -20,7 +19,6 @@ import { Loader2Icon } from "lucide-react";
 
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
-//TODO: Feat Update
 //TODO: Feat Delete
 //TODO: Styling untuk input yang digunakan pada Detail View
 export default function AuthorForm({

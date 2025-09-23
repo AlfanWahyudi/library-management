@@ -20,6 +20,7 @@ export default function RootLayout({ children }) {
       className={`${openSans.variable} antialiased`}  
     >
       <body className="overflow-x-hidden max-w-screen">
+        <div id="modal"></div>
         {children}
       </body>
     </html>

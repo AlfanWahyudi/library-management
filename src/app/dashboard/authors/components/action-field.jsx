@@ -7,9 +7,14 @@ import { Eye, SquarePen } from "lucide-react";
 import SheetContentMain from "@/components/sheet/sheet-content-main";
 import AuthorForm from "./form";
 import { Table } from "@/components/ui/table";
+import AlertDialogInfo from "@/components/alert-dialog/alert-dialog-info";
+import { useRouter } from "next/navigation";
 
-// TODO: Feat View, Update, dan Delete
+// TODO: Feat View, dan Delete
 export default function ActionFieldAuthor({ author }) {
+  const router = useRouter()
+
+  const [ openAlert, setOpenAlert ] = useState(false)
   const [ openSheet, setOpenSheet ] = useState(false)
 
   const [action, setAction ] = useState({
@@ -36,49 +41,72 @@ export default function ActionFieldAuthor({ author }) {
 
     setOpenSheet(true)
   }
+
+  const handleAlertAction = () => {
+    setOpenSheet(false)
+  }
+
+  const handleSuccess = () => {
+    setOpenAlert(true)
+    router.refresh()
+  }
+
+  const titleAlert = action.isEditOpen ? 'Update pengarang' : 'Hapus pengarang'
+  const textAlert = action.isEditOpen ? 'Berhasil memperbarui data pengarang.' : 'Berhasil menghapus data pengarang.'
   
   return (
-    <Sheet open={openSheet} onOpenChange={setOpenSheet}>
-      <div className="flex justify-center">
-        <SheetTrigger asChild>
-          <Button 
-            type="button" 
-            variant='ghost' 
-            size='icon' 
-            className='size-7'
-            onClick={() => handleOpenSheet('view')}
+    <>
+      <AlertDialogInfo
+        title={titleAlert}
+        open={openAlert}
+        onOpenChange={setOpenAlert}
+        cbAfterActionClicked={() => handleAlertAction()}
+      >
+        {textAlert}
+      </AlertDialogInfo>
+      <Sheet open={openSheet} onOpenChange={setOpenSheet}>
+        <div className="flex justify-center">
+          <SheetTrigger asChild>
+            <Button 
+              type="button" 
+              variant='ghost' 
+              size='icon' 
+              className='size-7'
+              onClick={() => handleOpenSheet('view')}
+            >
+              <Eye />
+            </Button>
+          </SheetTrigger>
+          <SheetTrigger asChild>
+            <Button 
+              type="button" 
+              variant='ghost' 
+              size='icon' 
+              className='size-7'
+              onClick={() => handleOpenSheet('edit')}
+            >
+              <SquarePen />
+            </Button>
+          </SheetTrigger>
+        </div>
+        <SheetContentMain>
+          <AuthorForm 
+            openForm={openSheet} 
+            cbSuccess={handleSuccess}
+            author={author} 
+            viewOnly={action.isViewOpen} 
+            title={title}
           >
-            <Eye />
-          </Button>
-        </SheetTrigger>
-        <SheetTrigger asChild>
-          <Button 
-            type="button" 
-            variant='ghost' 
-            size='icon' 
-            className='size-7'
-            onClick={() => handleOpenSheet('edit')}
-          >
-            <SquarePen />
-          </Button>
-        </SheetTrigger>
-      </div>
-      <SheetContentMain>
-        <AuthorForm 
-          openForm={openSheet} 
-          author={author} 
-          viewOnly={action.isViewOpen} 
-          title={title}
-        >
-          {/* //TODO: Display and list of book that author have */}
-          {action.isViewOpen && (
-            <Table>
+            {/* //TODO: Display and list of book that author have */}
+            {action.isViewOpen && (
+              <Table>
 
-            </Table>
-          )}
-        </AuthorForm>
+              </Table>
+            )}
+          </AuthorForm>
 
-      </SheetContentMain>
-    </Sheet>
+        </SheetContentMain>
+      </Sheet>
+    </>
   )
 }
