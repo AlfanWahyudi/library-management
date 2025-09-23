@@ -54,9 +54,11 @@ export default function SelectControlForm({
                 ))}
               </SelectContent>
             </Select>
-            <FormDescription>
-              {children}
-            </FormDescription>
+            {children && (
+              <FormDescription>
+                {children}
+              </FormDescription>
+            )}
             <FormMessage />
           </FormItem>
         )

@@ -34,9 +34,11 @@ export default function TextareaControlForm({
               {...props}
             />
           </FormControl>
-          <FormDescription>
-            {children}
-          </FormDescription>
+          {children && (
+            <FormDescription>
+              {children}
+            </FormDescription>
+          )}
           <FormMessage />
         </FormItem>
       )}
