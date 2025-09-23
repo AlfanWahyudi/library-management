@@ -12,23 +12,23 @@ import { Table } from "@/components/ui/table";
 export default function ActionFieldAuthor({ author }) {
   const [ openSheet, setOpenSheet ] = useState(false)
 
-  const [state, setState ] = useState({
+  const [action, setAction ] = useState({
     isViewOpen: false,
     isEditOpen: false,
   })
 
-  const title = state.isViewOpen ? author.fullName : 'Update pengarang'
+  const title = action.isViewOpen ? author.fullName : 'Update pengarang'
 
   const handleOpenSheet = (action) => {
     if (action == 'view') {
-      setState({
+      setAction({
         isViewOpen: true,
         isEditOpen: false,
       })
     }
 
     if (action === 'edit') {
-      setState({
+      setAction({
         isViewOpen: false,
         isEditOpen: true,
       })
@@ -67,11 +67,11 @@ export default function ActionFieldAuthor({ author }) {
         <AuthorForm 
           openForm={openSheet} 
           author={author} 
-          viewOnly={state.isViewOpen} 
+          viewOnly={action.isViewOpen} 
           title={title}
         >
           {/* //TODO: Display and list of book that author have */}
-          {state.isViewOpen && (
+          {action.isViewOpen && (
             <Table>
 
             </Table>

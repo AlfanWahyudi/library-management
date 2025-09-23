@@ -110,6 +110,7 @@ export default function AuthorForm({
             name="fullName"
             label="Nama Lengkap"
             isRequired={true}
+            value={author?.fullName}
           />
         )}
         <SelectControlForm 
@@ -120,6 +121,7 @@ export default function AuthorForm({
           placeholder="Pilih kebangsaan"
           items={countries.map((country) => ({ val: country.code, label: country.name }))}
           disabled={countryErr || viewOnly}
+          value={author?.country.code}
         />
         <InputControlForm 
           useFormProp={form}

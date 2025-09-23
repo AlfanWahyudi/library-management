@@ -25,35 +25,42 @@ export default function SelectControlForm({
   children, 
   placeholder = 'Pilih item',
   items = [],
+  value = null,
   ...props  
 }) {
   return (
     <FormField
       control={useFormProp.control}
       name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>
-            {label} {isRequired && <span className="text-destructive">*</span>} 
-          </FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value} {...props}>
-            <FormControl>
-              <SelectTrigger className='w-[100%]'>
-                <SelectValue placeholder={placeholder} />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {items.map((item) => (
-                <SelectItem value={item.val} key={item.val}>{item.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FormDescription>
-            {children}
-          </FormDescription>
-          <FormMessage />
-        </FormItem>
-      )}
+      render={({ field }) => {
+        const defaultValue = value !== null && field.value === '' 
+          ? value 
+          : field.value
+
+        return (
+          <FormItem>
+            <FormLabel>
+              {label} {isRequired && <span className="text-destructive">*</span>} 
+            </FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={defaultValue} {...props}>
+              <FormControl>
+                <SelectTrigger className='w-[100%]'>
+                  <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {items.map((item) => (
+                  <SelectItem value={item.val} key={item.val}>{item.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormDescription>
+              {children}
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )
+      }}
     />
   )
 }
