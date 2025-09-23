@@ -52,7 +52,8 @@ const AuthorService = {
     }
   },
 
-  create: async({
+  save: async({
+    id = null,
     fullName,
     countryCode,
     about = null,
@@ -64,7 +65,15 @@ const AuthorService = {
       throw new Error('countryCode property is not found.')
     }
 
-    const author = await AuthorDAL.create({ fullName, countryCode, about, activeSince })
+    if (id !== null) {
+      const author = await AuthorDAL.findById({ id })
+
+      if (author === null) {
+        throw new Error('author id is not found.')
+      }
+    }
+
+    const author = await AuthorDAL.save({ id, fullName, countryCode, about, activeSince })
 
     return createAuthorDTO({
       ...author,

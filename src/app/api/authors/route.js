@@ -9,7 +9,7 @@ export async function POST(req) {
     const body = await req.json()
     const parsed = authorServerSchema.parse(body)
 
-    const author = await AuthorService.create(parsed)
+    const author = await AuthorService.save({...parsed})
 
     return NextResponse.json(
       createSuccessRes({
