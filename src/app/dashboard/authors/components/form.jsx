@@ -19,11 +19,10 @@ import SelectControlForm from "@/components/form/select-control-form";
 
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
-//TODO: Tampilkan isi form sesuai dengan Update, dan Detail Author nya,
 //TODO: Feat Update
 //TODO: Feat Delete
-//TODO: display selected kebangsaan
 //TODO: Styling untuk input yang digunakan pada Detail View
+//TODO: perbaiki validasi zod untuk activeSince, empty string masih dianggap tidak sebuah nilai, harus nya field ini nullable
 export default function AuthorForm({
   openForm,
   cbSuccess = () => {},
@@ -37,10 +36,10 @@ export default function AuthorForm({
     // all validation errors for single field will display at once
     criteriaMode: 'all',
     defaultValues: {
-      fullName: '',
-      countryCode: '',
-      activeSince: null,
-      about: null,
+      fullName: author?.fullName || '',
+      countryCode: author?.country.code || '',
+      activeSince: author?.activeSince || '',
+      about: author?.about || '',
     },
     resolver: zodResolver(authorClientSchema)
   })
@@ -110,7 +109,6 @@ export default function AuthorForm({
             name="fullName"
             label="Nama Lengkap"
             isRequired={true}
-            value={author?.fullName}
           />
         )}
         <SelectControlForm 
@@ -121,7 +119,6 @@ export default function AuthorForm({
           placeholder="Pilih kebangsaan"
           items={countries.map((country) => ({ val: country.code, label: country.name }))}
           disabled={countryErr || viewOnly}
-          value={author?.country.code}
         />
         <InputControlForm 
           useFormProp={form}
@@ -129,7 +126,6 @@ export default function AuthorForm({
           label="Aktif Sejak"
           type="number"
           disabled={viewOnly}
-          value={author?.activeSince}
         />
         <TextareaControlForm 
           useFormProp={form}
@@ -137,7 +133,6 @@ export default function AuthorForm({
           label="Tentang"
           rows={10}
           disabled={viewOnly}
-          value={author?.about}
         />
       </div>
       {children}
