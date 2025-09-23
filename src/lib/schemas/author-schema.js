@@ -12,8 +12,10 @@ export const authorClientSchema = z.object({
     .length(2, 'Kode negara tidak sesuai, harus 2 huruf (Alpha-2 code)'),
   activeSince: z // integer, nullable. tidak boleh minus
     .transform((val) => {
-      const num = parseInt(val, 10);
-      return val.trim() === "" || isNaN(num) ? null : num;
+      const num = parseInt(val, 10)
+      return (typeof(val) === 'string' &&  val.trim() === "") || isNaN(num) 
+        ? null 
+        : num
     })
     .refine((val) => val === null || val > 0, { 
       error: "Aktif sejak harus berupa angka positif" 
