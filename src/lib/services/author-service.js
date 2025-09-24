@@ -88,7 +88,7 @@ const AuthorService = {
       throw new Error('author id is not found.')
     }
 
-    return await AuthorDAL.sofDelete({ id: author.id })
+    return await AuthorDAL.delete({ id: author.id })
   }
 }
 

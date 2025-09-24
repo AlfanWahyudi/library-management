@@ -1,7 +1,8 @@
 import sql from "@/lib/config/db"
+import { dataNotDeleted } from "../utils/sql-utils"
 
 const UserRoleDAL = {
-  //TODO: jangan menampilkan data yang telah di softdeleted
+  //TODO: Test this function
   getById: async ({ userId }) => {
 
     const data = await sql`
@@ -21,7 +22,9 @@ const UserRoleDAL = {
       from users u 
       join user_roles ur on u.id = ur.user_id 
       join roles r on ur.role_code = r.code
-      where u.id = ${userId}
+      where 
+        u.id = ${userId} AND
+        ${ dataNotDeleted('u') }
     `
     return data.map((item) => {
       return {

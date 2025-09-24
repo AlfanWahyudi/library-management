@@ -1,7 +1,8 @@
 import 'server-only'
-import { createAuthorDTO } from '../dto/author-dto'
+
 import sql from '../config/db'
 import { createAuthor } from '../models/author-model'
+import { dataDeleted, dataNotDeleted } from '../utils/sql-utils'
 
 const tableName = 'authors'
 
@@ -9,15 +10,15 @@ const tableName = 'authors'
 const tempUsername = 'superadmin1' // later change this
 
 const AuthorDAL = {
-  //TODO: jangan menampilkan data yang telah di softdeleted
   findById: async ({ id }) => {
     if (typeof(id) !== 'number') throw new Error('id must be a number.')
 
     const authors = await sql`
       SELECT * FROM ${ sql(tableName) }
-      WHERE id = ${id}
+      WHERE
+        id = ${id} AND
+        ${ dataNotDeleted() }
     `
-
     return authors.length === 0 
       ? null
       : createAuthor({...authors[0]})
@@ -64,15 +65,19 @@ const AuthorDAL = {
           about = ${ about }, 
           updated_by = ${ tempUsername }, 
           updated_at = NOW()
-        WHERE id = ${id}
+        WHERE
+          id = ${id} AND
+          ${ dataNotDeleted() }
         RETURNING *
       `
     }
 
-    return createAuthor({...authors[0]})
+    return authors.length === 0 
+      ? null
+      : createAuthor({...authors[0]})
   },
 
-  sofDelete: async ({ id }) => {
+  delete: async ({ id }) => {
     if (typeof(id) !== 'number') throw new Error('id must be a number.')
 
     const authors = await sql`
@@ -80,18 +85,31 @@ const AuthorDAL = {
       SET 
         deleted_by = ${ tempUsername }, 
         deleted_at = NOW()
-      WHERE 
+      WHERE
         id = ${id} AND
-        deleted_by IS NULL AND
-        deleted_at IS NULL
+        ${ dataNotDeleted() }
       RETURNING *
-      `
+    `
 
     return authors.length > 0
   },
 
   restore: async ({ id }) => {
-    //TODO
+    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+
+    const authors = await sql`
+      UPDATE ${ sql(tableName) } 
+      SET
+        deleted_by = NULL, 
+        deleted_at = NULL
+      WHERE
+        id = ${id} AND
+        ${ dataDeleted() }
+      RETURNING *
+    `
+    return authors.length === 0 
+      ? null
+      : createAuthor({...authors[0]})
   },
 
   forceDelete: () => {
