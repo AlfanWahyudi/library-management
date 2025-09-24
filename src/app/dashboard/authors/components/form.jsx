@@ -93,8 +93,6 @@ export default function AuthorForm({
   }
   
   const onDelete = async (id) => {
-    //TODO: handle delete author nya
-
     await runDelete({
       fetchFn: async() => await deleteAuthor({ id }),
       onSuccess: () => {
