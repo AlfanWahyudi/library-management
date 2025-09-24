@@ -24,16 +24,25 @@ export default function AlertDialogMain({
   cbAfterCancelClicked = () => {},
   children,
 }) {
-  const [open, setOpen] = useState(false)
+  const [ open, setOpen ] = useState(false)
   const [ actionClicked, setActionClicked ] = useState(false)
 
-  const handleActionClicked = async () => {
-    setActionClicked(true)
+  const handleActionClicked = async (evt) => {
+    try {
+      evt.preventDefault()
+      evt.stopPropagation()
 
-    await cbAfterActionClicked()
+      setActionClicked(true)
 
-    setActionClicked(false)
-    setOpen(false)
+      await cbAfterActionClicked() 
+      
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setActionClicked(false)
+
+      setOpen(false)
+    }
   }
 
   return (

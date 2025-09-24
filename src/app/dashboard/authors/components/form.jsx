@@ -20,7 +20,7 @@ import AlertDialogMain from "@/components/alert-dialog/alert-dialog-main";
 
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
-//TODO: Display Error ketika create, update dan delete nya
+//TODO: Display Error ketika delete nya
 //TODO: Styling untuk input yang digunakan pada Detail View
 export default function AuthorForm({
   openForm,
