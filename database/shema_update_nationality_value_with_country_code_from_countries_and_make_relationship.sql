@@ -70,5 +70,11 @@ SELECT
 	a.updated_at
 FROM authors a 
 JOIN countries c ON c.code = a.country_code
-LEFT JOIN book_authors ba ON ba.author_id = a.id 
-GROUP BY a.id, c.name;
+LEFT JOIN (
+	select * from book_authors ba 
+	left join books b on b.id = ba.book_id
+	where b.deleted_at is null and b.deleted_by is null
+) as book_a ON book_a.author_id = a.id 
+GROUP BY a.id, c.name
+having 
+	a.deleted_at is null and a.deleted_by is null;
