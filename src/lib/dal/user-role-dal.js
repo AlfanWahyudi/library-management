@@ -1,6 +1,7 @@
 import sql from "@/lib/config/db"
 
 const UserRoleDAL = {
+  //TODO: jangan menampilkan data yang telah di softdeleted
   getById: async ({ userId }) => {
 
     const data = await sql`

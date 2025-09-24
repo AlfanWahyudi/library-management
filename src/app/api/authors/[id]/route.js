@@ -2,6 +2,7 @@ import { createErrorRes, createSuccessRes } from "@/lib/dto/res-dto"
 import { authorServerSchema } from "@/lib/schemas/author-schema"
 import AuthorService from "@/lib/services/author-service"
 import { NextResponse } from "next/server"
+import { ZodError } from "zod"
 
 export async function PUT(req, { params }) {
   try {
@@ -13,7 +14,7 @@ export async function PUT(req, { params }) {
 
     return NextResponse.json(
       createSuccessRes({
-        message: 'Author successfully updated.',
+        message: 'Author successfully updated, id: ' + id,
         data: author
       })
     )
@@ -45,10 +46,18 @@ export async function DELETE(req, { params }) {
     const { id } = await params
     
     // delete data service class
+    const success = await AuthorService.delete({id})
 
-    return NextResponse.json(
-      createSuccessRes({ message: 'Author successfully deleted.' })
-    )
+    if (success) {
+      return NextResponse.json(
+        createSuccessRes({ message: 'Author successfully deleted, id: ' + id })
+      )
+    } else {
+      return NextResponse.json(
+        createErrorRes({ error: `Failed to remove author, id: ${id}. Please try again later`}),
+        { status : 500 }
+      )
+    }
     
   } catch (err) {
     console.error(err)

@@ -19,7 +19,21 @@ const saveAuthor = async ({ data, id = null }) => {
   })      
 
   if (!res.ok) {
-    throw new Error(err);
+    throw new Error(err)
+  }
+
+  const resJson = await res.json()
+
+  return resJson.data
+}
+
+const deleteAuthor = async ({ id }) => {
+  const res = await fetch('/api/authors/' + id, {
+    method: 'DELETE'
+  })      
+
+  if (!res.ok) {
+    throw new Error(err)
   }
 
   const resJson = await res.json()
@@ -29,4 +43,5 @@ const saveAuthor = async ({ data, id = null }) => {
 
 export {
   saveAuthor,
+  deleteAuthor
 }

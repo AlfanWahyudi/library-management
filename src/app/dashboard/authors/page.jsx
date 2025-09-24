@@ -47,6 +47,7 @@ export default async function AuthorPage({ searchParams }) {
         pageTitle='Pengarang'
         rightContentItem={rightContentItem}
       />
+      {/* //TODO: Soft deleted data masih muncul */}
       <AuthorDataTable authorItemsPaginated={items} />
     </>
   )

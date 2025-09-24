@@ -79,6 +79,16 @@ const AuthorService = {
       ...author,
       country
     })
+  },
+
+  delete: async({id}) => {
+    const author = await AuthorDAL.findById({ id: parseInt(id) })
+
+    if (author === null) {
+      throw new Error('author id is not found.')
+    }
+
+    return await AuthorDAL.sofDelete({ id: author.id })
   }
 }
 

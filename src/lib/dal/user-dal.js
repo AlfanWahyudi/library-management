@@ -3,6 +3,7 @@ import 'server-only'
 import sql from '@/lib/config/db'
 
 const UserDAL = {
+  //TODO: jangan menampilkan data yang telah di softdeleted
   getById: async (id) => {
     const users = await sql`
       select 
@@ -16,6 +17,7 @@ const UserDAL = {
       : users[0]
   },
 
+  //TODO: jangan menampilkan data yang telah di softdeleted
   getByUsername: async (username) => {
     const users = await sql`
       select 
@@ -28,6 +30,7 @@ const UserDAL = {
       : users[0]
   },
 
+  //TODO: jangan menampilkan data yang telah di softdeleted
   getRoles: async ({ id }) => {
     return await sql`
       select 

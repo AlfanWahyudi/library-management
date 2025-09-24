@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { authorClientSchema } from "@/lib/schemas/author-schema";
 import AlertMain from "@/components/alert-main";
 import useFetch from "@/hooks/use-fetch";
-import { saveAuthor } from "@/lib/http/author-http";
+import { deleteAuthor, saveAuthor } from "@/lib/http/author-http";
 import { useEffect } from "react";
 import { getAllCountry } from "@/lib/http/country-http";
 
@@ -16,10 +16,11 @@ import InputControlForm from "@/components/form/input-control-form";
 import TextareaControlForm from "@/components/form/textarea-control-form";
 import SelectControlForm from "@/components/form/select-control-form";
 import { Loader2Icon } from "lucide-react";
+import AlertDialogMain from "@/components/alert-dialog/alert-dialog-main";
 
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
-//TODO: Feat Delete
+//TODO: Display Error ketika create, update dan delete nya
 //TODO: Styling untuk input yang digunakan pada Detail View
 export default function AuthorForm({
   openForm,
@@ -58,6 +59,13 @@ export default function AuthorForm({
   } = useFetch({ initialValue: [] })
 
 
+  const {
+    error: deleteErr,
+    isPending: isDeletePending,
+    runFetch: runDelete,
+  } = useFetch({ initialValue: undefined })
+
+
   useEffect(() => {
     const fetchingData = async () => {
       await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
@@ -82,8 +90,18 @@ export default function AuthorForm({
         },
       })
     } else {
-      //TODO: handle delete author nya
     }
+  }
+  
+  const onDelete = async (id) => {
+    //TODO: handle delete author nya
+
+    await runDelete({
+      fetchFn: async() => await deleteAuthor({ id }),
+      onSuccess: () => {
+        cbSuccess()
+      }
+    })
   }
 
   let errFormTitle = 'Error menyimpan data pengarang baru'
@@ -158,18 +176,14 @@ export default function AuthorForm({
           </Button>
         )}
         {viewOnly && (
-          <Button 
-            type="submit" 
-            size='sm' 
-            variant='destructive' 
-            disabled={isPending}
+          <AlertDialogMain
+            title='Hapus pengarang'
+            triggerLabel='Hapus pengarang'
+            actionLabel='Hapus'
+            cbAfterActionClicked={async () => await onDelete(author?.id)}
           >
-            {isPending && <Loader2Icon className="animate-spin" />}
-            {isPending 
-              ? 'Mohon tunggu' 
-              : 'Hapus'
-            }
-          </Button>
+            Apakah anda yakin untuk menghapus pengarang ini?
+          </AlertDialogMain>
         )}
         <SheetClose asChild>
           <Button type="button" size='sm' variant="outline">Tutup</Button>

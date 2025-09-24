@@ -5,6 +5,7 @@ import { createCountry } from '../models/country-model'
 const tableName = 'countries'
 
 const CountryDAL = {
+  //TODO: jangan menampilkan data yang telah di softdeleted
   getByCode: async({ code }) => {
     code = code.toString().toUpperCase()
 

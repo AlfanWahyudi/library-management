@@ -5,7 +5,11 @@ import { createAuthor } from '../models/author-model'
 
 const tableName = 'authors'
 
+//TODO: get curr user
+const tempUsername = 'superadmin1' // later change this
+
 const AuthorDAL = {
+  //TODO: jangan menampilkan data yang telah di softdeleted
   findById: async ({ id }) => {
     if (typeof(id) !== 'number') throw new Error('id must be a number.')
 
@@ -31,9 +35,6 @@ const AuthorDAL = {
     if (activeSince !== null && activeSince < 0) {
       throw new Error('activeSince property cannot less than 0.')
     }
-
-    //TODO: get curr user
-    const tempUsername = 'superadmin1' // later change this
 
     let authors = []
     if (id === null) {
@@ -71,7 +72,25 @@ const AuthorDAL = {
     return createAuthor({...authors[0]})
   },
 
-  sofDelete: () => {
+  sofDelete: async ({ id }) => {
+    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+
+    const authors = await sql`
+      UPDATE ${ sql(tableName) } 
+      SET 
+        deleted_by = ${ tempUsername }, 
+        deleted_at = NOW()
+      WHERE 
+        id = ${id} AND
+        deleted_by IS NULL AND
+        deleted_at IS NULL
+      RETURNING *
+      `
+
+    return authors.length > 0
+  },
+
+  restore: async ({ id }) => {
     //TODO
   },
 
