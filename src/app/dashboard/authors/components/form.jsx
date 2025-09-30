@@ -97,6 +97,9 @@ export default function AuthorForm({
       fetchFn: async() => await deleteAuthor({ id }),
       onSuccess: () => {
         cbSuccess()
+      },
+      onError: () => {
+        
       }
     })
   }

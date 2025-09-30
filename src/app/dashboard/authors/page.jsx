@@ -4,10 +4,11 @@ import AuthorBreadcrumb from "./components/breadcrumb";
 import AuthorDataTable from "./components/data-table";
 import AuthorService from "@/lib/services/author-service";
 import SaveSheetAuthor from "./components/save-sheet";
+import DownloadPdfButton from "./components/download-pdf-button";
 
 const rightContentItem = (
   <>
-    <Button variant='outline' size='sm'>Download PDF</Button>
+    <DownloadPdfButton />
     <SaveSheetAuthor />
   </>
 )
