@@ -33,14 +33,13 @@ const UserDAL = {
       : users[0]
   },
 
-  //TODO: Test this function
   getRoles: async ({ id }) => {
     return await sql`
       select 
         r.id,
         r.name
       from user_roles ur 
-      join user u ON ur.user_id = u.id
+      join users u ON ur.user_id = u.id
       join roles r ON ur.role_id = r.id 
       where 
         ur.user_id = ${id} AND
