@@ -1,4 +1,4 @@
-import LoanViolationBreadcrumb from "./components/breadcrumb";
+import LoanViolationBreadcrumb from "@/components/dashboard/loan-violations/breadcrumb";
 
 export default function LoanViolationPage() {
   return(

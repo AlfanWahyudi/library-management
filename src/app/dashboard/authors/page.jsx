@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import ContentHead from "../components/content-head";
-import AuthorBreadcrumb from "./components/breadcrumb";
-import AuthorDataTable from "./components/data-table";
+import AuthorBreadcrumb from "@/components/dashboard/authors/breadcrumb";
+import AuthorDataTable from "@/components/dashboard/authors/data-table";
+import DownloadPdfButton from "@/components/dashboard/authors/download-pdf-button";
+import SaveSheetAuthor from "@/components/dashboard/authors/save-sheet";
+import ContentHead from "@/components/dashboard/content-head";
+
 import AuthorService from "@/lib/services/author-service";
-import SaveSheetAuthor from "./components/save-sheet";
-import DownloadPdfButton from "./components/download-pdf-button";
 
 const rightContentItem = (
   <>

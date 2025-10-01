@@ -2,7 +2,7 @@
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, useSidebar } from "@/components/ui/sidebar";
 
-import AppLogo from "./app-logo";
+import AppLogo from "../app-logo";
 import NavMain from "./nav/nav-main";
 import NavProfile from "./nav/nav-profile";
 import NavLogout from "./nav/nav-logout";

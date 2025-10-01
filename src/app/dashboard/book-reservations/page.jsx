@@ -1,4 +1,4 @@
-import BookReservationBreadcrumb from "./components/breadcrumb";
+import BookReservationBreadcrumb from "@/components/dashboard/book-reservations/breadcrumb";
 
 export default function BookReservationPage() {
   return(

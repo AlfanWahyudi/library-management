@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import BookBreadcrumb from "./components/breadcrumb";
+import BookBreadcrumb from "@/components/dashboard/books/breadcrumb";
 
 
 export default function BookPage({}) {

@@ -1,4 +1,4 @@
-import MemberBreadcrumb from "./components/breadcrumb";
+import MemberBreadcrumb from "@/components/dashboard/members/breadcrumb";
 
 export default function MemberPage() {
   return(

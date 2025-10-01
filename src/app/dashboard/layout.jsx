@@ -1,10 +1,10 @@
 'use client'
 
+import DashHeader from "@/components/dashboard/header";
+import DashMainContent from "@/components/dashboard/main-content";
+import DashSidebar from "@/components/dashboard/sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import BreadCrumbContextProvider from "@/store/breadcrumb-context";
-import DashHeader from "./components/header";
-import DashSidebar from "./components/sidebar";
-import DashMainContent from "./components/main-content";
 
 export default function DashboardLayout({ children }) {
   return (
