@@ -13,8 +13,16 @@ const AuthorViewDAL = {
   },
 
   getAllForExcel: async () => {
-    const authors = await sql`select * from ${ sql(tableName) } order by ${ sql(tableFields[8]) } desc`
-    return authors.map((author) => createAuthorViewModel({...author}))
+    const result = []
+
+    await sql`
+      select * from ${ sql(tableName) } 
+      order by ${ sql(tableFields[8]) } desc
+    `.forEach(row => {
+      result.push(createAuthorViewModel({...row}))
+    })
+
+    return result
   },
 
   getAllPaginated: async ({ 
