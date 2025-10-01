@@ -3,8 +3,7 @@ import 'server-only'
 import RolePermissionDAL from '@/lib/dal/role-permission-dal'
 import SessionDAL from '@/lib/dal/session-dal'
 
-const Permission = {
-  isAllowed: async ({ name }) => {
+const isUserAllowed = async ({ name }) => {
     const result = {
       success: false,
       message: `Sorry, you don’t have permission to access this feature.`
@@ -25,6 +24,7 @@ const Permission = {
 
     return result
   }
-}
 
-export default Permission
+export {
+  isUserAllowed
+}
