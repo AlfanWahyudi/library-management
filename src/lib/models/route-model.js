@@ -1,6 +1,6 @@
-import httpMethodConstant from "../constants/http-method-const"
+import { HTTP } from "../constants/http"
 
-const isMethodCorrect = (method) => httpMethodConstant[method.toLowerCase()] !== undefined
+const isMethodCorrect = (method) => HTTP.METHOD[method.toUpperCase()] !== undefined
 
 const isRouteModelValid = (obj) => {
   if (typeof(obj) !== 'object') return false
@@ -14,13 +14,13 @@ function createRouteModel({ url, title, method, path = null }) {
   if (typeof(title) !== 'string') throw new Error('title property must be a string')
   if (typeof(method) !== 'string') throw new Error('method property must be a string')
     
-  const methods = Object.getOwnPropertyNames(httpMethodConstant).join(', ')
+  const methods = Object.getOwnPropertyNames(HTTP.METHOD).join(', ')
   if (!isMethodCorrect(method)) throw new Error(`http method can only ${methods}`)
 
   return {
     url,
     title,
-    method: method.toLowerCase(),
+    method: method.toUpperCase(),
     path,
   }
 }

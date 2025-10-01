@@ -18,30 +18,30 @@ import {
 import { LayoutDashboard, Book, Users, Scale, ChevronRight } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import routeConst from "@/lib/constants/route-const";
+import { ROUTE } from "@/lib/constants/route";
 
 const menus = [
 	{
-		...routeConst.dashboard,
+		...ROUTE.DASHBOARD,
 		icon: LayoutDashboard,
 	},
 	{
-		...routeConst.books,
+		...ROUTE.BOOKS,
 		icon: Book,
 		subMenus: [
-			{...routeConst.books},
-			{...routeConst.authors},
-			{...routeConst.bookReservations},
-			{...routeConst.bookLoans},
-			{...routeConst.loanViolations},
+			{...ROUTE.BOOKS},
+			{...ROUTE.AUTHORS},
+			{...ROUTE.BOOK_RESERVATIONS},
+			{...ROUTE.BOOK_LOANS},
+			{...ROUTE.LOAN_VIOLATIONS},
 		],
 	},
 	{
-		...routeConst.violationSanctions,
+		...ROUTE.VIOLATION_SANCTIONS,
 		icon: Scale,
 	},
 	{
-		...routeConst.members,
+		...ROUTE.MEMBERS,
 		icon: Users,
 	},
 ];

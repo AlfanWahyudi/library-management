@@ -1,4 +1,4 @@
-const queryParamsConstant = {
+export const DATA_TABLE_PARAMS = {
   PAGE: 'page',
   LIMIT: 'limit',
   ORDER_BY: 'orderBy',
@@ -6,6 +6,3 @@ const queryParamsConstant = {
   SEARCH: 'search',
   SEARCH_FIELDS: 'searchFields'
 }
-
-
-export default queryParamsConstant

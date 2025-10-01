@@ -4,7 +4,7 @@ import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import queryParamsConst from '@/lib/constants/query-params-const'
+import { DATA_TABLE_PARAMS } from '@/lib/constants/data-table-params'
 
 //TODO: bikin factory pattern nya dengan function aja untuk object defaultParamsVal 
 export default function useServerSideDataTable({
@@ -24,18 +24,18 @@ export default function useServerSideDataTable({
 }) {
   const searchParams = useSearchParams()
 
-  const [searchFilter, setSearchFilter] = useState(searchParams.get(queryParamsConst.SEARCH) || defaultParamsVal.search)
+  const [searchFilter, setSearchFilter] = useState(searchParams.get(DATA_TABLE_PARAMS.SEARCH) || defaultParamsVal.search)
 
   const [pagination, setPagination] = useState({
-    pageIndex: parseInt(searchParams.get(queryParamsConst.PAGE)) || defaultParamsVal.page, //initial page index
-    pageSize: parseInt(searchParams.get(queryParamsConst.LIMIT)) || defaultParamsVal.limit, //default page size
+    pageIndex: parseInt(searchParams.get(DATA_TABLE_PARAMS.PAGE)) || defaultParamsVal.page, //initial page index
+    pageSize: parseInt(searchParams.get(DATA_TABLE_PARAMS.LIMIT)) || defaultParamsVal.limit, //default page size
   });
 
   const [sorting, setSorting] = useState([
     {
-      id: searchParams.get(queryParamsConst.ORDER_BY) || defaultParamsVal.orderBy,
-      desc: searchParams.get(queryParamsConst.ORDER_DIR) 
-        ? searchParams.get(queryParamsConst.ORDER_DIR).toLowerCase() === defaultParamsVal.orderDir
+      id: searchParams.get(DATA_TABLE_PARAMS.ORDER_BY) || defaultParamsVal.orderBy,
+      desc: searchParams.get(DATA_TABLE_PARAMS.ORDER_DIR) 
+        ? searchParams.get(DATA_TABLE_PARAMS.ORDER_DIR).toLowerCase() === defaultParamsVal.orderDir
         : true,
     }
   ])
@@ -60,24 +60,24 @@ export default function useServerSideDataTable({
   })
 
   useEffect(() => {
-    const searchFields = searchParams.get(queryParamsConst.SEARCH_FIELDS) || defaultParamsVal.searchFields
+    const searchFields = searchParams.get(DATA_TABLE_PARAMS.SEARCH_FIELDS) || defaultParamsVal.searchFields
 
     const updatedParams = new URLSearchParams()
-    updatedParams.set(queryParamsConst.PAGE, pagination.pageIndex)
-    updatedParams.set(queryParamsConst.LIMIT, pagination.pageSize)
-    updatedParams.set(queryParamsConst.SEARCH, searchFilter)
-    updatedParams.set(queryParamsConst.SEARCH_FIELDS, searchFields)
-    updatedParams.set(queryParamsConst.ORDER_BY, sorting[0].id)
-    updatedParams.set(queryParamsConst.ORDER_DIR, sorting[0].desc ? 'desc' : 'asc')
+    updatedParams.set(DATA_TABLE_PARAMS.PAGE, pagination.pageIndex)
+    updatedParams.set(DATA_TABLE_PARAMS.LIMIT, pagination.pageSize)
+    updatedParams.set(DATA_TABLE_PARAMS.SEARCH, searchFilter)
+    updatedParams.set(DATA_TABLE_PARAMS.SEARCH_FIELDS, searchFields)
+    updatedParams.set(DATA_TABLE_PARAMS.ORDER_BY, sorting[0].id)
+    updatedParams.set(DATA_TABLE_PARAMS.ORDER_DIR, sorting[0].desc ? 'desc' : 'asc')
 
     // adding other params
     for (const [key, value] of searchParams.entries()) {
       if (
-        key !== queryParamsConst.PAGE &&
-        key !== queryParamsConst.LIMIT &&
-        key !== queryParamsConst.SEARCH &&
-        key !== queryParamsConst.ORDER_BY &&
-        key !== queryParamsConst.ORDER_DIR
+        key !== DATA_TABLE_PARAMS.PAGE &&
+        key !== DATA_TABLE_PARAMS.LIMIT &&
+        key !== DATA_TABLE_PARAMS.SEARCH &&
+        key !== DATA_TABLE_PARAMS.ORDER_BY &&
+        key !== DATA_TABLE_PARAMS.ORDER_DIR
       ) {
         updatedParams.set(key, value)
       }

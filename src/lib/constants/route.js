@@ -1,58 +1,56 @@
 import { createRouteModel } from "../models/route-model"
 
-const routeConst = {
-  login: createRouteModel({
+export const ROUTE = {
+  LOGIN: createRouteModel({
     url: '/login',
     title: 'Login',
     method: 'get',
   }),
-  dashboard: createRouteModel({
+  DASHBOARD: createRouteModel({
     url: '/dashboard',
     title: 'Dashboard',
     method: 'get'
   }),
-  authors: createRouteModel({
+  AUTHORS: createRouteModel({
     url: '/dashboard/authors',
     title: 'Pengarang',
     method: 'get',
     path: {
     },
   }),
-  bookLoans: createRouteModel({
+  BOOK_LOANS: createRouteModel({
     url: '/dashboard/book-loans',
     title: 'Peminjaman Buku',
     method: 'get',
   }),
-  bookReservations: createRouteModel({
+  BOOK_RESERVATIONS: createRouteModel({
     url: '/dashboard/book-reservations',
     title: 'Reservasi Buku',
     method: 'get',
   }),
-  books: createRouteModel({
+  BOOKS: createRouteModel({
     url: '/dashboard/books',
     title: 'Buku',
     method: 'get',
   }),
-  loanViolations: createRouteModel({
+  LOAN_VIOLATIONS: createRouteModel({
     url: '/dashboard/loan-violations',
     title: 'Pelanggaran Peminjaman Buku',
     method: 'get',
   }),
-  members: createRouteModel({
+  MEMBERS: createRouteModel({
     url: '/dashboard/members',
     title: 'Anggota Perpustakaan',
     method: 'get',
   }),
-  userProfiles: createRouteModel({
+  USER_PROFILES: createRouteModel({
     url: '/dashboard/user-profiles',
     title: 'Profile Pengguna',
     method: 'get',
   }),
-  violationSanctions: createRouteModel({
+  VIOLATION_SANCTIONS: createRouteModel({
     url: '/dashboard/violation-sanctions',
     title: 'Pelanggaran dan Sanksi',
     method: 'get',
   }),
 }
-
-export default routeConst

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import ContentHead from "./components/content-head"
 import { useSetBreadcrumb } from "@/hooks/use-breadcrumb"
-import routeConst from "@/lib/constants/route-const"
+import { ROUTE } from "@/lib/constants/route"
 
 const rightContentItem = (
   <>
@@ -13,7 +13,7 @@ const rightContentItem = (
 )
 
 const breadcrumbItems = [
-  {...routeConst.dashboard}
+  {...ROUTE.DASHBOARD}
 ]
 
 export default function DashboardPage() {

@@ -1,11 +1,11 @@
 'use client'
 
 import { useSetBreadcrumb } from "@/hooks/use-breadcrumb"
-import routeConst from "@/lib/constants/route-const"
+import { ROUTE } from "@/lib/constants/route"
 
 const breadcrumbItems = [
-  {...routeConst.dashboard},
-  {...routeConst.members}
+  {...ROUTE.DASHBOARD},
+  {...ROUTE.MEMBERS}
 ]
 
 export default function MemberBreadcrumb() {
