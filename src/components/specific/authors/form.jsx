@@ -5,18 +5,18 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authorClientSchema } from "@/lib/schemas/author-schema";
-import AlertMain from "@/components/alert-main";
+import AlertMain from "@/components/common/alert-main";
 import useFetch from "@/hooks/use-fetch";
 import { deleteAuthor, saveAuthor } from "@/lib/http/author-http";
 import { useEffect } from "react";
 import { getAllCountry } from "@/lib/http/country-http";
 
-import MainContentForm from "@/components/form/main-content-form";
-import InputControlForm from "@/components/form/input-control-form";
-import TextareaControlForm from "@/components/form/textarea-control-form";
-import SelectControlForm from "@/components/form/select-control-form";
+import MainContentForm from "@/components/common/form/main-content-form";
+import InputControlForm from "@/components/common/form/input-control-form";
+import TextareaControlForm from "@/components/common/form/textarea-control-form";
+import SelectControlForm from "@/components/common/form/select-control-form";
 import { Loader2Icon } from "lucide-react";
-import AlertDialogMain from "@/components/alert-dialog/alert-dialog-main";
+import AlertDialogMain from "@/components/common/alert-dialog/alert-dialog-main";
 
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka

@@ -1,4 +1,4 @@
-import UserProfileBreadcrumb from "@/components/dashboard/user-profiles/breadcrumb";
+import UserProfileBreadcrumb from "@/components/specific/user-profiles/breadcrumb";
 
 export default function userProfilePage({  }) {
   return (

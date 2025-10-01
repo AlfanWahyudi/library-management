@@ -1,8 +1,8 @@
 'use client'
 
-import DashHeader from "@/components/dashboard/header";
-import DashMainContent from "@/components/dashboard/main-content";
-import DashSidebar from "@/components/dashboard/sidebar";
+import DashHeader from "@/components/specific/header";
+import DashMainContent from "@/components/specific/main-content";
+import DashSidebar from "@/components/specific/sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import BreadCrumbContextProvider from "@/store/breadcrumb-context";
 

@@ -1,10 +1,10 @@
 "use client"
 
-import DataTable from "@/components/data-table/data-table-main";
-import FilterWrapperDataTable from "@/components/data-table/filter-wrapper-data-table";
+import DataTable from "@/components/common/data-table/data-table-main";
+import FilterWrapperDataTable from "@/components/common/data-table/filter-wrapper-data-table";
 import { useRouter } from "next/navigation";
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table";
-import WrapperDataTable from "@/components/data-table/wrapper-data-table";
+import WrapperDataTable from "@/components/common/data-table/wrapper-data-table";
 import { 
   columnsDefAuthor, 
   searchingItemsAuthor, 

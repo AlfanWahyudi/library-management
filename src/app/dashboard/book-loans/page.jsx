@@ -1,4 +1,4 @@
-import BookLoanBreadcrumb from "@/components/dashboard/book-loans/breadcrumb";
+import BookLoanBreadcrumb from "@/components/specific/book-loans/breadcrumb";
 
 export default function BookLoanPage() {
   return(

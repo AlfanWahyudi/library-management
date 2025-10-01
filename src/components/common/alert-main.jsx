@@ -1,8 +1,8 @@
 'use client'
 
 import { CircleAlert, CircleCheck, CircleX, Info, X } from "lucide-react";
-import { Alert, AlertTitle, AlertDescription } from "./ui/alert"
-import { Button } from "./ui/button";
+import { Alert, AlertTitle, AlertDescription } from "../ui/alert"
+import { Button } from "../ui/button";
 import { useRef, useState } from "react";
 
 export default function AlertMain({ variant = 'info', title, children }) {

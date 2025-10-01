@@ -1,4 +1,4 @@
-import ViolationSanctionBreadcrumb from "@/components/dashboard/violation-sanctions/breadcrumb";
+import ViolationSanctionBreadcrumb from "@/components/specific/violation-sanctions/breadcrumb";
 
 export default function ViolationSanctionsPage() {
   return(

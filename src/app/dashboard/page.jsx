@@ -1,6 +1,6 @@
 'use client'
 
-import ContentHead from "@/components/dashboard/content-head"
+import ContentHead from "@/components/specific/content-head"
 import { Button } from "@/components/ui/button"
 import { useSetBreadcrumb } from "@/hooks/use-breadcrumb"
 import { ROUTE } from "@/lib/constants/route"

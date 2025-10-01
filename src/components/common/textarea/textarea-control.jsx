@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import InputErrorList from "./input-error-list";
+import InputErrorList from "@/components/common/input/input-error-list"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 
-export default function InputControl({ 
+export default function TextareaControl({ 
   name, 
   label, 
   hasError = false,
@@ -19,9 +19,9 @@ export default function InputControl({
   return (
     <div className="grid w-full gap-2" key={key}>
       <Label htmlFor={name}>
-        <span>{label} {isRequired && requiredSymbol}</span>
+        <span>{label}{isRequired && requiredSymbol}</span>
       </Label>
-      <Input name={name} {...props} />
+      <Textarea name={name} {...props} />
       {
         (hasError) && <InputErrorList messages={[...errorMsg]} />
       }

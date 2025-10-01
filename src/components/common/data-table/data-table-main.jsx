@@ -3,7 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { flexRender } from "@tanstack/react-table";
 import PaginationDataTable from "./pagination/pagination-data-table";
-import { Separator } from "../ui/separator";
+import { Separator } from "../../ui/separator";
 
 
 //TODO: rapihkan codingannya

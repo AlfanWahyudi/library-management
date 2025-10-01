@@ -1,6 +1,6 @@
 'use client'
 
-import PrimaryBreadcrumb from "@/components/primary-breadcrumb"
+import PrimaryBreadcrumb from "@/components/common/primary-breadcrumb"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@radix-ui/react-dropdown-menu"
 

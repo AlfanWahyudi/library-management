@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Sheet, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Eye, SquarePen } from "lucide-react";
-import SheetContentMain from "@/components/sheet/sheet-content-main";
+import SheetContentMain from "@/components/common/sheet/sheet-content-main";
 import AuthorForm from "./form";
 import { Table } from "@/components/ui/table";
-import AlertDialogInfo from "@/components/alert-dialog/alert-dialog-info";
+import AlertDialogInfo from "@/components/common/alert-dialog/alert-dialog-info";
 import { useRouter } from "next/navigation";
 
 // TODO: Feat View, dan Delete

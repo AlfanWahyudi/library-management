@@ -1,6 +1,6 @@
 "use client"
 
-import { Select, SelectContent, SelectGroup, SelectTrigger, SelectValue } from "../ui/select";
+import { Select, SelectContent, SelectGroup, SelectTrigger, SelectValue } from "../../ui/select";
 
 export default function FilterDataTable({ placeHolder }) {
   return (

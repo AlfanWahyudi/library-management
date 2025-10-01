@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AuthorForm from "./form";
-import SheetContentMain from "@/components/sheet/sheet-content-main";
-import AlertDialogInfo from "@/components/alert-dialog/alert-dialog-info";
+import SheetContentMain from "@/components/common/sheet/sheet-content-main";
+import AlertDialogInfo from "@/components/common/alert-dialog/alert-dialog-info";
 
 
 //TODO: Jangan tutup mmodal nya ketika click diluar modal component. close modal nya hanya dengan click tombol "tutup dan X"

@@ -1,7 +1,7 @@
 "use client"
 
-import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
+import { Button } from "../../ui/button";
+import { Separator } from "../../ui/separator";
 import SearchDataTable from "./search-data-table";
 
 export default function FilterWrapperDataTable({ searchingFieldItems, table, children }) {

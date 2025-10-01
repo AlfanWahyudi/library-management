@@ -1,8 +1,8 @@
-import AuthorBreadcrumb from "@/components/dashboard/authors/breadcrumb";
-import AuthorDataTable from "@/components/dashboard/authors/data-table";
-import DownloadPdfButton from "@/components/dashboard/authors/download-pdf-button";
-import SaveSheetAuthor from "@/components/dashboard/authors/save-sheet";
-import ContentHead from "@/components/dashboard/content-head";
+import AuthorBreadcrumb from "@/components/specific/authors/breadcrumb";
+import AuthorDataTable from "@/components/specific/authors/data-table";
+import DownloadPdfButton from "@/components/specific/authors/download-pdf-button";
+import SaveSheetAuthor from "@/components/specific/authors/save-sheet";
+import ContentHead from "@/components/specific/content-head";
 
 import AuthorService from "@/lib/services/author-service";
 

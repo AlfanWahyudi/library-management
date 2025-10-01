@@ -2,7 +2,7 @@
 
 import { createColumnHelper } from "@tanstack/react-table";
 
-import SortIndicatorTable from "@/components/data-table/sort-indicator-table";
+import SortIndicatorTable from "@/components/common/data-table/sort-indicator-table";
 import { formatDateTime } from "@/lib/utils/datetime";
 import ActionFieldAuthor from "./action-field";
 
