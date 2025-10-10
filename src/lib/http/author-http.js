@@ -35,9 +35,7 @@ const deleteAuthor = async ({ id }) => {
     throw new Error('Gagal menghapus data pengarang, mohon dicoba lagi nanti.')
   }
 
-  const resJson = await res.json()
-
-  return resJson.data
+  return 1
 }
 
 const downloadPdfAuthorAll = async () => {

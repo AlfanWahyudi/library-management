@@ -10,12 +10,14 @@ import { Table } from "@/components/ui/table";
 import AlertDialogInfo from "@/components/common/alert-dialog/alert-dialog-info";
 import { useRouter } from "next/navigation";
 
-// TODO: Feat View, dan Delete
+//TODO: FIX BUG alert kebuka 2x ketika berhasil hapus data 
 export default function ActionFieldAuthor({ author }) {
   const router = useRouter()
 
   const [ openAlert, setOpenAlert ] = useState(false)
   const [ openSheet, setOpenSheet ] = useState(false)
+
+  console.log(openAlert)
 
   const [action, setAction ] = useState({
     isViewOpen: false,

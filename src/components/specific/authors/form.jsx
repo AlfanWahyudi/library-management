@@ -43,16 +43,16 @@ export default function AuthorForm({
     resolver: zodResolver(authorClientSchema)
   })
 
-
   const {
-    error: authorError,
-    isPending,
-    runFetch: runFetchAuthor,
+    error: errorSaved,
+    isPending: pendingSaved,
+    runFetch: runSaveAuthor,
+    fetchedData: saved,
   } = useFetch({ initialValue: undefined })
 
 
   const {
-    error: countryErr,
+    error: errorCountry,
     runFetch: runFetchCountry,
     fetchedData: countries,
     reset: resetCountries,
@@ -60,9 +60,10 @@ export default function AuthorForm({
 
 
   const {
-    error: deleteErr,
-    isPending: isDeletePending,
+    error: errorDelete,
+    isPending: pendingDeleted,
     runFetch: runDelete,
+    fetchedData: deleted,
   } = useFetch({ initialValue: undefined })
 
 
@@ -76,31 +77,31 @@ export default function AuthorForm({
     } else {
       resetCountries()
     }
-  }, [openForm])
 
+    if (saved || deleted) {
+      console.log(deleted)
+      cbSuccess()
+    }
+
+    if (errorSaved || errorDelete) {
+      // TODO: handle error nya
+    }
+
+  }, [openForm, saved, errorSaved, deleted, errorDelete])
 
   const onSubmit = async (data, e) => {
     const id = author !== null ? author.id : null
 
     if (!viewOnly) {
-      await runFetchAuthor({ 
-        fetchFn: async() => await saveAuthor({data, id}), 
-        onSuccess: () => {
-          cbSuccess()
-        },
+      await runSaveAuthor({ 
+        fetchFn: async() => await saveAuthor({data, id})
       })
     }
   }
   
   const onDelete = async (id) => {
     await runDelete({
-      fetchFn: async() => await deleteAuthor({ id }),
-      onSuccess: () => {
-        cbSuccess()
-      },
-      onError: () => {
-        
-      }
+      fetchFn: async() => await deleteAuthor({ id })
     })
   }
 
@@ -122,14 +123,14 @@ export default function AuthorForm({
         <SheetTitle>{title}</SheetTitle>
       </SheetHeader>
       <div className="grid flex-1 auto-rows-min gap-6 px-4">
-        {authorError !== '' && (
+        {errorSaved !== '' && (
           <AlertMain title={errFormTitle} variant="error">
-            <p>{authorError}</p>
+            <p>{errorSaved}</p>
           </AlertMain>  
         )}
-        {countryErr && (
+        {errorCountry && (
           <AlertMain title='Error menampilkan daftar negara pada field kebangsaan' variant="error">
-            <p>{countryErr}</p>
+            <p>{errorCountry}</p>
           </AlertMain>  
         )}
         {!viewOnly && (
@@ -147,7 +148,7 @@ export default function AuthorForm({
           isRequired={true}
           placeholder="Pilih kebangsaan"
           items={countries.map((country) => ({ val: country.code, label: country.name }))}
-          disabled={countryErr || viewOnly}
+          disabled={errorCountry || viewOnly}
         />
         <InputControlForm 
           useFormProp={form}
@@ -167,9 +168,9 @@ export default function AuthorForm({
       {children}
       <SheetFooter>
         {!viewOnly && (
-          <Button type="submit" size='sm' disabled={isPending}>
-            {isPending && <Loader2Icon className="animate-spin" />}
-            {isPending 
+          <Button type="submit" size='sm' disabled={pendingSaved}>
+            {pendingSaved && <Loader2Icon className="animate-spin" />}
+            {pendingSaved 
               ? 'Mohon tunggu'
               : 'Simpan'
             }
