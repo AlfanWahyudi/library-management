@@ -1,23 +1,20 @@
 'use client';
 
-import { useState } from "react";
-import { Sheet, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useEffect, useState } from "react";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Eye, SquarePen } from "lucide-react";
 import SheetContentMain from "@/components/common/sheet/sheet-content-main";
 import AuthorForm from "./form";
 import { Table } from "@/components/ui/table";
-import AlertDialogInfo from "@/components/common/alert-dialog/alert-dialog-info";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-//TODO: FIX BUG alert kebuka 2x ketika berhasil hapus data 
 export default function ActionFieldAuthor({ author }) {
   const router = useRouter()
 
-  const [ openAlert, setOpenAlert ] = useState(false)
   const [ openSheet, setOpenSheet ] = useState(false)
-
-  console.log(openAlert)
+  const [ isSuccess, setIsSuccess ] = useState(false)
 
   const [action, setAction ] = useState({
     isViewOpen: false,
@@ -44,28 +41,27 @@ export default function ActionFieldAuthor({ author }) {
     setOpenSheet(true)
   }
 
-  const handleAlertAction = () => {
-    setOpenSheet(false)
-  }
-
   const handleSuccess = () => {
-    setOpenAlert(true)
+    setOpenSheet(false)
+    setIsSuccess(true)
     router.refresh()
   }
 
-  const titleAlert = action.isEditOpen ? 'Update pengarang' : 'Hapus pengarang'
-  const textAlert = action.isEditOpen ? 'Berhasil memperbarui data pengarang.' : 'Berhasil menghapus data pengarang.'
-  
+  useEffect(() => { 
+    if (isSuccess) { 
+      console.log('success')
+      const text = action.isEditOpen ? 'Berhasil memperbarui data pengarang' : 'Berhasil menghapus data pengarang'
+      toast.success(text, {
+        duration: 5000,
+        action: { label: 'Tutup', onClick: () => toast.dismiss() },
+      })
+
+      setIsSuccess(false)
+    }
+  }, [isSuccess])
+
   return (
     <>
-      <AlertDialogInfo
-        title={titleAlert}
-        open={openAlert}
-        onOpenChange={setOpenAlert}
-        cbAfterActionClicked={() => handleAlertAction()}
-      >
-        {textAlert}
-      </AlertDialogInfo>
       <Sheet open={openSheet} onOpenChange={setOpenSheet}>
         <div className="flex justify-center">
           <SheetTrigger asChild>

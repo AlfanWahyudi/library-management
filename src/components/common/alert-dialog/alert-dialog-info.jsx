@@ -14,7 +14,7 @@ import {
 export default function AlertDialogInfo({
   title,
   actionLabel = 'Oke',
-  cbAfterActionClicked = () => {},
+  cbAfterActionClicked = (evt) => {},
   children,
   ...props
 }) {
@@ -29,7 +29,7 @@ export default function AlertDialogInfo({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={() => cbAfterActionClicked()}>{actionLabel}</AlertDialogAction>
+          <AlertDialogAction onClick={(evt) => cbAfterActionClicked(evt)}>{actionLabel}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

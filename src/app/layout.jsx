@@ -1,5 +1,6 @@
 import { Open_Sans } from "next/font/google";
 import "../styles/globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
       className={`${openSans.variable} antialiased`}  
     >
       <body className="overflow-x-hidden max-w-screen">
+        <Toaster position="bottom-center" />
         <div id="modal"></div>
         {children}
       </body>
