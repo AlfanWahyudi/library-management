@@ -11,7 +11,6 @@ const rightContentItem = (
   </>
 )
 
-//TODO: validate query params with zod schema
 export default async function AuthorPage() {
   return (
     <>
