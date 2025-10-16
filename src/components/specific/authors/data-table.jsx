@@ -23,7 +23,7 @@ const defaultParam = {
 }
 
 //TODO: Tampilan Tamble bikin rapih
-//TODO: coba pikirin lagi bagus nya gimana untuk searching apakah harus sesuai dengan page yang sedang dibuka, atau bisa search ke semua data tanpa harus ada batasan seperti page, dll. 
+//TODO: tambahkan UI kondisi sendang panding fetching data nya
 //TODO: bikin hook nya untuk handle serverside datatable
 export default function AuthorDataTable() {
   const {
