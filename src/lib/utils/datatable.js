@@ -11,11 +11,35 @@ export const getPaginatedList = async ({
   searchFields,
   tableName
 }) => {
+  if (page === null || page === undefined) {
+    throw new Error('page property must not be empty.')
+  }
+
+  if (limit === null || limit === undefined) {
+    throw new Error('limit property must not be empty.')
+  }
+
+  if (orderBy === null || orderBy === undefined) {
+    throw new Error('orderBy property must not be empty.')
+  }
+
+  if (orderDir === null || orderDir === undefined) {
+    throw new Error('orderDir property must not be empty.')
+  }
+
+  if (tableName === null || tableName === undefined || tableName === '') {
+    throw new Error('tableName property must not be empty.')
+  }
+
   if (
     (search === null || search === undefined) &&
     searchFields.length === 0 
   ) {
     throw new Error('search and searchFields properties must not be empty.')
+  }
+
+  if ((search && search.length > 0) && (searchFields.length === 0)) {
+    throw new Error(`searchFields must not be empty when search is already filled.`)
   }
 
   const data = await sql`

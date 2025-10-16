@@ -1,3 +1,19 @@
+const getPaginatedListAuthor = async ({ page, limit, search, searchFields, orderBy, orderDir }) => {
+  const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir}).toString();
+  const res = await fetch(`/api/authors?${query}`)
+  
+  if (!res.ok) {
+    throw new Error(err)
+  }
+
+  const resJson = await res.json()
+
+  return {
+    data: resJson.data,
+    meta: resJson.meta
+  }
+}
+
 const saveAuthor = async ({ data, id = null }) => {
   let method = 'POST'
   let url = '/api/authors'
@@ -63,6 +79,7 @@ const downloadPdfAuthorAll = async () => {
 }
 
 export {
+  getPaginatedListAuthor,
   saveAuthor,
   deleteAuthor,
   downloadPdfAuthorAll,
