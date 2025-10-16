@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { getPaginatedListAuthor } from "@/lib/http/author-http";
 
-
 const defaultParam = {
   page: 0,
   limit: 10,
@@ -24,7 +23,6 @@ const defaultParam = {
 }
 
 //TODO: Tampilan Tamble bikin rapih
-//TODO: kasih delay fetch untuk search nya
 //TODO: coba pikirin lagi bagus nya gimana untuk searching apakah harus sesuai dengan page yang sedang dibuka, atau bisa search ke semua data tanpa harus ada batasan seperti page, dll. 
 //TODO: bikin hook nya untuk handle serverside datatable
 export default function AuthorDataTable() {
@@ -51,7 +49,7 @@ export default function AuthorDataTable() {
   const [pagination, setPagination] = useState({
     pageIndex: defaultParam.page,
     pageSize: defaultParam.limit
-  });
+  })
   const [sorting, setSorting] = useState([
     {
       id: defaultParam.orderBy,
