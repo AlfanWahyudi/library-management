@@ -4,10 +4,57 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { flexRender } from "@tanstack/react-table";
 import PaginationDataTable from "./pagination/pagination-data-table";
 import { Separator } from "../../ui/separator";
+import { Loader2Icon } from "lucide-react";
 
 
 //TODO: rapihkan codingannya
-export default function DataTableMain({ table }) {
+export default function DataTableMain({ table, isPending = false, error = false }) {
+  let bodyContent = null
+  if (error) {
+    bodyContent = (
+      <TableRow>
+        <TableCell colSpan={table.options.columns.length} className='h-24 text-center text-destructive text-md'>
+          Gagal menampilkan data yang Anda cari, mohon untuk mencoba lagi nanti.
+        </TableCell>
+      </TableRow>
+    )
+  } else if (isPending) {
+    bodyContent = (
+      <TableRow>
+        <TableCell colSpan={table.options.columns.length} className='h-24 text-center text-md'>
+          <p className="inline-flex gap-1 items-center justify-center">
+            <Loader2Icon className="animate-spin" /> Please wait...
+          </p>
+        </TableCell>
+      </TableRow>
+    )
+  } else {
+    if (table.getRowModel().rows?.length) {
+      bodyContent = (
+        table.getRowModel().rows.map((row) => (
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() && 'selected'}
+          >
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))
+      )
+    } else {
+      bodyContent = (
+        <TableRow>
+          <TableCell colSpan={table.options.columns.length} className='h-24 text-center text-md'>
+            No results.
+          </TableCell>
+        </TableRow>
+      )
+    }
+  }
+
   return (
     <article className="overflow-hidden rounded-md border">
       <Table>
@@ -28,27 +75,7 @@ export default function DataTableMain({ table }) {
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length 
-            ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={table.options.columns.length} className='h-24 text-center'>
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+          {bodyContent}
         </TableBody>
       </Table>
       <Separator className='mt-2' />

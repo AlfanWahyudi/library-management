@@ -12,7 +12,6 @@ import { getPaginatedListAuthor } from "@/lib/http/author-http"
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table"
 
 //TODO: Tampilan Tamble bikin rapih
-//TODO: tambahkan UI kondisi sendang panding fetching data nya
 export default function AuthorDataTable() {
   const {
     error,
@@ -28,9 +27,7 @@ export default function AuthorDataTable() {
     <WrapperDataTable>
       <FilterWrapperDataTable searchingFieldItems={searchingItemsAuthor} table={table}>
       </FilterWrapperDataTable>
-      {!error && <DataTable table={table} />}
-      {/* //TODO: buat component untuk menampilkan pesan error nya */}
-      {error && <h1>Error menampilkan data nya nih hadehh. Coba lagi nanti yaaa</h1>}
+      <DataTable table={table} isPending={isPending} error={error} />
     </WrapperDataTable>
   )
 }
