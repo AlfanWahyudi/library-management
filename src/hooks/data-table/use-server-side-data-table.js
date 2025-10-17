@@ -1,53 +1,59 @@
 'use client'
 
-import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
+import { useReactTable, getCoreRowModel } from "@tanstack/react-table"
+import useFetch from "../use-fetch"
 
-import { DATA_TABLE_PARAMS } from '@/lib/constants/data-table-params'
-
-//TODO: bikin factory pattern nya dengan function aja untuk object defaultParamsVal 
-export default function useServerSideDataTable({
-  router,
+export default function useServerSideDataTable({ 
+  fetchingData,
   columnsDef,
-  dataSource,
-  metaSource,
-  defaultParamsVal = {
-    search: '', 
-    searchFields: '',
-    page: 0, 
-    limit: 10, 
-    orderBy: 'updated_at', 
-    orderDir: 'desc'  
-  },
-  tanstackTableOpt = {},
+  otherTanStackProps = {},
+  page = 0, 
+  limit = 10, 
+  search = '', 
+  searchFields = '', 
+  orderBy = 'updated_at', 
+  orderDir = 'desc' 
 }) {
-  const searchParams = useSearchParams()
+  const {
+    error,
+    fetchedData,
+    isPending,
+    reset,
+    runFetch,
+  } = useFetch({ 
+    initialValue: { 
+      data: [], 
+      meta: {
+        page: 0,
+        limit: 0,
+        dataCount: 0,
+        pageCount: 0,
+        itemsCount: 0,
+      } 
+    } 
+  })
 
-  const [searchFilter, setSearchFilter] = useState(searchParams.get(DATA_TABLE_PARAMS.SEARCH) || defaultParamsVal.search)
-
+  const [searchFilter, setSearchFilter] = useState(search)
   const [pagination, setPagination] = useState({
-    pageIndex: parseInt(searchParams.get(DATA_TABLE_PARAMS.PAGE)) || defaultParamsVal.page, //initial page index
-    pageSize: parseInt(searchParams.get(DATA_TABLE_PARAMS.LIMIT)) || defaultParamsVal.limit, //default page size
-  });
-
+    pageIndex: page,
+    pageSize: limit
+  })
   const [sorting, setSorting] = useState([
     {
-      id: searchParams.get(DATA_TABLE_PARAMS.ORDER_BY) || defaultParamsVal.orderBy,
-      desc: searchParams.get(DATA_TABLE_PARAMS.ORDER_DIR) 
-        ? searchParams.get(DATA_TABLE_PARAMS.ORDER_DIR).toLowerCase() === defaultParamsVal.orderDir
-        : true,
+      id: orderBy,
+      desc: orderDir.toLowerCase() === 'desc',
     }
   ])
 
   const table = useReactTable({  
-    data: [...dataSource],
+    data: [...fetchedData.data],
     columns: columnsDef, 
     manualFiltering: true, //turn off client-side filtering
     manualPagination: true, //turn off client-side pagination
     manualSorting: true, //turn off client-side sorting
     getCoreRowModel: getCoreRowModel(),
-    rowCount: metaSource.itemsCount, //pass in the total row count so the table knows how many pages there are (pageCount calculated internally if not provided)
+    rowCount: fetchedData.meta.itemsCount, //pass in the total row count so the table knows how many pages there are (pageCount calculated internally if not provided)
     onPaginationChange: setPagination, //update the pagination state when internal APIs mutate the pagination state
     onSortingChange: setSorting,
     onGlobalFilterChange: setSearchFilter,
@@ -56,43 +62,39 @@ export default function useServerSideDataTable({
       sorting,
       globalFilter: searchFilter
     },
-    ...tanstackTableOpt
+    ...otherTanStackProps
   })
 
   useEffect(() => {
-    const searchFields = searchParams.get(DATA_TABLE_PARAMS.SEARCH_FIELDS) || defaultParamsVal.searchFields
-
-    const updatedParams = new URLSearchParams()
-    updatedParams.set(DATA_TABLE_PARAMS.PAGE, pagination.pageIndex)
-    updatedParams.set(DATA_TABLE_PARAMS.LIMIT, pagination.pageSize)
-    updatedParams.set(DATA_TABLE_PARAMS.SEARCH, searchFilter)
-    updatedParams.set(DATA_TABLE_PARAMS.SEARCH_FIELDS, searchFields)
-    updatedParams.set(DATA_TABLE_PARAMS.ORDER_BY, sorting[0].id)
-    updatedParams.set(DATA_TABLE_PARAMS.ORDER_DIR, sorting[0].desc ? 'desc' : 'asc')
-
-    // adding other params
-    for (const [key, value] of searchParams.entries()) {
-      if (
-        key !== DATA_TABLE_PARAMS.PAGE &&
-        key !== DATA_TABLE_PARAMS.LIMIT &&
-        key !== DATA_TABLE_PARAMS.SEARCH &&
-        key !== DATA_TABLE_PARAMS.ORDER_BY &&
-        key !== DATA_TABLE_PARAMS.ORDER_DIR
-      ) {
-        updatedParams.set(key, value)
+    const fetch = async () => {
+      const authorParam = {
+        searchFields: searchFields,
+        page: pagination.pageIndex,
+        limit: pagination.pageSize,
+        search: searchFilter,
+        orderBy: sorting[0].id,
+        orderDir: sorting[0].desc ? 'desc' : 'asc', 
       }
+
+      await runFetch({ 
+        fetchFn: async() => await fetchingData(authorParam)
+      })
     }
 
-    router.replace(`?${updatedParams.toString()}`) //update current url
-  }, [router, defaultParamsVal.searchFields, searchFilter, pagination, sorting, searchParams])
-
+    fetch()
+  }, [searchFields, searchFilter, pagination, sorting])
 
   return {
-    searchParams,
     table,
+    error,
+    isPending,
+    fetchedData,
+    searchFilter,
     pagination,
     sorting,
-    searchFilter,
-    defaultParamsVal
+    setSorting,
+    setPagination,
+    reset,
+    setSearchFilter,
   }
 }
