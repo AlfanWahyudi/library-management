@@ -87,7 +87,9 @@ export default function ActionFieldAuthor({ author }) {
             </Button>
           </SheetTrigger>
         </div>
-        <SheetContentMain>
+        <SheetContentMain
+          preventPointerDownOutside={action.isEditOpen}
+        >
           <AuthorForm 
             openForm={openSheet} 
             cbSuccess={handleSuccess}

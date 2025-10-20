@@ -8,7 +8,6 @@ import AuthorForm from "./form";
 import SheetContentMain from "@/components/common/sheet/sheet-content-main";
 import { toast } from "sonner";
 
-//TODO: Jangan tutup mmodal nya ketika click diluar modal component. close modal nya hanya dengan click tombol "tutup dan X"
 export default function SaveSheetAuthor({
 }) {
   const router = useRouter()
@@ -40,7 +39,9 @@ export default function SaveSheetAuthor({
         <SheetTrigger asChild>
           <Button size='sm'>Tambah pengarang</Button>
         </SheetTrigger>
-        <SheetContentMain>
+        <SheetContentMain
+          preventPointerDownOutside={true}
+        >
           <AuthorForm 
             openForm={openForm}
             cbSuccess={handleSuccess}

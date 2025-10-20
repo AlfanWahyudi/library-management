@@ -28,7 +28,7 @@ export default function AuthorForm({
   author = null,
   title,
   viewOnly = false,
-  children
+  children,
 }) {
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
