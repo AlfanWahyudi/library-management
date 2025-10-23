@@ -1,6 +1,6 @@
 "use client"
 
-import RowOptionDataTable from "./row-option-data-table"
+import RowOptionDataTable from "./row-option/row-option-data-table"
 import NavigatePageContent from "./navigate-page-content"
 import PaginateLabel from "./paginate-label"
 
