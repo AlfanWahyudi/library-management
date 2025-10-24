@@ -5,6 +5,7 @@ import { createAuthorDTO } from '../dto/author-dto'
 import AuthorDAL from '../dal/author-dal'
 import CountryDAL from '../dal/country-dal'
 import { createCountry } from '../models/country-model'
+import { generateAuthorExcel } from '../excel/author-excel'
 
 const resourceCode = 'AUT'
 
@@ -30,6 +31,13 @@ const AuthorService = {
 
   //   return await AuthorDAL.getAll()
   // },
+
+  exportToExcel: async () => {
+    const authors = await AuthorViewDAL.getAllForExcel()
+    const fileBuffer = await generateAuthorExcel({ authors })
+
+    return fileBuffer
+  },
 
   getAllPaginated: async ({
     page, 
