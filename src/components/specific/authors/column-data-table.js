@@ -2,50 +2,73 @@
 
 import { createColumnHelper } from "@tanstack/react-table";
 
-import SortIndicatorTable from "@/components/common/data-table/sort-indicator-table";
+import ColSortingHeader from "@/components/common/data-table/header/col-sorting-header";
 import { formatDateTime } from "@/lib/utils/datetime";
 import ActionFieldAuthor from "./action-field";
-
+import ColHeader from "@/components/common/data-table/header/col-header";
 
 const columnHelper = createColumnHelper()
-
 
 const columnsDefAuthor = [
   columnHelper.accessor('fullName', {
     id: 'full_name',
-    header: ({ column }) => SortIndicatorTable({column, headerName: 'Nama Lengkap'}),
+    header: ({ column }) => (
+      <ColHeader>
+        <ColSortingHeader column={column} headerName='Nama Lengkap' />
+      </ColHeader>
+    ),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => row.country.name, {
     id: 'country_name',
-    header: () => 'Kebangsaan',
-    header: ({ column }) => SortIndicatorTable({column, headerName: 'Kebangsaan'}),
+    header: ({ column }) => (
+      <ColHeader>
+        <ColSortingHeader column={column} headerName='Kebangsaan' />
+      </ColHeader>
+    ),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${row.activeSince || '-'}`, {
     id: 'active_since',
-    header: () => 'Aktif Sejak',
-    header: ({ column }) => SortIndicatorTable({column, headerName: 'Aktif Sejak'}),
+    header: ({ column }) => (
+      <ColHeader>
+        <ColSortingHeader column={column} headerName='Aktif Sejak' />
+      </ColHeader>
+    ),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${row.about || '-'}`, {
     id: 'about',
-    header: ({ column }) => SortIndicatorTable({column, headerName: 'Tentang'}),
+    header: ({ column }) => (
+      <ColHeader>
+        <ColSortingHeader column={column} headerName='Tentang' />
+      </ColHeader>
+    ),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${formatDateTime({ datetime: new Date(row.createdAt) })  || '-'}`, {
     id: 'created_at',
-    header: ({ column }) => SortIndicatorTable({column, headerName: 'Tanggal Dibuat'}),
+    header: ({ column }) => (
+      <ColHeader>
+        <ColSortingHeader column={column} headerName='Tanggal Dibuat' />
+      </ColHeader>
+    ),
     cell: props => props.getValue(),
   }),
   columnHelper.accessor(row => `${formatDateTime({ datetime: new Date(row.updatedAt) })  || '-'}`, {
     id: 'updated_at',
-    header: ({ column }) => SortIndicatorTable({column, headerName: 'Tanggal Diperbaharui'}),
+    header: ({ column }) => (
+      <ColHeader>
+        <ColSortingHeader column={column} headerName='Tanggal Diperbaharui' />
+      </ColHeader>
+    ),
     cell: props => props.getValue(),
   }),
   columnHelper.display({
     id: 'actions',
-    header: () => 'Aksi',
+    header: () => (
+      <ColHeader className='text-center'>Aksi</ColHeader>
+    ),
     enableSorting: false,
     cell: ({ row }) => {
       const author = row.original

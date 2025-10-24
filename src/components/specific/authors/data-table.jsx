@@ -11,7 +11,6 @@ import {
 import { getPaginatedListAuthor } from "@/lib/http/author-http"
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table"
 
-//TODO: Tampilan Tamble bikin rapih
 export default function AuthorDataTable() {
   const {
     error,

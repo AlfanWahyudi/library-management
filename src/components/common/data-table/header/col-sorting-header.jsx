@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
-export default function SortIndicatorTable({ column, headerName }) {
+export default function ColSortingHeader({ column, headerName }) {
   return (
     <Button
       variant="ghost"
+      size='default'
       onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
     >
       {headerName}
