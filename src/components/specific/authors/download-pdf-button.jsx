@@ -5,33 +5,24 @@ import { Button } from "@/components/ui/button"
 import { downloadPdfAuthorAll } from "@/lib/http/author-http"
 import { Loader2Icon } from "lucide-react"
 import { useEffect } from "react"
+import { downloadBlobData } from "@/lib/utils/download-util"
+import { toast } from "sonner"
 
 export default function DownloadPdfButton({}) {
   const {
     error,
     isPending,
     runFetch,
+    reset,
     fetchedData
   } = useFetch({ initialValue: undefined })
 
   const onSuccessFetchedData = () => {
-    console.log(fetchedData)
-    //TODO: buat util function untuk trigger download nya
-    // 4. Create a temporary link and trigger the download
-    const url = window.URL.createObjectURL(fetchedData.blobData);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fetchedData.filename;
-    document.body.appendChild(a);
-    a.click();
-
-    // 5. Cleanup
-    a.remove();
-    window.URL.revokeObjectURL(url);
+    downloadBlobData({ blob: fetchedData.blobData, filename: fetchedData.filename })
   }
 
   const onErrorFetchedData = () => {
-   //TODO 
+    toast.error(error)
   }
 
   useEffect(() => {
@@ -45,9 +36,8 @@ export default function DownloadPdfButton({}) {
 
   }, [fetchedData, error])
 
-
-  //TODO: ganti untuk set on success download nya lewat fetched Data
   const handleDownload = async () => {
+    reset()
     await runFetch({
       fetchFn: async() => await downloadPdfAuthorAll(),
     })

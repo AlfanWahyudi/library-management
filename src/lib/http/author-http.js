@@ -1,3 +1,5 @@
+import { getFilenameFromRes } from "../utils/http";
+
 const getPaginatedListAuthor = async ({ page, limit, search, searchFields, orderBy, orderDir }) => {
   const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir}).toString();
   const res = await fetch(`/api/authors?${query}`)
@@ -58,16 +60,14 @@ const downloadPdfAuthorAll = async () => {
   const res = await fetch('/api/authors/files?extension=xlsx')      
 
   if (!res.ok) {
-    throw new Error('Gagal download pdf data pengarang, mohon dicoba lagi nanti.')
+    throw new Error('Gagal download data pengarang, mohon dicoba lagi nanti.')
   }
 
-  //TODO: buat utils function untuk handle ini
-  // 3. Extract filename from Content-Disposition header (if available)
   let filename = "authors-file";
-  const disposition = res.headers.get("Content-Disposition");
-  if (disposition && disposition.includes("filename=")) {
-    const splitted = disposition.split("filename=")
-    filename = splitted[1].replaceAll(`"`, ``)
+
+  const filenameRes = getFilenameFromRes(res)
+  if (filenameRes) {
+    filename = filenameRes
   }
 
   const blobData = await res.blob()
