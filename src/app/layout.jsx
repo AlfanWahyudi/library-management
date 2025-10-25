@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
       className={`${openSans.variable} antialiased`}  
     >
       <body className="overflow-x-hidden max-w-screen">
-        <Toaster position="bottom-center" />
+        <Toaster position="top-center" />
         <div id="modal"></div>
         {children}
       </body>
