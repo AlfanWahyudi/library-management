@@ -2,112 +2,96 @@
 
 import {
 	SidebarMenu,
-	SidebarMenuItem,
-	SidebarMenuButton,
-	SidebarMenuSub,
-	SidebarMenuSubItem,
-	SidebarMenuSubButton,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 
-import { LayoutDashboard, Book, Users, Scale, ChevronRight } from "lucide-react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { LayoutDashboard, Users, UserPen, Gavel, BookText, BookUp, Scale } from "lucide-react";
 import { ROUTE } from "@/lib/constants/route";
+import SidebarMenuItemDefault from "@/components/common/sidebar-menu/sidebar-menu-item-default";
+import SidebarMenuItemCollapsible from "@/components/common/sidebar-menu/sidebar-menu-item-collapsible";
 
 const menus = [
 	{
-		...ROUTE.DASHBOARD,
-		icon: LayoutDashboard,
+		title: null,
+		items: [
+			{
+				...ROUTE.DASHBOARD,
+				icon: LayoutDashboard,
+			},
+			{
+				...ROUTE.MEMBERS,
+				icon: Users,
+			},
+		]
 	},
 	{
-		...ROUTE.BOOKS,
-		icon: Book,
-		subMenus: [
-			{...ROUTE.BOOKS},
-			{...ROUTE.AUTHORS},
-			{...ROUTE.BOOK_RESERVATIONS},
-			{...ROUTE.BOOK_LOANS},
-			{...ROUTE.LOAN_VIOLATIONS},
-		],
+		title: 'Buku',
+		items: [
+			{
+				...ROUTE.BOOKS,
+				icon: BookText
+			},
+			{
+				...ROUTE.AUTHORS,
+				icon: UserPen,
+			},
+			{
+				...ROUTE.BOOK_LOANS,
+				icon: BookUp
+			},
+		]
 	},
 	{
-		...ROUTE.VIOLATION_SANCTIONS,
-		icon: Scale,
-	},
-	{
-		...ROUTE.MEMBERS,
-		icon: Users,
-	},
+		title: 'Pelanggaran',
+		items: [
+			{
+				...ROUTE.VIOLATIONS,
+				icon: Scale
+			},
+			{
+				...ROUTE.LOAN_VIOLATIONS,
+				icon: Gavel,
+			},
+		]
+	}
 ];
 
 export default function NavMain() {
-	const pathname = usePathname()
-
 	return (
-		<SidebarMenu>
-			{menus.map((item) => {
-				let menuItem = null;
+		<>
+			{menus.map((menu) => (
+				<SidebarGroup key={menu.title}>
+					{menu.title && <SidebarGroupLabel>{menu.title}</SidebarGroupLabel>}
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{menu.items.map((item) => {
+								let menuItem = null;
 
-				if (item["subMenus"]) {
-					menuItem = (
-						<Collapsible className="group/collapsible" key={item.title}>
-							<SidebarMenuItem>
-								<CollapsibleTrigger asChild>
-									<SidebarMenuButton tooltip={item.title}>
-										{item.icon && <item.icon />}
-										<span>{item.title}</span>
-										<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-									</SidebarMenuButton>
-								</CollapsibleTrigger>
-								<CollapsibleContent>
-									<SidebarMenuSub>
-										{item.subMenus.map((sub) => (
-											<SidebarMenuSubItem key={sub.title}>
-												<SidebarMenuSubButton 
-													isActive={pathname === sub.url} 
-													asChild
-												>
-													<Link 
-														href={sub.url} 
-														title={sub.title}
-													>
-														<span>{sub.title}</span>
-													</Link>
-												</SidebarMenuSubButton>
-											</SidebarMenuSubItem>
-										))}
-									</SidebarMenuSub>
-								</CollapsibleContent>
-							</SidebarMenuItem>
-						</Collapsible>
-					);
-				} else {
-					menuItem = (
-						<SidebarMenuItem key={item.title}>
-							<SidebarMenuButton 
-								isActive={pathname === item.url} 
-								asChild
-							>
-								<Link 
-									href={item.url} 
-									title={item.title}
-								>
-									{item.icon && <item.icon />}
-									<span>{item.title}</span>
-								</Link>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					);
-				}
+								if (item["subMenus"]) {
+									menuItem = (
+										<SidebarMenuItemCollapsible 
+											key={item.title}
+											item={item}
+										/>
+									);
+								} else {
+									menuItem = (
+										<SidebarMenuItemDefault 
+											key={item.title}
+											item={item}
+										/>
+									) 
+								}
 
-				return menuItem;
-			})}
-		</SidebarMenu>
+								return menuItem;
+							})}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+			))}
+		</>
 	);
 }

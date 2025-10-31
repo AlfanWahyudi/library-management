@@ -5,7 +5,7 @@ import { ROUTE } from "@/lib/constants/route"
 
 const breadcrumbItems = [
   {...ROUTE.DASHBOARD},
-  {...ROUTE.VIOLATION_SANCTIONS}
+  {...ROUTE.VIOLATIONS}
 ]
 
 export default function ViolationSanctionBreadcrumb() {

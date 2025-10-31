@@ -23,7 +23,7 @@ export default function DashSidebar() {
 			<SidebarHeader>
 				<AppLogo />
 			</SidebarHeader>
-			<SidebarContent className="p-2">
+			<SidebarContent>
 				<NavMain />
 			</SidebarContent>
 			<SidebarFooter>

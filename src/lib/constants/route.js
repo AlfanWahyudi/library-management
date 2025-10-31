@@ -23,11 +23,6 @@ export const ROUTE = {
     title: 'Peminjaman Buku',
     method: 'get',
   }),
-  BOOK_RESERVATIONS: createRouteModel({
-    url: '/dashboard/book-reservations',
-    title: 'Reservasi Buku',
-    method: 'get',
-  }),
   BOOKS: createRouteModel({
     url: '/dashboard/books',
     title: 'Buku',
@@ -40,7 +35,7 @@ export const ROUTE = {
   }),
   MEMBERS: createRouteModel({
     url: '/dashboard/members',
-    title: 'Anggota Perpustakaan',
+    title: 'Anggota',
     method: 'get',
   }),
   USER_PROFILES: createRouteModel({
@@ -48,9 +43,9 @@ export const ROUTE = {
     title: 'Profile Pengguna',
     method: 'get',
   }),
-  VIOLATION_SANCTIONS: createRouteModel({
-    url: '/dashboard/violation-sanctions',
-    title: 'Pelanggaran dan Sanksi',
+  VIOLATIONS: createRouteModel({
+    url: '/dashboard/violations',
+    title: 'Pelanggaran',
     method: 'get',
   }),
 }
