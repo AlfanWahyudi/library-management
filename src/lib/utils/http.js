@@ -1,5 +1,7 @@
 
+import { ZodError } from "zod";
 import { HTTP } from "../constants/http";
+import { createErrorRes } from "../dto/res-dto";
 
 const getHttpStatusTitle = (code) => {
   return HTTP.STATUS[code] || 'Unknown Status';
@@ -17,8 +19,33 @@ const getFilenameFromRes = (resObj) => {
   return filename
 }
 
+const generateErrorHttpRes = (err) => {
+  const errRes = createErrorRes('Something went wrong, please try again later.')
+  let status = 500
+
+  switch (err) {
+    case err instanceof ZodError:
+      errRes.error = 'Validation failed.',
+      errRes.details = err.issues
+
+      status = 400
+      break;
+  
+    default:
+      errRes.error = err.toString()
+      break;
+  }
+  
+
+  return {
+    errRes,
+    status
+  }
+}
+
 
 export {
   getHttpStatusTitle,
-  getFilenameFromRes
+  getFilenameFromRes,
+  generateErrorHttpRes
 }

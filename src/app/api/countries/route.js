@@ -1,6 +1,7 @@
 import { createErrorRes, createSuccessRes } from "@/lib/dto/res-dto"
 import { countryListSchema } from "@/lib/schemas/country-schema"
 import CountryService from "@/lib/services/country-service"
+import { generateErrorHttpRes } from "@/lib/utils/http"
 import { NextResponse } from "next/server"
 import { ZodError } from "zod"
 
@@ -29,22 +30,8 @@ export async function GET(req) {
     
   } catch (err) {
     console.error(err)
-    
-    if (err instanceof ZodError) {
-      return NextResponse.json(
-        createErrorRes({
-          error: 'Query validation failed.',
-          details: err.issues
-        }),
-        { status: 400 }
-      )
-    }
 
-    return NextResponse.json(
-      createErrorRes({
-        error: err.toString(),
-      }),
-      { status: 500 }
-    )
+    const httpErr = generateErrorHttpRes(err)
+    return NextResponse.json(httpErr.errRes, { status: httpErr.status })
   }
 }

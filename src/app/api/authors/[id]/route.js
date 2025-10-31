@@ -1,8 +1,8 @@
 import { createErrorRes, createSuccessRes } from "@/lib/dto/res-dto"
 import { authorServerSchema } from "@/lib/schemas/author-schema"
 import AuthorService from "@/lib/services/author-service"
+import { generateErrorHttpRes } from "@/lib/utils/http"
 import { NextResponse } from "next/server"
-import { ZodError } from "zod"
 
 export async function PUT(req, { params }) {
   try {
@@ -22,22 +22,8 @@ export async function PUT(req, { params }) {
   } catch (err) {
     console.error(err)
     
-    if (err instanceof ZodError) {
-      return NextResponse.json(
-        createErrorRes({
-          error: 'Validation failed.',
-          details: err.issues
-        }),
-        { status: 400 }
-      )
-    }
-
-    return NextResponse.json(
-      createErrorRes({
-        error: err.toString(),
-      }),
-      { status: 500 }
-    )
+    const httpErr = generateErrorHttpRes(err)
+    return NextResponse.json(httpErr.errRes, { status: httpErr.status })
   }
 }
 
@@ -61,22 +47,8 @@ export async function DELETE(req, { params }) {
     
   } catch (err) {
     console.error(err)
-    
-    if (err instanceof ZodError) {
-      return NextResponse.json(
-        createErrorRes({
-          error: 'Validation failed.',
-          details: err.issues
-        }),
-        { status: 400 }
-      )
-    }
 
-    return NextResponse.json(
-      createErrorRes({
-        error: err.toString(),
-      }),
-      { status: 500 }
-    )
+    const httpErr = generateErrorHttpRes(err)
+    return NextResponse.json(httpErr.errRes, { status: httpErr.status })
   }
 }

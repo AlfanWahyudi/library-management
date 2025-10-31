@@ -1,8 +1,7 @@
 import { extSchema } from "@/lib/schemas/file-schema"
 import { NextResponse } from "next/server"
 import AuthorService from "@/lib/services/author-service"
-import { ZodError } from "zod"
-import { createErrorRes } from "@/lib/dto/res-dto"
+import { generateErrorHttpRes } from "@/lib/utils/http"
 
 export async function GET(req) {
   try {
@@ -25,22 +24,8 @@ export async function GET(req) {
     });
   } catch (err) {
     console.error(err)
-    
-    if (err instanceof ZodError) {
-      return NextResponse.json(
-        createErrorRes({
-          error: 'Validation failed.',
-          details: err.issues
-        }),
-        { status: 400 }
-      )
-    }
 
-    return NextResponse.json(
-      createErrorRes({
-        error: err.toString(),
-      }),
-      { status: 500 }
-    )
+    const httpErr = generateErrorHttpRes(err)
+    return NextResponse.json(httpErr.errRes, { status: httpErr.status })
   }
 } 
