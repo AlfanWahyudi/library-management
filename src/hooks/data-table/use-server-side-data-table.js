@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table"
 import useFetch from "../use-fetch"
+import { DataTableContext } from "@/store/data-table-context"
 
 export default function useServerSideDataTable({ 
   fetchingData,
@@ -33,6 +34,8 @@ export default function useServerSideDataTable({
       } 
     } 
   })
+
+  const { isTableRefreshed, stopRefreshTable } = useContext(DataTableContext)
 
   const [searchFilter, setSearchFilter] = useState(search)
   const [pagination, setPagination] = useState({
@@ -65,8 +68,22 @@ export default function useServerSideDataTable({
     ...otherTanStackProps
   })
 
+  const resetToDefault = () => {
+    setSearchFilter(search)
+    setPagination({
+      pageIndex: page,
+      pageSize: limit
+    })
+    setSorting([
+      {
+        id: orderBy,
+        desc: orderDir.toLowerCase() === 'desc',
+      }
+    ])
+  }
+
   useEffect(() => {
-    const fetch = async () => {
+    const startFetching = async () => {
       const authorParam = {
         searchFields: searchFields,
         page: pagination.pageIndex,
@@ -81,8 +98,19 @@ export default function useServerSideDataTable({
       })
     }
 
-    fetch()
-  }, [searchFields, searchFilter, pagination, sorting])
+    startFetching()
+
+    if (isTableRefreshed) {
+      resetToDefault()
+    }
+
+    return () => {
+      if (isTableRefreshed) {
+        stopRefreshTable()
+      }
+    }
+
+  }, [searchFilter, pagination, sorting, isTableRefreshed])
 
   return {
     table,

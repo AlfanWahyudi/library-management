@@ -2,16 +2,21 @@
 
 import { Sheet, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AuthorForm from "./form";
 import SheetContentMain from "@/components/common/sheet/sheet-content-main";
+import { DataTableContext } from "@/store/data-table-context";
+import { useRouter } from "next/navigation";
 
 export default function SaveSheetAuthor({
 }) {
+  const { refreshTable } = useContext(DataTableContext)
+ 
   const [ openForm, setOpenForm ] = useState(false)
 
   function handleSuccess() {
     setOpenForm(false)
+    refreshTable()
   }
 
   return (
