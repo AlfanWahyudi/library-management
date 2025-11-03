@@ -17,19 +17,32 @@ import TextareaControlForm from "@/components/common/form/textarea-control-form"
 import SelectControlForm from "@/components/common/form/select-control-form";
 import { Loader2Icon } from "lucide-react";
 import AlertDialogMain from "@/components/common/alert-dialog/alert-dialog-main";
+import { toast } from "sonner";
 
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
-//TODO: Display Error ketika delete nya
 //TODO: Styling untuk input yang digunakan pada Detail View
 export default function AuthorForm({
   openForm,
   cbSuccess = () => {},
   author = null,
-  title,
   viewOnly = false,
   children,
 }) {
+  const formCreate = !viewOnly && !author
+  const formUpdate = !viewOnly && author
+  const formView = viewOnly && author
+
+  const formTitle = formCreate 
+    ? 'Tambah pengarang'
+    : formUpdate
+      ? 'Update pengarang'
+      : formView
+        ? 'Detail pengarang'
+        : 'Form pengarang'
+
+  const inputRequired = viewOnly ? false : true
+
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
     // all validation errors for single field will display at once
@@ -72,27 +85,51 @@ export default function AuthorForm({
       await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
     }
 
+    const handleSuccAction = () => {
+      let msg =  ''
+      
+      if (saved && formCreate) {
+        msg = 'Berhasil menambahkan data pengarang'
+      }
+
+      if (saved && formUpdate) {
+        msg = 'Berhasil memperbarui data pengarang'  
+      }
+  
+      if (deleted && formView) {
+        msg = 'Berhasil menghapus data pengarang'
+      }
+      
+      if (msg !== '') {
+        cbSuccess()
+
+        setTimeout(() => {
+          toast.success(msg)
+        }, 200)
+      }
+    }
+
+    const handleErrAction = () => {
+      const msg = errorSaved || errorDelete
+      if (msg !== '') {
+        toast.error(msg)
+      }
+    }
+
     if (openForm) {
       fetchingData()
+
+      handleSuccAction()
+      handleErrAction()
     } else {
       resetCountries()
     }
-
-    if (saved || deleted) {
-      console.log(deleted)
-      cbSuccess()
-    }
-
-    if (errorSaved || errorDelete) {
-      // TODO: handle error nya
-    }
-
   }, [openForm, saved, errorSaved, deleted, errorDelete])
 
   const onSubmit = async (data, e) => {
     const id = author !== null ? author.id : null
 
-    if (!viewOnly) {
+    if (!formView) {
       await runSaveAuthor({ 
         fetchFn: async() => await saveAuthor({data, id})
       })
@@ -105,69 +142,56 @@ export default function AuthorForm({
     })
   }
 
-  let errFormTitle = 'Error menyimpan data pengarang baru'
-  if (viewOnly) {
-    errFormTitle = 'Error menghapus data pengarang'
-  } else if (!viewOnly && author !== null) {
-    errFormTitle = 'Error memperbarui data pengarang'
-  }
-
   return (
     <MainContentForm 
       useFormProp={form} 
       onSubmitForm={onSubmit} 
-      className="flex-1 flex flex-col"
+      className="flex-1 flex flex-col gap-4"
       noValidate
     >
       <SheetHeader>
-        <SheetTitle>{title}</SheetTitle>
+        <SheetTitle>{formTitle}</SheetTitle>
       </SheetHeader>
       <div className="grid flex-1 auto-rows-min gap-6 px-4">
-        {errorSaved !== '' && (
-          <AlertMain title={errFormTitle} variant="error">
-            <p>{errorSaved}</p>
-          </AlertMain>  
-        )}
         {errorCountry && (
           <AlertMain title='Error menampilkan daftar negara pada field kebangsaan' variant="error">
             <p>{errorCountry}</p>
           </AlertMain>  
         )}
-        {!viewOnly && (
-          <InputControlForm 
-            useFormProp={form}
-            name="fullName"
-            label="Nama Lengkap"
-            isRequired={true}
-          />
-        )}
+        <InputControlForm 
+          useFormProp={form}
+          name="fullName"
+          label="Nama Lengkap"
+          isRequired={inputRequired}
+          disabled={formView}
+        />
         <SelectControlForm 
           useFormProp={form}
           name="countryCode"
           label="Kebangsaan"
-          isRequired={true}
+          isRequired={inputRequired}
           placeholder="Pilih kebangsaan"
           items={countries.map((country) => ({ val: country.code, label: country.name }))}
-          disabled={errorCountry || viewOnly}
+          disabled={errorCountry || formView}
         />
         <InputControlForm 
           useFormProp={form}
           name="activeSince"
           label="Aktif Sejak"
           type="number"
-          disabled={viewOnly}
+          disabled={formView}
         />
         <TextareaControlForm 
           useFormProp={form}
           name="about"
           label="Tentang"
           rows={10}
-          disabled={viewOnly}
+          disabled={formView}
         />
       </div>
       {children}
       <SheetFooter>
-        {!viewOnly && (
+        {!formView && (
           <Button type="submit" size='sm' disabled={pendingSaved}>
             {pendingSaved && <Loader2Icon className="animate-spin" />}
             {pendingSaved 
@@ -176,7 +200,7 @@ export default function AuthorForm({
             }
           </Button>
         )}
-        {viewOnly && (
+        {formView && (
           <AlertDialogMain
             title='Hapus pengarang'
             triggerLabel='Hapus pengarang'
