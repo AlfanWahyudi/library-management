@@ -20,7 +20,7 @@ const getFilenameFromRes = (resObj) => {
 }
 
 const generateErrorHttpRes = (err) => {
-  const errRes = createErrorRes('Something went wrong, please try again later.')
+  const errRes = createErrorRes({ error: 'Something went wrong, please try again later.' })
   let status = 500
 
   switch (err) {
