@@ -152,44 +152,46 @@ export default function AuthorForm({
       <SheetHeader>
         <SheetTitle>{formTitle}</SheetTitle>
       </SheetHeader>
-      <div className="grid flex-1 auto-rows-min gap-6 px-4">
-        {errorCountry && (
-          <AlertMain title='Error menampilkan daftar negara pada field kebangsaan' variant="error">
-            <p>{errorCountry}</p>
-          </AlertMain>  
-        )}
-        <InputControlForm 
-          useFormProp={form}
-          name="fullName"
-          label="Nama Lengkap"
-          isRequired={inputRequired}
-          disabled={formView}
-        />
-        <SelectControlForm 
-          useFormProp={form}
-          name="countryCode"
-          label="Kebangsaan"
-          isRequired={inputRequired}
-          placeholder="Pilih kebangsaan"
-          items={countries.map((country) => ({ val: country.code, label: country.name }))}
-          disabled={errorCountry || formView}
-        />
-        <InputControlForm 
-          useFormProp={form}
-          name="activeSince"
-          label="Aktif Sejak"
-          type="number"
-          disabled={formView}
-        />
-        <TextareaControlForm 
-          useFormProp={form}
-          name="about"
-          label="Tentang"
-          rows={10}
-          disabled={formView}
-        />
-      </div>
-      {children}
+      <section className="flex-1 px-4">
+        <div className='grid auto-rows-min gap-6 mb-10'>
+          {errorCountry && (
+            <AlertMain title='Error menampilkan daftar negara pada field kebangsaan' variant="error">
+              <p>{errorCountry}</p>
+            </AlertMain>  
+          )}
+          <InputControlForm 
+            useFormProp={form}
+            name="fullName"
+            label="Nama Lengkap"
+            isRequired={inputRequired}
+            disabled={formView}
+          />
+          <SelectControlForm 
+            useFormProp={form}
+            name="countryCode"
+            label="Kebangsaan"
+            isRequired={inputRequired}
+            placeholder="Pilih kebangsaan"
+            items={countries.map((country) => ({ val: country.code, label: country.name }))}
+            disabled={errorCountry || formView}
+          />
+          <InputControlForm 
+            useFormProp={form}
+            name="activeSince"
+            label="Aktif Sejak"
+            type="number"
+            disabled={formView}
+          />
+          <TextareaControlForm 
+            useFormProp={form}
+            name="about"
+            label="Tentang"
+            rows={10}
+            disabled={formView}
+          />
+        </div>
+        {children}
+      </section>
       <SheetFooter>
         {!formView && (
           <Button type="submit" size='sm' disabled={pendingSaved}>

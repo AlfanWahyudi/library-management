@@ -3,6 +3,7 @@ import 'server-only'
 import sql from '../config/db'
 import { createAuthor } from '../models/author-model'
 import { dataDeleted, dataNotDeleted } from '../utils/sql-utils'
+import { createBook } from '../models/book-model'
 
 const tableName = 'authors'
 
@@ -116,6 +117,35 @@ const AuthorDAL = {
     //TODO
   },
 
+  getBooks: async ({ id }) => {
+    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+    
+    const books = await sql`
+      SELECT 
+        b.id,
+        b.isbn,
+        b.title,
+        b.sub_title,
+        b.publisher,
+        b.publication_date,
+        b.page,
+        b.language,
+        b.edition,
+        b.created_by,
+        b.updated_by,
+        b.created_at,
+        b.updated_at
+      FROM 
+        books as b
+      JOIN 
+        book_authors ba ON ba.book_id = b.id
+      WHERE
+        ba.author_id = ${id} AND
+        ${ dataNotDeleted('b') }
+    `
+
+    return books.map((book) => createBook({...book}))
+  }
 }
 
 export default AuthorDAL

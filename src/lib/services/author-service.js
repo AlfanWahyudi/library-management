@@ -97,6 +97,17 @@ const AuthorService = {
     }
 
     return await AuthorDAL.delete({ id: author.id })
+  },
+
+  getBooks: async({ id }) => {
+    const authorId = parseInt(id)
+    const author = await AuthorDAL.findById({ id: authorId })
+
+    if (author === null) {
+      throw new Error('author id is not found.')
+    }
+
+    return await AuthorDAL.getBooks({ id: authorId })  
   }
 }
 

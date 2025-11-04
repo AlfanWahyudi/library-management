@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState } from "react";
+import { act, useContext, useEffect, useState } from "react";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Eye, SquarePen } from "lucide-react";
@@ -8,6 +8,9 @@ import SheetContentMain from "@/components/common/sheet/sheet-content-main";
 import AuthorForm from "./form";
 import { Table } from "@/components/ui/table";
 import { DataTableContext } from "@/store/data-table-context";
+import useFetch from "@/hooks/use-fetch";
+import AuthorBookTable from "./author-book-table";
+import { getBooksByAuthorId } from "@/lib/http/author-http";
 
 export default function ActionFieldAuthor({ author }) {
   const { refreshTable }  = useContext(DataTableContext)
@@ -17,6 +20,15 @@ export default function ActionFieldAuthor({ author }) {
     isViewOpen: false,
     isEditOpen: false,
   })
+
+
+  const {
+    runFetch: fetchingBookItems,
+    isPending: isBookItemsPending,
+    error: errorBookItems,
+    fetchedData: bookItems,
+    reset: resetBookItems
+  } = useFetch({ initialValue: null })
 
   const handleOpenSheet = (action) => {
     if (action == 'view') {
@@ -40,6 +52,20 @@ export default function ActionFieldAuthor({ author }) {
     setOpenSheet(false)
     refreshTable()
   }
+
+  useEffect(() => {
+    const runningFetch = async () => {
+      if (action.isViewOpen) {
+        await fetchingBookItems({
+          fetchFn: async () => await getBooksByAuthorId({ id: author.id })
+        })
+      } else {
+        resetBookItems()
+      }
+    }
+
+    runningFetch()
+  }, [action])
 
   return (
     <>
@@ -77,11 +103,12 @@ export default function ActionFieldAuthor({ author }) {
             author={author} 
             viewOnly={action.isViewOpen} 
           >
-            {/* //TODO: Display and list of book that author have */}
             {action.isViewOpen && (
-              <Table>
-
-              </Table>
+              <div className="grid gap-3">
+                <h2 className="font-medium">Daftar Buku</h2>
+                {errorBookItems && <p>Error mengambil daftar buku yang dimiliki pengarang ini</p>}
+                {bookItems && <AuthorBookTable bookItems={bookItems} />}
+              </div>
             )}
           </AuthorForm>
 

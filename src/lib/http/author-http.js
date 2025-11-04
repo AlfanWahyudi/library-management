@@ -78,9 +78,22 @@ const downloadPdfAuthorAll = async () => {
   }
 }
 
+const getBooksByAuthorId = async ({ id }) => {
+  const res = await fetch(`/api/authors/${id}/books`)
+
+  if (!res.ok) {
+    throw new Error('Gagal menampilkan daftar buku berdasarkan pengarang yang dicari.')
+  }
+
+  const resJson = await res.json()
+
+  return resJson.data
+}
+
 export {
   getPaginatedListAuthor,
   saveAuthor,
   deleteAuthor,
   downloadPdfAuthorAll,
+  getBooksByAuthorId,
 }
