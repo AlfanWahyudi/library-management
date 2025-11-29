@@ -2,6 +2,7 @@ import 'server-only'
 
 import sql from '@/lib/config/db'
 import { dataDeleted, dataNotDeleted } from '../utils/sql-utils'
+import { createUser } from '../models/user-model'
 
 const UserDAL = {
   getById: async (id) => {
@@ -16,7 +17,7 @@ const UserDAL = {
 
     return users.length === 0
       ? null
-      : users[0]
+      : createUser(users[0]) 
   },
 
   getByUsername: async (username) => {
@@ -30,7 +31,7 @@ const UserDAL = {
     `
     return users.length === 0
       ? null
-      : users[0]
+      : createUser(users[0])
   },
 
   getRoles: async ({ id }) => {

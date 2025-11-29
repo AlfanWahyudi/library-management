@@ -1,6 +1,7 @@
 import 'server-only'
 
 import bcrypt from 'bcrypt'
+import UserDAL from '../dal/user-dal'
 
 const UserService = {
   checkCredential: async ({ user, password }) => {
@@ -11,6 +12,16 @@ const UserService = {
     }
 
     return isMatch
+  },
+
+  getById: async (id) => {
+    const user = await UserDAL.getById(id)
+
+    if (user == null) {
+      throw new Error('user id is not found')
+    }
+
+    return user
   }
 }
 
