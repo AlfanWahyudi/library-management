@@ -7,7 +7,7 @@ import NavMain from "./nav/nav-main";
 import NavProfile from "./nav/nav-profile";
 import NavLogout from "./nav/nav-logout";
 
-export default function DashSidebar() {
+export default function DashSidebar({ userFullName, userRole }) {
 	const {
 		state,
 		open,
@@ -28,7 +28,7 @@ export default function DashSidebar() {
 			</SidebarContent>
 			<SidebarFooter>
 				<SidebarMenu>
-					<NavProfile />
+					<NavProfile name={userFullName} role={userRole} />
 					<NavLogout />
 				</SidebarMenu>
 			</SidebarFooter>
