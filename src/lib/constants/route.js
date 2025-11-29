@@ -40,7 +40,7 @@ export const ROUTE = {
   }),
   USER_PROFILES: createRouteModel({
     url: '/dashboard/user-profiles',
-    title: 'Profile Pengguna',
+    title: 'Profile',
     method: 'get',
   }),
   VIOLATIONS: createRouteModel({
