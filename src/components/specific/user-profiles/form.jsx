@@ -5,16 +5,32 @@ import MainContentForm from "@/components/common/form/main-content-form"
 import SelectControlForm from "@/components/common/form/select-control-form"
 import TextareaControlForm from "@/components/common/form/textarea-control-form"
 import { Button } from "@/components/ui/button"
+import useFetch from "@/hooks/use-fetch"
+import { updateProfile } from "@/lib/http/user-http"
+import { userClientSchema } from "@/lib/schemas/users/user-client-schema"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Loader2Icon } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+
+const genderOpt = [
+  { val: 'm', label: 'Laki-Laki' }, 
+  { val: 'f', label: 'Perempuan' }
+]
 
 //TODO: styling this form
+//TODO: tombol "Simpan Perubahan" akan berfungsi jika form ada yang diubah
+//TODO: Jika terdapat prefix space pada semua input fields, maka hapus spasi nya
+//TODO: validate duplicate email client side jangan dengan ZOD
+// bagaimana kalau ternya fetch nya gagal?
+// - disable form
+// - refresh page 
+// - disable input nya
+// - kasih pesan error fetch, dan berikan info untuk merefresh page. 
 export default function UserProfileForm({ username, fullName, email, gender, address }) {
-
-  const genderOpt = [
-    { val: 'm', label: 'Laki-Laki' }, 
-    { val: 'f', label: 'Perempuan' }
-  ]
+  const router = useRouter()
 
   const [formState, setFormState] = useState({
     viewOnly: true,
@@ -27,15 +43,40 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     // by setting validateCriteriaMode to 'all',
     // all validation errors for single field will display at once
     criteriaMode: 'all',
-    defaultValues: {
+    values: {
       username: username,
       fullName: fullName,
       email: email,
       gender: gender,
       address: address
-    }
+    },
+    resolver: zodResolver(userClientSchema)
   })
 
+  const {
+    error,
+    isPending,
+    runFetch,
+    fetchedData: user,
+    reset: fetchReset,
+  } = useFetch({ initialValue: undefined })
+
+  useEffect(() => {
+    if (user) {
+      toast.success('Berhasil memperbarui data profile.')
+
+      setTimeout(() => {
+        fetchReset()
+
+        router.refresh()
+      }, 200)
+    }
+
+    if (error) {
+      toast.error(error)
+    }
+
+  }, [user, error])
 
   const changeFormView = (view) => {
     setFormState({
@@ -51,10 +92,12 @@ export default function UserProfileForm({ username, fullName, email, gender, add
   }
 
   const onSubmit = async (data, e) => {
-    //TODO: handle submit update profile data
-    console.log(data)
+    if (formState.update) {
+      await runFetch({
+        fetchFn: async() => await updateProfile({...data, username})
+      })
+    }
   }
-
 
   return (
     <MainContentForm
@@ -66,16 +109,15 @@ export default function UserProfileForm({ username, fullName, email, gender, add
       <section className="flex flex-col gap-5 mb-8">
         <InputControlForm
           useFormProp={form}
-          name="fullName"
-          label="Nama Lengkap"
-          isRequired={inputRequired}
-          disabled={formState.viewOnly}
+          name="username"
+          label="Username"
+          disabled={true}
         />
 
         <InputControlForm
           useFormProp={form}
-          name="username"
-          label="Username"
+          name="fullName"
+          label="Nama Lengkap"
           isRequired={inputRequired}
           disabled={formState.viewOnly}
         />
@@ -95,6 +137,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           isRequired={inputRequired}
           placholder="Pilih"
           items={genderOpt}
+          selectedValue={form.getValues('gender')}
           disabled={formState.viewOnly}
         />
 
@@ -122,8 +165,13 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           <>
             <Button 
               type="submit" 
+              disabled={isPending}
             >
-              Simpan Perubahan
+              {isPending && <Loader2Icon className="animate-spin" />}
+              {isPending
+                ? 'Mohon tunggu'
+                : 'Simpan Perubahan'
+              }
             </Button>
             <Button 
               type="button" 
