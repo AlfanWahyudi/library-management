@@ -12,12 +12,13 @@ export default async function DashboardLayout({ children }) {
   if (!session.isAuth) {
     //TODO: handle display error message
   }
-
+  
+  const user = await UserService.getById(session.userId)
   const role = session.roles.map((role) => role.name).join(', ')
   return (
     <BreadCrumbContextProvider>
       <SidebarProvider>
-        <DashSidebar userFullName={session.fullName} userRole={role}  />
+        <DashSidebar userFullName={user.fullName} userRole={role}  />
         <SidebarInset>
           <DashHeader />
           <DashMainContent>
