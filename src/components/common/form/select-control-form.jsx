@@ -25,7 +25,7 @@ export default function SelectControlForm({
   children, 
   placeholder = 'Pilih item',
   items = [],
-  value = null,
+  selectedValue = null,
   ...props  
 }) {
   return (
@@ -33,8 +33,8 @@ export default function SelectControlForm({
       control={useFormProp.control}
       name={name}
       render={({ field }) => {
-        const defaultValue = value !== null && field.value === '' 
-          ? value 
+        const defaultValue = selectedValue !== null && field.value === '' 
+          ? selectedValue 
           : field.value
 
         return (
@@ -42,7 +42,7 @@ export default function SelectControlForm({
             <FormLabel>
               {label} {isRequired && <span className="text-destructive">*</span>} 
             </FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={defaultValue} {...props}>
+            <Select value={field.value} onValueChange={field.onChange} defaultValue={defaultValue} {...props}>
               <FormControl>
                 <SelectTrigger className='w-[100%]'>
                   <SelectValue placeholder={placeholder} />
