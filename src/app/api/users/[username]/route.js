@@ -1,5 +1,5 @@
 import { createSuccessRes } from "@/lib/dto/res-dto"
-import { userServerSchema } from "@/lib/schemas/users/user-server-schema"
+import { userServerSchema } from "@/lib/schemas/user-server-schema"
 import UserService from "@/lib/services/user-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
 import { NextResponse } from "next/server"
