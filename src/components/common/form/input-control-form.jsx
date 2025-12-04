@@ -13,7 +13,8 @@ import {
 export default function InputControlForm({ 
   control, 
   name, 
-  label, 
+  label,
+  rules = null, 
   isRequired = false, 
   children, 
   ...props  
@@ -22,6 +23,7 @@ export default function InputControlForm({
     <FormField 
       control={control}
       name={name}
+      rules={rules}
       render={({ field }) => (
         <FormItem>
           <FormLabel>

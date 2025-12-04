@@ -1,33 +1,29 @@
 'use client'
 
+import AlertMain from "@/components/common/alert-main"
 import InputControlForm from "@/components/common/form/input-control-form"
 import MainContentForm from "@/components/common/form/main-content-form"
 import SelectControlForm from "@/components/common/form/select-control-form"
 import TextareaControlForm from "@/components/common/form/textarea-control-form"
 import { Button } from "@/components/ui/button"
 import useFetch from "@/hooks/use-fetch"
-import { updateProfile } from "@/lib/http/user-http"
-import { userClientSchema } from "@/lib/schemas/users/user-client-schema"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { checkEmailExist, updateProfile } from "@/lib/http/user-http"
+import { getErrMsgZod } from "@/lib/utils/zod-utils"
 import { Loader2Icon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import z from "zod"
 
 const genderOpt = [
   { val: 'm', label: 'Laki-Laki' }, 
   { val: 'f', label: 'Perempuan' }
 ]
 
+//TODO: e2e testing
+//TODO: cleaning the code
 //TODO: styling this form
-//TODO: Jika terdapat prefix space pada semua input fields, maka hapus spasi nya
-//TODO: validate duplicate email client side jangan dengan ZOD
-// bagaimana kalau ternya fetch nya gagal?
-// - disable form
-// - refresh page 
-// - disable input nya
-// - kasih pesan error fetch, dan berikan info untuk merefresh page. 
 export default function UserProfileForm({ username, fullName, email, gender, address }) {
   const router = useRouter()
 
@@ -39,7 +35,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
   const inputRequired = formState.viewOnly ? false : true
 
   const form = useForm({
-    mode: 'all',
+    mode: 'onChange',
     // by setting validateCriteriaMode to 'all',
     // all validation errors for single field will display at once
     criteriaMode: 'all',
@@ -50,7 +46,6 @@ export default function UserProfileForm({ username, fullName, email, gender, add
       gender: gender,
       address: address
     },
-    resolver: zodResolver(userClientSchema)
   })
 
   const {
@@ -60,6 +55,14 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     fetchedData: user,
     reset: fetchReset,
   } = useFetch({ initialValue: undefined })
+
+  const {
+    error: checkEmailError,
+    runFetch: runFetchCheckEmail,
+    fetchedData: isEmailExist,
+  } = useFetch({ initialValue: undefined })
+
+  const disableSubmitBtn = isPending || !form.formState.isDirty || error || checkEmailError
 
   useEffect(() => {
     if (user) {
@@ -76,7 +79,14 @@ export default function UserProfileForm({ username, fullName, email, gender, add
       toast.error(error)
     }
 
-  }, [user, error])
+    // trigger email field when email is duplicate
+    if (isEmailExist) {
+      form.trigger('email')
+    } else {
+      form.clearErrors('email')
+    }
+
+  }, [user, error, isEmailExist])
 
   const changeFormView = (view) => {
     setFormState({
@@ -99,6 +109,51 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     }
   }
 
+  // === Start Validation ===
+  const validateFullName = (fullName) => {
+    const schema = z.string().trim().min(1, 'Nama Lengkap tidak boleh kosong')
+
+    const result = schema.safeParse(fullName)
+    if (!result.success) return getErrMsgZod(result)
+
+    return true
+  }
+
+  const validateEmail = async (email) => {
+    const schema = z.email('Format email tidak sesuai').trim()
+
+    const result = schema.safeParse(email)
+    if (!result.success) return getErrMsgZod(result)
+
+    await runFetchCheckEmail({
+      fetchFn: async () => await checkEmailExist({ email })
+    })
+
+    if (isEmailExist) {
+      return 'Email sudah digunakan, mohon untuk mengganti dengan yang lain'      
+    }
+
+    return true
+  }
+
+  const validateGender = (gender) => {
+    const schema = z.string().min(1, 'Jenis Kelamin tidak boleh kosong')
+
+    const result = schema.safeParse(gender)
+    if (!result.success) return getErrMsgZod(result)
+  
+  }
+
+  const validateAddress = (address) => {
+    const schema = z.string().trim().min(1, 'Alamat Lengkap tidak boleh kosong')
+
+    const result = schema.safeParse(address)
+    if (!result.success) return getErrMsgZod(result)
+
+    return true
+  }
+  // === End Validation ===
+
   return (
     <MainContentForm
       useFormProp={form}
@@ -107,6 +162,11 @@ export default function UserProfileForm({ username, fullName, email, gender, add
       noValidate
     >
       <section className="flex flex-col gap-5 mb-8">
+        {checkEmailError && (
+          <AlertMain title='Error melakukan pengecekan duplikasi email' variant="error">
+            <p>{checkEmailError}</p>
+          </AlertMain>
+        )}
         <InputControlForm
           control={form.control}
           name="username"
@@ -118,6 +178,9 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           control={form.control}
           name="fullName"
           label="Nama Lengkap"
+          rules={{
+            validate: validateFullName,
+          }}
           isRequired={inputRequired}
           disabled={formState.viewOnly}
         />
@@ -126,6 +189,9 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           control={form.control}
           name="email"
           label="Email"
+          rules={{
+            validate: validateEmail,
+          }}
           isRequired={inputRequired}
           disabled={formState.viewOnly}
         />
@@ -138,6 +204,9 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           placholder="Pilih"
           items={genderOpt}
           selectedValue={form.getValues('gender')}
+          rules={{
+            validate: validateGender,
+          }}
           disabled={formState.viewOnly}
         />
 
@@ -146,6 +215,9 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           name="address"
           label="Alamat Lengkap"
           isRequired={inputRequired}
+          rules={{
+            validate: validateAddress,
+          }}
           disabled={formState.viewOnly}
         />
       </section>
@@ -165,7 +237,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           <>
             <Button 
               type="submit" 
-              disabled={isPending || !form.formState.isDirty}
+              disabled={disableSubmitBtn}
             >
               {isPending && <Loader2Icon className="animate-spin" />}
               {isPending

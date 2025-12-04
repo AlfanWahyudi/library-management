@@ -14,7 +14,8 @@ import {
 export default function TextareaControlForm({
   control, 
   name, 
-  label, 
+  label,
+  rules = null, 
   isRequired = false, 
   children, 
   ...props  
@@ -23,6 +24,7 @@ export default function TextareaControlForm({
     <FormField
       control={control}
       name={name}
+      rules={rules}
       render={({ field }) => (
         <FormItem>
           <FormLabel>

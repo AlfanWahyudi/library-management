@@ -21,6 +21,7 @@ export default function SelectControlForm({
   control, 
   name, 
   label, 
+  rules = null,
   isRequired = false, 
   children, 
   placeholder = 'Pilih item',
@@ -32,6 +33,7 @@ export default function SelectControlForm({
     <FormField
       control={control}
       name={name}
+      rules={rules}
       render={({ field }) => {
         const defaultValue = selectedValue !== null && field.value === '' 
           ? selectedValue 

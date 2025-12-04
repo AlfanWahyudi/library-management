@@ -94,6 +94,24 @@ const UserDAL = {
 
     return users.length > 0
   },
+
+  checkUsernameExist: async ({ id, username }) => {
+    if (id === null) throw new Error('id must not be null')
+    if (username === null) throw new Error('username must not be null')
+
+    const users = await sql`
+      SELECT 
+        * 
+      FROM 
+        ${ sql(tableName) }
+      WHERE
+        username = ${username} AND
+        id != ${id} AND
+        ${ dataNotDeleted() }
+    `
+
+    return users.length > 0
+  }
 }
 
 export default UserDAL

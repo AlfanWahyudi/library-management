@@ -26,6 +26,14 @@ const UserService = {
     return user
   },
 
+  checkEmailExist: async ({ id, email }) => {
+    return await UserDAL.checkEmailExist({ id, email })
+  },
+
+  checkUsernameExist: async ({ id, username }) => {
+    return await UserDAL.checkUsernameExist({ id, username })
+  },
+
   updateProfile: async ({ username, email, fullName, gender, address }) => {
     if (username === null || username === '') throw new Error('username must not be null or empty')
 

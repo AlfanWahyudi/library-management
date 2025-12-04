@@ -17,6 +17,24 @@ const updateProfile = async ({username, email, fullName, gender, address}) => {
   return resJson.data
 }
 
+const checkEmailExist = async ({email}) => {
+  const res = await fetch(`/api/users/find-duplicate?email=${email}`)
+
+  if (!res.ok) {
+    throw new Error('Gagal cek duplikasi email, mohon dicoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+
+  return resJson.data['isEmailExist']
+}
+
+const checkUsernameExist = async ({username}) => {
+  //TODO
+}
+
 export {
-  updateProfile
+  updateProfile,
+  checkEmailExist,
+  checkUsernameExist
 }
