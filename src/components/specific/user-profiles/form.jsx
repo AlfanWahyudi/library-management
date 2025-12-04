@@ -21,7 +21,6 @@ const genderOpt = [
 ]
 
 //TODO: styling this form
-//TODO: tombol "Simpan Perubahan" akan berfungsi jika form ada yang diubah
 //TODO: Jika terdapat prefix space pada semua input fields, maka hapus spasi nya
 //TODO: validate duplicate email client side jangan dengan ZOD
 // bagaimana kalau ternya fetch nya gagal?
@@ -40,6 +39,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
   const inputRequired = formState.viewOnly ? false : true
 
   const form = useForm({
+    mode: 'all',
     // by setting validateCriteriaMode to 'all',
     // all validation errors for single field will display at once
     criteriaMode: 'all',
@@ -165,7 +165,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           <>
             <Button 
               type="submit" 
-              disabled={isPending}
+              disabled={isPending || !form.formState.isDirty}
             >
               {isPending && <Loader2Icon className="animate-spin" />}
               {isPending
