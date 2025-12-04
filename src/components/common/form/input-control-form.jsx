@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 
 export default function InputControlForm({ 
-  useFormProp, 
+  control, 
   name, 
   label, 
   isRequired = false, 
@@ -20,7 +20,7 @@ export default function InputControlForm({
 }) {
   return (
     <FormField 
-      control={useFormProp.control}
+      control={control}
       name={name}
       render={({ field }) => (
         <FormItem>

@@ -160,14 +160,14 @@ export default function AuthorForm({
             </AlertMain>  
           )}
           <InputControlForm 
-            useFormProp={form}
+            control={form.control}
             name="fullName"
             label="Nama Lengkap"
             isRequired={inputRequired}
             disabled={formView}
           />
           <SelectControlForm 
-            useFormProp={form}
+            control={form.control}
             name="countryCode"
             label="Kebangsaan"
             isRequired={inputRequired}
@@ -176,14 +176,14 @@ export default function AuthorForm({
             disabled={errorCountry || formView}
           />
           <InputControlForm 
-            useFormProp={form}
+            control={form.control}
             name="activeSince"
             label="Aktif Sejak"
             type="number"
             disabled={formView}
           />
           <TextareaControlForm 
-            useFormProp={form}
+            control={form.control}
             name="about"
             label="Tentang"
             rows={10}

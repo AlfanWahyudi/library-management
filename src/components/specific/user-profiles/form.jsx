@@ -108,14 +108,14 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     >
       <section className="flex flex-col gap-5 mb-8">
         <InputControlForm
-          useFormProp={form}
+          control={form.control}
           name="username"
           label="Username"
           disabled={true}
         />
 
         <InputControlForm
-          useFormProp={form}
+          control={form.control}
           name="fullName"
           label="Nama Lengkap"
           isRequired={inputRequired}
@@ -123,7 +123,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
         />
 
         <InputControlForm
-          useFormProp={form}
+          control={form.control}
           name="email"
           label="Email"
           isRequired={inputRequired}
@@ -131,7 +131,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
         />
 
         <SelectControlForm
-          useFormProp={form}
+          control={form.control}
           name="gender"
           label="Jenis Kelamin"
           isRequired={inputRequired}
@@ -142,7 +142,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
         />
 
         <TextareaControlForm
-          useFormProp={form}
+          control={form.control}
           name="address"
           label="Alamat Lengkap"
           isRequired={inputRequired}

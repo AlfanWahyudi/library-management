@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 
 export default function TextareaControlForm({
-  useFormProp, 
+  control, 
   name, 
   label, 
   isRequired = false, 
@@ -21,7 +21,7 @@ export default function TextareaControlForm({
 }) {
   return (
     <FormField
-      control={useFormProp.control}
+      control={control}
       name={name}
       render={({ field }) => (
         <FormItem>

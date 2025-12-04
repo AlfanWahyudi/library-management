@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select"
 
 export default function SelectControlForm({
-  useFormProp, 
+  control, 
   name, 
   label, 
   isRequired = false, 
@@ -30,7 +30,7 @@ export default function SelectControlForm({
 }) {
   return (
     <FormField
-      control={useFormProp.control}
+      control={control}
       name={name}
       render={({ field }) => {
         const defaultValue = selectedValue !== null && field.value === '' 
