@@ -59,7 +59,29 @@ const UserService = {
     }
 
     return createUserDTO(data)
-  }
+  },
+
+  changeUsername: async ({ newUsername }) => {
+    if (!newUsername || (newUsername && newUsername.trim() === '')) throw new Error('newUsername must not be null, undefined, or empty')
+
+    const session = await SessionDAL.verify()
+    if (!session.isAuth) {
+      throw new Error('User is not authenticated')
+    }
+
+    const user = await UserDAL.getById(session.userId)
+    if (user.username === newUsername) {
+      throw new Error('newUsername must not be same with prev username')
+    }
+
+    const data = await UserDAL.changeUsername({ id: user.id, newUsername })
+
+    if (!data) {
+      throw new Error('Failed to change username for user id: ' + user.id)
+    }
+
+    return createUserDTO(data)
+  }, 
 }
 
 

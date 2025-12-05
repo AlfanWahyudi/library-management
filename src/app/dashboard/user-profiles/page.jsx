@@ -1,9 +1,9 @@
 import ContentHead from "@/components/specific/content-head";
 import UserProfileBreadcrumb from "@/components/specific/user-profiles/breadcrumb";
 import UserProfileForm from "@/components/specific/user-profiles/form";
-import { Button } from "@/components/ui/button";
 import SessionDAL from "@/lib/dal/session-dal";
 import UserService from "@/lib/services/user-service";
+import ChangeUsernameSheet from "../../../components/specific/user-profiles/change-username/sheet";
 
 export default async function userProfilePage() {
   const session = await SessionDAL.verify()
@@ -19,8 +19,7 @@ export default async function userProfilePage() {
       <UserProfileBreadcrumb />
       <h1 className="sr-only">User Profile Page</h1>
       <ContentHead pageTitle='Profile'>
-        {/* TODO: jalankan func ganti username */}
-        <Button>Mengganti Username (Belum Selesai)</Button>
+        <ChangeUsernameSheet username={user.username} />
       </ContentHead>
 
       <UserProfileForm 

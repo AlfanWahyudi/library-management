@@ -30,11 +30,38 @@ const checkEmailExist = async ({email}) => {
 }
 
 const checkUsernameExist = async ({username}) => {
-  //TODO
+  const res = await fetch(`/api/users/find-duplicate?username=${username}`)
+
+  if (!res.ok) {
+    throw new Error('Gagal cek duplikasi username, mohon dicoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+
+  return resJson.data['isUsernameExist']
+}
+
+const changeUsername = async ({ newUsername }) => {
+  const res = await fetch(`/api/users/change-username`, {
+    method: 'PUT',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ newUsername })
+  })
+
+  if (!res.ok) {
+    throw new Error('Gagal mengganti username, mohon untuk dicoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+
+  return resJson.data
 }
 
 export {
   updateProfile,
   checkEmailExist,
-  checkUsernameExist
+  checkUsernameExist,
+  changeUsername,
 }

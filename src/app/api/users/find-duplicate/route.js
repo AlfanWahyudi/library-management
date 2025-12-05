@@ -5,7 +5,6 @@ import { generateErrorHttpRes } from "@/lib/utils/http"
 import { NextResponse } from "next/server"
 
 
-//TODO: test for check duplication of username
 export async function GET(req) {
   try {
     const searchParams = req.nextUrl.searchParams
@@ -29,7 +28,7 @@ export async function GET(req) {
     let message = ''
     let data = null
     if (query.email) {
-      message = `Successfully check duplication of email for userId: ${session.userId}`
+      message = `Successfully check duplication of email for user id: ${session.userId}`
 
       const isEmailExist = await UserService.checkEmailExist({ id: session.userId, email: query.email })
       data = {
@@ -37,14 +36,14 @@ export async function GET(req) {
       }
     }
 
-    // if (query.username) {
-    //   message = `Successfully check duplication of username for userId: ${session.userId}`
+    if (query.username) {
+      message = `Successfully check duplication of username for user id: ${session.userId}`
 
-    //   const isUsernameExist = await UserService.checkUsernameExist({ id: session.userId, username: query.username })
-    //   data = {
-    //     isUsernameExist
-    //   }
-    // }
+      const isUsernameExist = await UserService.checkUsernameExist({ id: session.userId, username: query.username })
+      data = {
+        isUsernameExist
+      }
+    }
 
     return NextResponse.json(
       createSuccessRes({

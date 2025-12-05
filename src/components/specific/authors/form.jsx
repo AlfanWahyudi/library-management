@@ -193,6 +193,7 @@ export default function AuthorForm({
         {children}
       </section>
       <SheetFooter>
+        {/* TODO: Add confirmation to before submitting   */}
         {!formView && (
           <Button type="submit" size='sm' disabled={pendingSaved}>
             {pendingSaved && <Loader2Icon className="animate-spin" />}

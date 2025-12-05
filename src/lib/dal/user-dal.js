@@ -111,6 +111,25 @@ const UserDAL = {
     `
 
     return users.length > 0
+  },
+
+  changeUsername: async ({ id, newUsername }) => {
+    if (id === null) throw new Error('id must not be null')
+    if (newUsername === null) throw new Error('newUsername must not be null')
+
+    const users = await sql`
+      UPDATE ${ sql(tableName) }
+      SET
+        username = ${newUsername}
+      WHERE
+        id = ${id} AND
+        ${ dataNotDeleted() }
+      RETURNING *
+    `
+
+    return users.length === 0
+      ? null
+      : createUser({...users[0]})
   }
 }
 
