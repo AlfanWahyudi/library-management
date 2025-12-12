@@ -1,5 +1,5 @@
-const getPaginatedListMember = async ({ page, limit, search, searchFields, orderBy, orderDir }) => {
-  const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir}).toString();
+const getPaginatedListMember = async ({ page, limit, search, searchFields, orderBy, orderDir, gender }) => {
+  const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir, gender}).toString();
   const res = await fetch(`/api/members?${query}`)
   
   if (!res.ok) {

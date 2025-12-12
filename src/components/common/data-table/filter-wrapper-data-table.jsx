@@ -4,7 +4,7 @@ import { Button } from "../../ui/button";
 import { Separator } from "../../ui/separator";
 import SearchDataTable from "./search-data-table";
 
-export default function FilterWrapperDataTable({ searchingFieldItems, table, children }) {
+export default function FilterWrapperDataTable({ searchingFieldItems, table, onResetFilter = () => {}, isFilterChange = false, children }) {
   return (
     <>
       <Separator className="my-4" />
@@ -12,7 +12,7 @@ export default function FilterWrapperDataTable({ searchingFieldItems, table, chi
           <SearchDataTable searchingFieldItems={searchingFieldItems} table={table} />
           <article className="text-sm flex flex-wrap gap-3">
             {children}
-            {children && <Button variant="link" className="text-destructive" disabled>Hapus Filter</Button>}
+            {children && <Button onClick={onResetFilter} variant="link" className="text-destructive" disabled={!isFilterChange}>Reset Filter</Button>}
           </article>
         </section>
       <Separator className="my-4" />

@@ -14,7 +14,8 @@ export default function useServerSideDataTable({
   search = '', 
   searchFields = '', 
   orderBy = 'updated_at', 
-  orderDir = 'desc' 
+  orderDir = 'desc',
+  defaultColFilters = [], 
 }) {
   const {
     error,
@@ -36,7 +37,6 @@ export default function useServerSideDataTable({
   })
 
   const { isTableRefreshed, stopRefreshTable } = useContext(DataTableContext)
-
   const [searchFilter, setSearchFilter] = useState(search)
   const [pagination, setPagination] = useState({
     pageIndex: page,
@@ -48,6 +48,8 @@ export default function useServerSideDataTable({
       desc: orderDir.toLowerCase() === 'desc',
     }
   ])
+  // TODO: test column filters nya lebih dari 2 columns
+  const [colFilters, setColFilters] = useState(defaultColFilters)
 
   const table = useReactTable({  
     data: [...fetchedData.data],
@@ -60,6 +62,7 @@ export default function useServerSideDataTable({
     onPaginationChange: setPagination, //update the pagination state when internal APIs mutate the pagination state
     onSortingChange: setSorting,
     onGlobalFilterChange: setSearchFilter,
+    onColumnFiltersChange: setColFilters,
     state: {
       pagination,
       sorting,
@@ -80,6 +83,7 @@ export default function useServerSideDataTable({
         desc: orderDir.toLowerCase() === 'desc',
       }
     ])
+    setColFilters(defaultColFilters)
   }
 
   useEffect(() => {
@@ -92,6 +96,10 @@ export default function useServerSideDataTable({
         orderBy: sorting[0].id,
         orderDir: sorting[0].desc ? 'desc' : 'asc', 
       }
+
+      colFilters.forEach((colFilter) => {
+        authorParam[colFilter.id] = colFilter.value
+      })
 
       await runFetch({ 
         fetchFn: async() => await fetchingData(authorParam)
@@ -110,7 +118,7 @@ export default function useServerSideDataTable({
       }
     }
 
-  }, [searchFilter, pagination, sorting, isTableRefreshed])
+  }, [searchFilter, pagination, sorting, isTableRefreshed, colFilters])
 
   return {
     table,
