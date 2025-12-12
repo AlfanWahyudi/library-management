@@ -25,6 +25,7 @@ export default function MemberDataTable() {
   return (
     <WrapperDataTable>
       <FilterWrapperDataTable searchingFieldItems={searchingItemsMember} table={table}>
+        
       </FilterWrapperDataTable>
       <DataTable table={table} isPending={isPending} error={error} />
     </WrapperDataTable>

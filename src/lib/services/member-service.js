@@ -11,9 +11,10 @@ const MemberService = {
     orderDir,
     search,
     searchFields = [],
+    gender = 'all',
   }) => {
 
-    const items = await MemberDAL.getAllPaginated({ page, limit, orderBy, orderDir, search, searchFields})
+    const items = await MemberDAL.getAllPaginated({ page, limit, orderBy, orderDir, search, searchFields, gender})
     const dataMapped = items.data.map((member) => createMemberDTO(member))
 
     return {

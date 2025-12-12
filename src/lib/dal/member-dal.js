@@ -18,7 +18,14 @@ const MemberDAL = {
     orderDir = 'desc',
     search = '',
     searchFields = [],
+    gender = 'all',
   }) => {
+    const filterQueries = []
+
+    if (gender !== 'all') {
+      filterQueries.push(sql`${sql('gender')} = ${gender}`)
+    }
+
     const paginatedItems = await getPaginatedList({
       page,
       limit,
@@ -26,7 +33,8 @@ const MemberDAL = {
       orderDir,
       search,
       searchFields,
-      tableName
+      tableName,
+      filterQueries
     })
 
     paginatedItems.data = paginatedItems.data.map((item) => createMember({...item}))

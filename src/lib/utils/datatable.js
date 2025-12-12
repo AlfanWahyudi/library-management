@@ -9,7 +9,8 @@ export const getPaginatedList = async ({
   orderDir,
   search,
   searchFields,
-  tableName
+  tableName,
+  filterQueries = [],
 }) => {
   if (page === null || page === undefined) {
     throw new Error('page property must not be empty.')
@@ -42,6 +43,10 @@ export const getPaginatedList = async ({
     throw new Error(`searchFields must not be empty when search is already filled.`)
   }
 
+  if (filterQueries && !Array.isArray(filterQueries)) {
+    throw new Error(`filterQueries must be non-empty array`)
+  }
+
   const data = await sql`
     SELECT
       *
@@ -61,8 +66,28 @@ export const getPaginatedList = async ({
       *
     FROM ${sql(tableName)}
     ${
-      search.trim() !== ''
-        ? sql`WHERE CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
+      search.trim() !== '' || (filterQueries && filterQueries.length > 0)
+        ? sql`WHERE 
+          ${search.trim() !== ''
+            ? sql`CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
+            : sql``
+          }
+          ${
+            // TODO: test jika filterQueries nya lebih dari satu, apakan akan tetap berhasil
+            filterQueries && filterQueries.length > 0
+            ? sql`${
+              filterQueries.flatMap(((query, idx) => (
+                [
+                  idx > 0 
+                    ? sql`AND` 
+                    : search.trim() !== '' ? sql`AND` : sql``, 
+                  sql`${query}`,
+                ]
+              )))
+            }`
+            : sql``
+          }
+        `
         : sql``
     }
     ORDER BY ${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}

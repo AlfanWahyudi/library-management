@@ -54,8 +54,7 @@ Query :
 - limit -> int, default 10; `10`
 - search -> string, default ''; `<memberName>`
 - searchFields -> string, (delimiter only with ','), default ''; `col1,col2,col3`
-- filterFields -> string, (delimiter only with ','), default 'gender'; `gender`
-- filter -> string, (delimiter per fields only with '\\' ), default 'all'; `all|m|f`
+- gender -> string, default 'all'; `all|m|f`
 - orderBy -> string, default 'updated_at'; `updated_at`
 - orderDir  -> string, default 'desc'; `desc`
 

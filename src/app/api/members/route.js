@@ -1,5 +1,6 @@
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import { dataTableParamSchema } from "@/lib/schemas/datatable-param-schema";
+import { memberDataTableParamSchema } from "@/lib/schemas/member-datatable-param-schema";
 import MemberService from "@/lib/services/member-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
 import { NextResponse } from "next/server";
@@ -15,10 +16,18 @@ export async function GET(req) {
       searchFields: searchParams.get('searchFields') || '',
       orderBy: searchParams.get('orderBy') || 'updated_at',
       orderDir: searchParams.get('orderDir') || 'desc',
+      gender: searchParams.get('gender') || 'all',
     }
-  
-    const parsed = dataTableParamSchema.parse(query)
-    const memberPaginatedList = await MemberService.getAllPaginated(parsed)
+
+    const { 
+      gender, 
+      ...defaultQuery 
+    } = query
+    
+    const parsedDefault = dataTableParamSchema.parse(defaultQuery)
+    const parsedFilter = memberDataTableParamSchema.parse({ gender: gender })
+
+    const memberPaginatedList = await MemberService.getAllPaginated({...parsedDefault, ...parsedFilter})
 
     return NextResponse.json(
       createSuccessRes({
