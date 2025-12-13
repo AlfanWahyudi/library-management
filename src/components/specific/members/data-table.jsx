@@ -11,11 +11,9 @@ import {
 } from "./column-data-table"
 import { getPaginatedListMember } from "@/lib/http/member-http"
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table"
-import { Select, SelectContent, SelectGroup, SelectTrigger, SelectValue, SelectItem, SelectLabel } from "@/components/ui/select"
+import MemberGenderFilter from "./gender-filter"
 import { useEffect, useState } from "react"
 
-
-// TODO: cleaning code untuk filtering nya
 export default function MemberDataTable() {
   const {
     error,
@@ -28,19 +26,38 @@ export default function MemberDataTable() {
     defaultColFilters,
   })
 
-  const defaultGender = defaultColFilters[0].value
-  const [gender, setGender] = useState(defaultGender)
+  const { id: colGenderId, value: defaultGender } = defaultColFilters[0]
 
-  useEffect(() => {
-    const genderCol = table.getColumn('gender')
-    genderCol.setFilterValue(gender)
-  }, [gender])
+  const [colFilters, setColFilters] = useState({
+    gender: defaultGender,
+  })
+
+  const [filterReset, setFilterReset] = useState(false)
 
   const resetFilter = () => {
-    setGender(defaultGender)
+    setFilterReset(true)
   }
 
-  const isFilterChange = gender !== defaultGender
+  const keepFilter = () => {
+    setFilterReset(false)
+  }
+
+  const updateColFilters = ({colId, val}) => {
+    setColFilters((prev) => ({...prev, [colId]: val}))
+  }
+
+  const isFilterChange = colFilters.gender !== defaultGender
+
+  useEffect(() => {
+    const filtering = () => {
+      const gender = colFilters.gender
+      const genderCol = table.getColumn(colGenderId)
+      genderCol.setFilterValue(gender)
+    }
+
+    filtering()
+    keepFilter()
+  }, [colFilters.gender])
 
   return (
     <WrapperDataTable>
@@ -50,19 +67,11 @@ export default function MemberDataTable() {
         onResetFilter={resetFilter} 
         isFilterChange={isFilterChange}
       >
-        <Select value={gender} onValueChange={setGender}>
-          <SelectTrigger className="min-w-[130px]">
-            <SelectValue placeholder='Jenis kelamin'></SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Jenis kelamin</SelectLabel>
-              <SelectItem value='all'>Semua</SelectItem>
-              <SelectItem value='m'>Laki-Laki</SelectItem>
-              <SelectItem value='f'>Perempuan</SelectItem>
-            </SelectGroup>
-        </SelectContent>
-        </Select>
+        <MemberGenderFilter 
+          defaultVal={defaultGender} 
+          filterReset={filterReset}
+          onChange={(val) => updateColFilters({colId: colGenderId, val})}
+        />
       </FilterWrapperDataTable>
       <DataTable table={table} isPending={isPending} error={error} />
     </WrapperDataTable>

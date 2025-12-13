@@ -72,6 +72,12 @@ export default function useServerSideDataTable({
   })
 
   const resetToDefault = () => {
+    /* 
+      - reset state dengan table API -
+      coba test aja
+
+      table.reset()
+    */
     setSearchFilter(search)
     setPagination({
       pageIndex: page,
