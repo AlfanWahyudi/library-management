@@ -7,12 +7,13 @@ import {
   columnsDefMember, 
   searchingItemsMember, 
   getSearchItemsIdMember,
-  defaultColFilters
+  defaultColFiltersMember
 } from "./column-data-table"
 import { getPaginatedListMember } from "@/lib/http/member-http"
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table"
 import MemberGenderFilter from "./gender-filter"
 import { useEffect, useState } from "react"
+import useServerSideFilterDataTable from "@/hooks/data-table/use-server-side-filter-data-table"
 
 export default function MemberDataTable() {
   const {
@@ -23,40 +24,25 @@ export default function MemberDataTable() {
     fetchingData: getPaginatedListMember,
     searchFields: getSearchItemsIdMember(),
     columnsDef: columnsDefMember,
-    defaultColFilters,
+    defaultColFilters: defaultColFiltersMember,
   })
 
-  const { id: colGenderId, value: defaultGender } = defaultColFilters[0]
-
-  const [colFilters, setColFilters] = useState({
-    gender: defaultGender,
+  const { id: colGenderId, value: defaultGender } = defaultColFiltersMember[0]
+  const { 
+    colFilters, 
+    filterReset, 
+    resetFilter, 
+    updateColFilters, 
+    filtering 
+  } = useServerSideFilterDataTable({ 
+    table, 
+    colFiltersVal: {gender: defaultGender} 
   })
-
-  const [filterReset, setFilterReset] = useState(false)
-
-  const resetFilter = () => {
-    setFilterReset(true)
-  }
-
-  const keepFilter = () => {
-    setFilterReset(false)
-  }
-
-  const updateColFilters = ({colId, val}) => {
-    setColFilters((prev) => ({...prev, [colId]: val}))
-  }
 
   const isFilterChange = colFilters.gender !== defaultGender
 
   useEffect(() => {
-    const filtering = () => {
-      const gender = colFilters.gender
-      const genderCol = table.getColumn(colGenderId)
-      genderCol.setFilterValue(gender)
-    }
-
     filtering()
-    keepFilter()
   }, [colFilters.gender])
 
   return (

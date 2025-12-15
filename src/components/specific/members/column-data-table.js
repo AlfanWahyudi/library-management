@@ -87,7 +87,7 @@ const searchingItemsMember = [
 
 const getSearchItemsIdMember = (separator = ',') => searchingItemsMember.map(item => item.id).join(separator)
 
-const defaultColFilters = [
+const defaultColFiltersMember = [
   {
     id: 'gender',
     value: 'all'
@@ -98,5 +98,5 @@ export {
   columnsDefMember,
   searchingItemsMember,
   getSearchItemsIdMember,
-  defaultColFilters
+  defaultColFiltersMember
 }
