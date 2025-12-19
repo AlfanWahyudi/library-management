@@ -1,6 +1,7 @@
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import { dataTableParamSchema } from "@/lib/schemas/datatable-param-schema";
 import { memberDataTableParamSchema } from "@/lib/schemas/member-datatable-param-schema";
+import { memberServerSchema } from "@/lib/schemas/member-server-schema";
 import MemberService from "@/lib/services/member-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
 import { NextResponse } from "next/server";
@@ -41,6 +42,28 @@ export async function GET(req) {
   } catch (err) {
     console.error(err)
 
+    const httpErr = generateErrorHttpRes(err)
+    return NextResponse.json(httpErr.errRes, { status: httpErr.status })
+  }
+}
+
+export async function POST(req) {
+  try {
+    const body = await req.json()
+    const parsed = memberServerSchema.parse(body)
+
+    const member = await MemberService.save({...parsed})
+
+    return NextResponse.json(
+      createSuccessRes({
+        message: 'Member successfully created.', 
+        data: member 
+      }), 
+      { status: 201 }
+    )
+  } catch (err) {
+    console.error(err)
+    
     const httpErr = generateErrorHttpRes(err)
     return NextResponse.json(httpErr.errRes, { status: httpErr.status })
   }
