@@ -201,7 +201,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           name="gender"
           label="Jenis Kelamin"
           isRequired={inputRequired}
-          placholder="Pilih"
+          placeholder="Pilih"
           items={genderOpt}
           selectedValue={form.getValues('gender')}
           rules={{

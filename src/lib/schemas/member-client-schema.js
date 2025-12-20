@@ -1,9 +1,7 @@
-import "server-only"
-
 import { GENDER } from "@/lib/constants/gender"
 import z from "zod"
 
-export const memberServerSchema = z.object({
+export const memberClientSchema = z.object({
   email: z // string, email required
     .email()
     .max(255),
@@ -24,7 +22,7 @@ export const memberServerSchema = z.object({
       error: `Invalid gender: can only be ${Object.getOwnPropertyNames(GENDER)}` 
     }),
   phone: z
-    .stringFormat('only-number', /^\d+$/)
+    .stringFormat('number format string', /^\d+$/)
     .max(20),
   birthDate: z
     .iso

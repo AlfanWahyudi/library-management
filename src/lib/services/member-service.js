@@ -33,6 +33,31 @@ const isFound = async ({ id }) => {
 }
 
 const MemberService = {
+ isDataExist: async ({ id = null, field, value }) => {
+    let result = false
+
+    let member = null
+    switch (field) {
+      case 'email':
+        member = await MemberDAL.findByEmail({ email: value })
+        break;
+      case 'phone':
+        member = await MemberDAL.findByPhone({ phone: value })
+        break;
+    }
+
+    if (id) {
+      const diffMember = member && member.id != id
+      if (diffMember) {
+        result = true
+      }
+    } else if (member) {
+      result = true
+    }
+
+    return result
+  },
+
   getAllPaginated: async ({
     page, 
     limit, 
@@ -68,12 +93,12 @@ const MemberService = {
       }
     }
 
-    const emailExist = await isDataExist({ id, field: 'email', value: email })
+    const emailExist = await MemberService.isDataExist({ id, field: 'email', value: email })
     if (emailExist) {
       throw new Error('email is already in use.')
     }
 
-    const phoneExist = await isDataExist({ id, field: 'phone', value: phone })
+    const phoneExist = await MemberService.isDataExist({ id, field: 'phone', value: phone })
     if (phoneExist) {
       throw new Error('phone is already in use.')
     }
