@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Eye, SquarePen, Trash } from "lucide-react";
+import Link from "next/link";
 
 
 // TODO
@@ -13,18 +14,22 @@ export default function ActionFieldMember({ member }) {
         variant='ghost' 
         size='icon' 
         className='size-7'
-        onClick={() => {}}
+        asChild={true}
       >
-        <Eye />
+        <Link href={`./members/${member.id}`} >
+          <Eye />
+        </Link>
       </Button>
       <Button 
         type="button" 
         variant='ghost' 
         size='icon' 
         className='size-7'
-        onClick={() => {}}
+        asChild={true}
       >
-        <SquarePen />
+        <Link href={`./members/${member.id}/update`}>
+          <SquarePen />
+        </Link>
       </Button>
       <Button 
         type="button" 

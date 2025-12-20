@@ -21,6 +21,7 @@ export default function CalendarControlForm({
   rules,
   placeholder = 'Pilih tanggal',
   isRequired,
+  disabled = false,
 }) {
 
 
@@ -39,9 +40,9 @@ export default function CalendarControlForm({
             <FormLabel htmlFor="date">
               {label} {isRequired && <span className="text-destructive">*</span>} 
             </FormLabel>
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={open} onOpenChange={setOpen} >
               <PopoverTrigger asChild>
-                <Button variant="outline" id="date" className={`${ fieldState.invalid ? 'border-destructive' : ''} justify-between font-normal`}>
+                <Button variant="outline" id="date" className={`${ fieldState.invalid ? 'border-destructive' : ''} justify-between font-normal`} disabled={disabled}>
                   {date ? date.toLocaleDateString() : placeholder}
                   <ChevronDownIcon />
                 </Button>
@@ -49,6 +50,7 @@ export default function CalendarControlForm({
               <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                 <Calendar
                   mode="single"
+                  defaultMonth={date}
                   selected={date}
                   captionLayout="dropdown"
                   onSelect={(date) => {

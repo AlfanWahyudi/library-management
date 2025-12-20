@@ -11,6 +11,7 @@ import { checkDuplicationMember, saveMember } from "@/lib/http/member-http";
 import { formatDate } from "@/lib/utils/date-utils";
 import { getErrMsgZod } from "@/lib/utils/zod-utils";
 import { Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -22,17 +23,28 @@ const genderOpt = [
 ]
 
 //TODO: styling form, must be responsive
-//TODO: handle after success create or update data
-export default function MemberForm() {
+export default function MemberForm({
+  member = null,
+  viewOnly = false,
+}) {
+  const formCreate = !viewOnly && !member
+  const formUpdate = !viewOnly && member
+  const formView = viewOnly && member
+
+  const inputRequired = viewOnly ? false : true
+
+  const router = useRouter()
+
   const form = useForm({
+    mode: 'onChange',
     criteriaMode: 'all',
     defaultValues: {
-      fullName: '',
-      email: '',
-      phone: '',
-      address: '',
-      birthDate: undefined,
-      gender: '',
+      fullName: member?.fullName || '',
+      email: member?.email || '',
+      phone: member?.phone || '',
+      address: member?.address || '',
+      birthDate: member ? new Date(member.birthDate) : undefined,
+      gender: member?.gender || '',
     },
   })
 
@@ -40,41 +52,33 @@ export default function MemberForm() {
     error: errorSaved,
     runFetch: runSaveMember,
     isPending: pendingSaved,
-    fetchedData: member,
+    fetchedData: saveData,
+    reset: fetchSaveReset
   } = useFetch({ initialValue: undefined })
 
-  const {
-    error: checkEmailError,
-    runFetch: runCheckEmail,
-    fetchedData: isEmailExist
-  } = useFetch({ initialValue: undefined })
-
-  const {
-    error: checkPhoneError,
-    runFetch: runCheckPhone,
-    fetchedData: isPhoneExist
-  } = useFetch({ initialValue: undefined })
-
-  const disableSubmitBtn = pendingSaved || !form.formState.isDirty || isEmailExist || isPhoneExist
+  const disableSubmitBtn = pendingSaved || !form.formState.isDirty
 
   useEffect(() => {
+    if (saveData) {
+      if (formCreate) {
+        toast.success('Berhasil menambahkan data anggota baru')
+      }
+
+      if (formUpdate) {
+        toast.success('Berhasil update data anggota')
+      }
+
+      setTimeout(() => {
+        fetchSaveReset()
+
+        router.push('/dashboard/members')
+      }, 100)
+    }
+
     if (errorSaved) {
       toast.error(errorSaved)
     }
-
-    if (isEmailExist) {
-      form.trigger('email')
-    } else {
-      form.clearErrors('email')
-    }
-
-    if (isPhoneExist) {
-      form.trigger('phone')
-    } else {
-      form.clearErrors('phone')
-    }
-
-  }, [errorSaved, isEmailExist, isPhoneExist])
+  }, [saveData, errorSaved])
 
 
   const mapData = ({ fullName, email, phone, address, birthDate, gender }) => {
@@ -89,10 +93,16 @@ export default function MemberForm() {
   }
 
   const onSubmit = async (data, e) => {
+    const id = member ? member.id : null
     const mappedData = mapData(data)
+
     await runSaveMember({
-      fetchFn: async () => await saveMember({ data: mappedData })
+      fetchFn: async () => await saveMember({ data: mappedData, id })
     })
+  }
+
+  const onReset = () => {
+    form.reset()
   }
   
   // === Start Validation ===
@@ -110,12 +120,10 @@ export default function MemberForm() {
 
     const result = schema.safeParse(email)
     if (!result.success) return getErrMsgZod(result)
-
-    await runCheckEmail({
-      fetchFn: async () => await checkDuplicationMember({ field: 'email', value: email })
-    })
-
-    if (isEmailExist) {
+    
+    const id = member ? member.id : null
+    const isDuplicate = await checkDuplicationMember({ field: 'email', value: email, id })
+    if (isDuplicate) {
       return 'Email sudah digunakan, mohon untuk mengganti dengan yang lain'
     }
 
@@ -135,11 +143,9 @@ export default function MemberForm() {
 
     if (!result.success) return getErrMsgZod(result)
 
-    await runCheckPhone({
-      fetchFn: async () => await checkDuplicationMember({ field: 'phone', value: phone })
-    })
-
-    if (isPhoneExist) {
+    const id = member ? member.id : null
+    const isDuplicate = await checkDuplicationMember({ field: 'phone', value: phone, id })
+    if (isDuplicate) {
       return 'No Telepon sudah digunakan, mohon untuk mengganti dengan yang lain'
     }
 
@@ -183,72 +189,89 @@ export default function MemberForm() {
       onSubmitForm={onSubmit}
       noValidate
     >
+      <section>
+      </section>
       <InputControlForm 
         control={form.control}
         name="fullName"
         label="Nama Lengkap"
-        isRequired={true}
+        isRequired={inputRequired}
         rules={{
           validate: validateFullName
         }}
+        disabled={formView}
       />
       <CalendarControlForm 
         control={form.control}
         name='birthDate'
         label='Tanggal Lahir'
-        isRequired={true}
+        isRequired={inputRequired}
         rules={{
           validate: validateBirthDate
         }}
+        disabled={formView}
       />
       <SelectControlForm 
         control={form.control}
         name="gender"
         label="Jenis Kelamin"
         items={genderOpt}
-        isRequired={true}
+        isRequired={inputRequired}
         rules={{
           validate: validateGender
         }}
+        disabled={formView}
       />
       <InputControlForm 
         control={form.control}
         name="email"
         label="Email"
-        isRequired={true}
+        isRequired={inputRequired}
         rules={{
           validate: validateEmail
         }}
+        disabled={formView}
       />
       <InputControlForm 
         control={form.control}
         name="phone"
         label="No Telepon"
-        isRequired={true}
+        isRequired={inputRequired}
         rules={{
           validate: validatePhone
         }}
+        disabled={formView}
       />
       <TextareaControlForm 
         control={form.control}
         name="address"
         label="Alamat Lengkap"
-        isRequired={true}
+        isRequired={inputRequired}
         rules={{
           validate: validateAddress
         }}
+        disabled={formView}
       />
-
-        <Button 
-          type="submit" 
-          disabled={disableSubmitBtn}
-        >
-          {pendingSaved && <Loader2Icon className="animate-spin" />}
-          {pendingSaved 
-            ? 'Mohon tunggu'
-            : 'Simpan'
-          }
-        </Button>
+      <section className="mt-5 flex flex-col gap-4">
+        {formUpdate && (
+          <Button 
+            variant='outline' 
+            onClick={onReset}
+            disabled={pendingSaved}
+          >
+            Reset
+          </Button>
+        )}
+        {!formView && (
+          <Button type="submit" disabled={disableSubmitBtn}>
+            {pendingSaved && <Loader2Icon className="animate-spin" />}
+            {pendingSaved 
+              ? 'Mohon tunggu'
+              : 'Simpan'
+            }
+          </Button>
+        )}
+      </section>
     </MainContentForm>
   )
 }
