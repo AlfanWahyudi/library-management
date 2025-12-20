@@ -79,14 +79,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
       toast.error(error)
     }
 
-    // trigger email field when email is duplicate
-    if (isEmailExist) {
-      form.trigger('email')
-    } else {
-      form.clearErrors('email')
-    }
-
-  }, [user, error, isEmailExist])
+  }, [user, error])
 
   const changeFormView = (view) => {
     setFormState({
@@ -125,11 +118,8 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     const result = schema.safeParse(email)
     if (!result.success) return getErrMsgZod(result)
 
-    await runFetchCheckEmail({
-      fetchFn: async () => await checkEmailExist({ email })
-    })
-
-    if (isEmailExist) {
+    const isDuplicate = await checkEmailExist({ email })
+    if (isDuplicate) {
       return 'Email sudah digunakan, mohon untuk mengganti dengan yang lain'      
     }
 
