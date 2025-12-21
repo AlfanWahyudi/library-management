@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import memberValidation from "./validation";
+import validateMember from "./validation";
 
 const genderOpt = [
   { val: 'm', label: 'Laki-Laki' }, 
@@ -119,7 +119,7 @@ export default function MemberForm({
         label="Nama Lengkap"
         isRequired={inputRequired}
         rules={{
-          validate: memberValidation.validateFullName
+          validate: validateMember.fullName
         }}
         disabled={formView}
       />
@@ -129,7 +129,7 @@ export default function MemberForm({
         label='Tanggal Lahir'
         isRequired={inputRequired}
         rules={{
-          validate: memberValidation.validateBirthDate
+          validate: validateMember.birthDate
         }}
         disabled={formView}
       />
@@ -140,7 +140,7 @@ export default function MemberForm({
         items={genderOpt}
         isRequired={inputRequired}
         rules={{
-          validate: memberValidation.validateGender
+          validate: validateMember.gender
         }}
         disabled={formView}
       />
@@ -150,7 +150,7 @@ export default function MemberForm({
         label="Email"
         isRequired={inputRequired}
         rules={{
-          validate: (email) => (memberValidation.validateEmail(email, member?.id)) 
+          validate: (email) => (validateMember.email(email, member?.id)) 
         }}
         disabled={formView}
       />
@@ -160,7 +160,7 @@ export default function MemberForm({
         label="No Telepon"
         isRequired={inputRequired}
         rules={{
-          validate: (phone) => (memberValidation.validatePhone(phone, member?.id))
+          validate: (phone) => (validateMember.phone(phone, member?.id))
         }}
         disabled={formView}
       />
@@ -170,7 +170,7 @@ export default function MemberForm({
         label="Alamat Lengkap"
         isRequired={inputRequired}
         rules={{
-          validate: memberValidation.validateAddress
+          validate: validateMember.address
         }}
         disabled={formView}
       />

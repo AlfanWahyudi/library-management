@@ -15,6 +15,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
+import validateUserProfile from "./validate"
 
 const genderOpt = [
   { val: 'm', label: 'Laki-Laki' }, 
@@ -94,55 +95,24 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     }
   }
 
+  const mapData = ({ username, fullName, email, gender, address }) => {
+    return {
+      username,
+      email,
+      gender,
+      fullName: fullName.trim(),
+      address: address.trim(),
+    }
+  }
+
   const onSubmit = async (data, e) => {
+    const dataMapped = mapData(data)
     if (formState.update) {
       await runFetch({
-        fetchFn: async() => await updateProfile({...data, username})
+        fetchFn: async() => await updateProfile({...dataMapped, username})
       })
     }
   }
-
-  // === Start Validation ===
-  const validateFullName = (fullName) => {
-    const schema = z.string().trim().min(1, 'Nama Lengkap tidak boleh kosong')
-
-    const result = schema.safeParse(fullName)
-    if (!result.success) return getErrMsgZod(result)
-
-    return true
-  }
-
-  const validateEmail = async (email) => {
-    const schema = z.email('Format email tidak sesuai').trim()
-
-    const result = schema.safeParse(email)
-    if (!result.success) return getErrMsgZod(result)
-
-    const isDuplicate = await checkEmailExist({ email })
-    if (isDuplicate) {
-      return 'Email sudah digunakan, mohon untuk mengganti dengan yang lain'      
-    }
-
-    return true
-  }
-
-  const validateGender = (gender) => {
-    const schema = z.string().min(1, 'Jenis Kelamin tidak boleh kosong')
-
-    const result = schema.safeParse(gender)
-    if (!result.success) return getErrMsgZod(result)
-  
-  }
-
-  const validateAddress = (address) => {
-    const schema = z.string().trim().min(1, 'Alamat Lengkap tidak boleh kosong')
-
-    const result = schema.safeParse(address)
-    if (!result.success) return getErrMsgZod(result)
-
-    return true
-  }
-  // === End Validation ===
 
   return (
     <MainContentForm
@@ -169,7 +139,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           name="fullName"
           label="Nama Lengkap"
           rules={{
-            validate: validateFullName,
+            validate: validateUserProfile.fullName,
           }}
           isRequired={inputRequired}
           disabled={formState.viewOnly}
@@ -180,7 +150,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           name="email"
           label="Email"
           rules={{
-            validate: validateEmail,
+            validate: validateUserProfile.email,
           }}
           isRequired={inputRequired}
           disabled={formState.viewOnly}
@@ -195,7 +165,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           items={genderOpt}
           selectedValue={form.getValues('gender')}
           rules={{
-            validate: validateGender,
+            validate: validateUserProfile.gender,
           }}
           disabled={formState.viewOnly}
         />
@@ -206,7 +176,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
           label="Alamat Lengkap"
           isRequired={inputRequired}
           rules={{
-            validate: validateAddress,
+            validate: validateUserProfile.address,
           }}
           disabled={formState.viewOnly}
         />
