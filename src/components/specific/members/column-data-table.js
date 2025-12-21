@@ -33,7 +33,7 @@ const columnsDefMember = [
     id: 'phone',
     header: ({ column }) => (
       <ColHeader>
-        <ColSortingHeader column={column} headerName='Nomor HP' />
+        <ColSortingHeader column={column} headerName='Nomor Telepon' />
       </ColHeader>
     ),
     cell: props => props.getValue(),

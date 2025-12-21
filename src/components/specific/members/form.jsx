@@ -7,15 +7,14 @@ import SelectControlForm from "@/components/common/form/select-control-form";
 import TextareaControlForm from "@/components/common/form/textarea-control-form";
 import { Button } from "@/components/ui/button";
 import useFetch from "@/hooks/use-fetch";
-import { checkDuplicationMember, saveMember } from "@/lib/http/member-http";
+import { saveMember } from "@/lib/http/member-http";
 import { formatDate } from "@/lib/utils/date-utils";
-import { getErrMsgZod } from "@/lib/utils/zod-utils";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
+import memberValidation from "./validation";
 
 const genderOpt = [
   { val: 'm', label: 'Laki-Laki' }, 
@@ -105,83 +104,6 @@ export default function MemberForm({
     form.reset()
   }
   
-  // === Start Validation ===
-  const validateFullName = (fullName) => {
-    const schema = z.string().trim().min(1, 'Nama Lengkap tidak boleh kosong')
-
-    const result = schema.safeParse(fullName)
-    if (!result.success) return getErrMsgZod(result)
-
-    return true
-  }
-
-  const validateEmail = async (email) => {
-    const schema = z.email('Format email tidak sesuai')
-
-    const result = schema.safeParse(email)
-    if (!result.success) return getErrMsgZod(result)
-    
-    const id = member ? member.id : null
-    const isDuplicate = await checkDuplicationMember({ field: 'email', value: email, id })
-    if (isDuplicate) {
-      return 'Email sudah digunakan, mohon untuk mengganti dengan yang lain'
-    }
-
-    return true
-  }
-
-  const validatePhone = async (phone) => {
-    const schema = z.stringFormat('only-number', /^\d+$/).max(20, 'No Telepon tidak boleh melebihi 20 angka')
-
-    const result = schema.safeParse(phone, {
-      error: (iss) => {
-        if (iss.format === 'only-number') {
-          return 'No Telepon invalid: hanya boleh angka'
-        }
-      }
-    })
-
-    if (!result.success) return getErrMsgZod(result)
-
-    const id = member ? member.id : null
-    const isDuplicate = await checkDuplicationMember({ field: 'phone', value: phone, id })
-    if (isDuplicate) {
-      return 'No Telepon sudah digunakan, mohon untuk mengganti dengan yang lain'
-    }
-
-    return true
-  }
-
-  const validateGender = (gender) => {
-    const schema = z.string().min(1, 'Jenis Kelamin tidak boleh kosong')
-
-    const result = schema.safeParse(gender)
-    if (!result.success) return getErrMsgZod(result)
-  
-    return true
-  }
-  
-  const validateBirthDate = (birthDate) => {
-    const schema = z.date({
-      error: issue => issue.input === undefined ? "Tanggal lahir tidak boleh kosong" : "Format tanggal tidak sesuai"
-    })
-
-    const result = schema.safeParse(birthDate)
-    if (!result.success) return getErrMsgZod(result)
-
-    return true
-  }
-
-  const validateAddress = (address) => {
-    const schema = z.string().trim().min(1, 'Alamat Lengkap tidak boleh kosong')
-
-    const result = schema.safeParse(address)
-    if (!result.success) return getErrMsgZod(result)
-
-    return true
-  }
-  // === End Validation ===
-
   return (
     <MainContentForm
       useFormProp={form}
@@ -197,7 +119,7 @@ export default function MemberForm({
         label="Nama Lengkap"
         isRequired={inputRequired}
         rules={{
-          validate: validateFullName
+          validate: memberValidation.validateFullName
         }}
         disabled={formView}
       />
@@ -207,7 +129,7 @@ export default function MemberForm({
         label='Tanggal Lahir'
         isRequired={inputRequired}
         rules={{
-          validate: validateBirthDate
+          validate: memberValidation.validateBirthDate
         }}
         disabled={formView}
       />
@@ -218,7 +140,7 @@ export default function MemberForm({
         items={genderOpt}
         isRequired={inputRequired}
         rules={{
-          validate: validateGender
+          validate: memberValidation.validateGender
         }}
         disabled={formView}
       />
@@ -228,7 +150,7 @@ export default function MemberForm({
         label="Email"
         isRequired={inputRequired}
         rules={{
-          validate: validateEmail
+          validate: (email) => (memberValidation.validateEmail(email, member?.id)) 
         }}
         disabled={formView}
       />
@@ -238,7 +160,7 @@ export default function MemberForm({
         label="No Telepon"
         isRequired={inputRequired}
         rules={{
-          validate: validatePhone
+          validate: (phone) => (memberValidation.validatePhone(phone, member?.id))
         }}
         disabled={formView}
       />
@@ -248,13 +170,14 @@ export default function MemberForm({
         label="Alamat Lengkap"
         isRequired={inputRequired}
         rules={{
-          validate: validateAddress
+          validate: memberValidation.validateAddress
         }}
         disabled={formView}
       />
       <section className="mt-5 flex flex-col gap-4">
         {formUpdate && (
-          <Button 
+          <Button
+            type="button" 
             variant='outline' 
             onClick={onReset}
             disabled={pendingSaved}
@@ -262,6 +185,7 @@ export default function MemberForm({
             Reset
           </Button>
         )}
+        {/* TODO: Add confirmation to before submitting   */}
         {!formView && (
           <Button type="submit" disabled={disableSubmitBtn}>
             {pendingSaved && <Loader2Icon className="animate-spin" />}
