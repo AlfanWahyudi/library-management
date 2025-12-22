@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { GENDER } from "../constants/gender";
+import { GENDER } from "../../constants/gender";
 import z from "zod";
 
 export const memberDataTableParamSchema = z.object({

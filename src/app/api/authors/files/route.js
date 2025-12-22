@@ -1,4 +1,4 @@
-import { extSchema } from "@/lib/schemas/file-schema"
+import { fileExtSchema } from "@/lib/schemas/file/file-ext-schema"
 import { NextResponse } from "next/server"
 import AuthorService from "@/lib/services/author-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
@@ -9,7 +9,7 @@ export async function GET(req) {
     const params = url.searchParams
 
     const ext = params.get('extension')
-    const parsedExt = extSchema.xlsx.parse(ext)
+    const parsedExt = fileExtSchema.xlsx.parse(ext)
 
     const buffer = await AuthorService.exportToExcel()
     const fileName = `authors_${new Date().toISOString()}.${parsedExt}`

@@ -4,7 +4,7 @@ import { SheetClose, SheetFooter, SheetHeader, SheetTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { authorClientSchema } from "@/lib/schemas/author-schema";
+import { authorClientSchema } from "@/lib/schemas/author/author-client-schema";
 import AlertMain from "@/components/common/alert-main";
 import useFetch from "@/hooks/use-fetch";
 import { deleteAuthor, saveAuthor } from "@/lib/http/author-http";

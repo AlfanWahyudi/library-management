@@ -11,7 +11,7 @@ const defaultFileExtSchema = z
   .min(1, 'extension must not be empty.')
 
 
-const extSchema =  {
+export const fileExtSchema =  {
   xlsx: defaultFileExtSchema
     .refine(
       (val) => /xlsx/.test(val), 
@@ -41,9 +41,4 @@ const extSchema =  {
       (val) => /pdf/.test(val), 
       `${allowedExtMsg} pdf.`
     ),
-}
-
-
-export {
-  extSchema
 }

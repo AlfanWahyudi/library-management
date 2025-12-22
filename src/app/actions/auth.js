@@ -1,6 +1,6 @@
 'use server'
 
-import { loginSchema } from '@/lib/schemas/login-schema'
+import { loginSchema } from '@/lib/schemas/auth/login-schema'
 import { redirect } from 'next/navigation'
 import z from 'zod'
 import { createSession } from '@/lib/utils/session'

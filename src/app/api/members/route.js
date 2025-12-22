@@ -1,7 +1,7 @@
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import { dataTableParamSchema } from "@/lib/schemas/datatable-param-schema";
-import { memberDataTableParamSchema } from "@/lib/schemas/member-datatable-param-schema";
-import { memberServerSchema } from "@/lib/schemas/member-server-schema";
+import { memberDataTableParamSchema } from "@/lib/schemas/member/member-datatable-param-schema";
+import { memberServerSchema } from "@/lib/schemas/member/member-server-schema";
 import MemberService from "@/lib/services/member-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
 import { NextResponse } from "next/server";

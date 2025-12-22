@@ -1,5 +1,5 @@
 import { createErrorRes, createSuccessRes } from "@/lib/dto/res-dto"
-import { authorServerSchema } from "@/lib/schemas/author-schema"
+import { authorServerSchema } from "@/lib/schemas/author/author-server-schema"
 import AuthorService from "@/lib/services/author-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
 import { NextResponse } from "next/server"
