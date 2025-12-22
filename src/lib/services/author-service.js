@@ -7,6 +7,7 @@ import CountryDAL from '../dal/country-dal'
 import { createCountry } from '../models/country-model'
 import { generateAuthorExcel } from '../excel/author-excel'
 import { NotFoundError } from '../errors/not-found-error'
+import { ActionFailedError } from '../errors/action-failed-error'
 
 const resourceCode = 'AUT'
 
@@ -83,6 +84,9 @@ const AuthorService = {
     }
 
     const author = await AuthorDAL.save({ id, fullName, countryCode, about, activeSince })
+    if (author === null) {
+      throw new ActionFailedError('failed to save author data')
+    }
 
     return createAuthorDTO({
       ...author,

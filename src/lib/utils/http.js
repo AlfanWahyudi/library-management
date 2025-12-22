@@ -3,6 +3,7 @@ import z, { ZodError } from "zod";
 import { HTTP } from "../constants/http";
 import { createErrorRes } from "../dto/res-dto";
 import { createErrorIssue } from "../dto/error-issue-dto";
+import { ActionFailedError } from "../errors/action-failed-error";
 
 const generateErrRes = (err) => {
   const statusCode = err['statusCode'] || 500
@@ -47,6 +48,10 @@ const generateErrorHttpRes = (err) => {
     errRes.error = 'Validation failed'
     errRes.issues = Object.entries(zodFlattened.fieldErrors)
       .map(([prop, messages]) => (createErrorIssue({ prop, messages })))   
+  } else if (err instanceof ActionFailedError) {
+    errRes.issues = [
+      createErrorIssue({ prop: null, messages: [err.message] })
+    ]
   }
 
   return {

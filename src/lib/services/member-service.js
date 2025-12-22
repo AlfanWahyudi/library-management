@@ -3,6 +3,7 @@ import 'server-only'
 import MemberDAL from '../dal/member-dal'
 import { createMemberDTO } from '../dto/member-dto'
 import { NotFoundError } from '../errors/not-found-error'
+import { ActionFailedError } from '../errors/action-failed-error'
 
 const isFound = async ({ id }) => {
   return await MemberDAL.findById({id}) !== null
@@ -91,7 +92,7 @@ const MemberService = {
 
     const member = await MemberDAL.save({ id, fullName, email, phone, address, birthDate, gender })
     if (member === null) {
-      throw new Error('failed to save member data')
+      throw new ActionFailedError('failed to save member data')
     }
 
     return createMemberDTO(member)

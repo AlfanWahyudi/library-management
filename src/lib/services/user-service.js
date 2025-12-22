@@ -8,6 +8,7 @@ import { NotFoundError } from '../errors/not-found-error'
 import { BadRequestError } from '../errors/bad-request-error'
 import { UnauthorizeError } from '../errors/unauthorized-error'
 import { ForbiddenError } from '../errors/forbidden-error'
+import { ActionFailedError } from '../errors/action-failed-error'
 
 const UserService = {
   checkCredential: async ({ user, password }) => {
@@ -59,7 +60,7 @@ const UserService = {
     const data = await UserDAL.updateProfile({ username, email, fullName, gender, address })
 
     if (data === null) {
-      throw new Error(`Failed to update user profile data.`)
+      throw new ActionFailedError(`Failed to update user profile data.`)
     }
 
     return createUserDTO(data)
@@ -81,7 +82,7 @@ const UserService = {
     const data = await UserDAL.changeUsername({ id: user.id, newUsername })
 
     if (!data) {
-      throw new Error('Failed to change username for user id: ' + user.id)
+      throw new ActionFailedError('Failed to change username for user id: ' + user.id)
     }
 
     return createUserDTO(data)
