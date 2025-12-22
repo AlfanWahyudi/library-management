@@ -4,6 +4,10 @@ import bcrypt from 'bcrypt'
 import UserDAL from '../dal/user-dal'
 import SessionDAL from '../dal/session-dal'
 import { createUserDTO } from '../dto/user-dto'
+import { NotFoundError } from '../errors/not-found-error'
+import { BadRequestError } from '../errors/bad-request-error'
+import { UnauthorizeError } from '../errors/unauthorized-error'
+import { ForbiddenError } from '../errors/forbidden-error'
 
 const UserService = {
   checkCredential: async ({ user, password }) => {
@@ -20,7 +24,7 @@ const UserService = {
     const user = await UserDAL.getById(id)
 
     if (user == null) {
-      throw new Error('user id is not found')
+      throw new NotFoundError('id', 'user id is not found')
     }
 
     return user
@@ -35,21 +39,21 @@ const UserService = {
   },
 
   updateProfile: async ({ username, email, fullName, gender, address }) => {
-    if (username === null || username === '') throw new Error('username must not be null or empty')
+    if (username === null || username === '') throw new BadRequestError('username', 'username must not be null or empty')
 
     const session = await SessionDAL.verify()
     if (!session.isAuth) {
-      throw new Error('User is not authenticated')
+      throw new UnauthorizeError('User is not authenticated')
     }
 
     const user = await UserService.getById(session.userId)
     if (user.username !== username) {
-      throw new Error(`You don't have any permission to update this user data.`)
+      throw new ForbiddenError(`You don't have any permission to update this user data.`)
     }
 
     const isEmailExist = await UserDAL.checkEmailExist({ id: user.id, email: user.email })
     if (isEmailExist) {
-      throw new Error(`email is already taken.`)
+      throw new BadRequestError('email', `email is already taken.`)
     }
 
     const data = await UserDAL.updateProfile({ username, email, fullName, gender, address })
@@ -66,12 +70,12 @@ const UserService = {
 
     const session = await SessionDAL.verify()
     if (!session.isAuth) {
-      throw new Error('User is not authenticated')
+      throw new UnauthorizeError('User is not authenticated')
     }
 
     const user = await UserDAL.getById(session.userId)
     if (user.username === newUsername) {
-      throw new Error('newUsername must not be same with prev username')
+      throw new BadRequestError('newUsername', 'newUsername must not be same with prev username')
     }
 
     const data = await UserDAL.changeUsername({ id: user.id, newUsername })

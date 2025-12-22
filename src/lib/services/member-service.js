@@ -2,6 +2,7 @@ import 'server-only'
 
 import MemberDAL from '../dal/member-dal'
 import { createMemberDTO } from '../dto/member-dto'
+import { NotFoundError } from '../errors/not-found-error'
 
 const isFound = async ({ id }) => {
   return await MemberDAL.findById({id}) !== null
@@ -12,7 +13,7 @@ const MemberService = {
     const member = await MemberDAL.findById({ id })
     
     if (member === null) {
-      throw new Error('member id is not found')
+      throw new NotFoundError('id', 'member id is not found')
     }
 
     return createMemberDTO(member)
@@ -74,18 +75,18 @@ const MemberService = {
     if (id !== null) {
       const memberFound = await isFound({id})
       if (!memberFound) {
-        throw new Error('member id is not found.')
+        throw new NotFoundError('id', 'member id is not found.')
       }
     }
 
     const emailExist = await MemberService.isDataExist({ id, field: 'email', value: email })
     if (emailExist) {
-      throw new Error('email is already in use.')
+      throw new NotFoundError('email', 'email is already in use.')
     }
 
     const phoneExist = await MemberService.isDataExist({ id, field: 'phone', value: phone })
     if (phoneExist) {
-      throw new Error('phone is already in use.')
+      throw new NotFoundError('phone', 'phone is already in use.')
     }
 
     const member = await MemberDAL.save({ id, fullName, email, phone, address, birthDate, gender })

@@ -1,7 +1,22 @@
 
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
 import { HTTP } from "../constants/http";
 import { createErrorRes } from "../dto/res-dto";
+import { createErrorIssue } from "../dto/error-issue-dto";
+
+const generateErrRes = (err) => {
+  const statusCode = err['statusCode'] || 500
+
+  const prop = err['prop'] || null
+  const messages = [statusCode === 500 ? `Something wen't wrong, please try again later` : err.message]
+
+  return createErrorRes({
+    error: getHttpStatusTitle(statusCode),
+    issues: [
+      createErrorIssue({ prop, messages })
+    ]
+  })
+}
 
 const getHttpStatusTitle = (code) => {
   return HTTP.STATUS[code] || 'Unknown Status';
@@ -20,22 +35,19 @@ const getFilenameFromRes = (resObj) => {
 }
 
 const generateErrorHttpRes = (err) => {
-  const errRes = createErrorRes({ error: 'Something went wrong, please try again later.' })
-  let status = 500
-
-  switch (err) {
-    case err instanceof ZodError:
-      errRes.error = 'Validation failed.',
-      errRes.details = err.issues
-
-      status = 400
-      break;
+  const errRes = generateErrRes(err)
   
-    default:
-      errRes.error = err.toString()
-      break;
+  let status = err['statusCode'] || 500
+
+  if (err instanceof ZodError) {
+    status = 400
+
+    const zodFlattened = z.flattenError(err)
+
+    errRes.error = 'Validation failed'
+    errRes.issues = Object.entries(zodFlattened.fieldErrors)
+      .map(([prop, messages]) => (createErrorIssue({ prop, messages })))   
   }
-  
 
   return {
     errRes,

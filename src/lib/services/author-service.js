@@ -6,6 +6,7 @@ import AuthorDAL from '../dal/author-dal'
 import CountryDAL from '../dal/country-dal'
 import { createCountry } from '../models/country-model'
 import { generateAuthorExcel } from '../excel/author-excel'
+import { NotFoundError } from '../errors/not-found-error'
 
 const resourceCode = 'AUT'
 
@@ -70,14 +71,14 @@ const AuthorService = {
     const country = await CountryDAL.getByCode({ code: countryCode })
 
     if (country === null) {
-      throw new Error('countryCode property is not found.')
+      throw new NotFoundError('countryCode', 'countryCode property is not found.')
     }
 
     if (id !== null) {
       const author = await AuthorDAL.findById({ id: parseInt(id) })
 
       if (author === null) {
-        throw new Error('author id is not found.')
+        throw new NotFoundError('id', 'author id is not found.')
       }
     }
 
@@ -93,7 +94,7 @@ const AuthorService = {
     const author = await AuthorDAL.findById({ id: parseInt(id) })
 
     if (author === null) {
-      throw new Error('author id is not found.')
+      throw new NotFoundError('id', 'author id is not found.')
     }
 
     return await AuthorDAL.delete({ id: author.id })
@@ -104,7 +105,7 @@ const AuthorService = {
     const author = await AuthorDAL.findById({ id: authorId })
 
     if (author === null) {
-      throw new Error('author id is not found.')
+      throw new NotFoundError('id', 'author id is not found.')
     }
 
     return await AuthorDAL.getBooks({ id: authorId })  

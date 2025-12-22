@@ -11,14 +11,13 @@ export const createSuccessRes = ({ message, data = null, ...otherProp }) => {
 
 }
 
-
-export const createErrorRes = ({ error, details = [] }) => {
+export const createErrorRes = ({ error, issues }) => {
   if (typeof(error) !== 'string') throw new Error('error property must be a string')
-  if (typeof(details) !== 'object') throw new Error('details property must be an object')
+  if (typeof(issues) !== 'object') throw new Error('issues property must be an object')
 
   return {
     success: false,
     error,
-    details
+    issues
   }
 }
