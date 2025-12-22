@@ -3,7 +3,7 @@
 import { loginSchema } from '@/lib/schemas/auth/login-schema'
 import { redirect } from 'next/navigation'
 import z from 'zod'
-import { createSession } from '@/lib/utils/session'
+import { createSession } from '@/lib/utils/server/session'
 import { cookies } from 'next/headers'
 import UserDAL from '@/lib/dal/user-dal'
 import UserService from '@/lib/services/user-service'

@@ -1,7 +1,7 @@
 'use client'
 
 import z from "zod";
-import { getErrMsgZod } from "@/lib/utils/zod-utils";
+import { getErrMsgZod } from "@/lib/utils/zod";
 import { checkEmailExist } from "@/lib/http/user-http"
 
 const validateUserProfile = {

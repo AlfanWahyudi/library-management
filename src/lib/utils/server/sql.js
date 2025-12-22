@@ -1,6 +1,6 @@
 import 'server-only'
 
-import sql from '../config/db'
+import sql from '../../config/db'
 
 // const dataNotDeleted = (alias = '') => sql`deleted_by IS NULL AND deleted_at IS NULL`
 const dataNotDeleted = (alias = '') => {

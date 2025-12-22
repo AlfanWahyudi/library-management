@@ -1,7 +1,7 @@
 import 'server-only'
 
 import sql from '@/lib/config/db'
-import { dataDeleted, dataNotDeleted } from '../utils/sql-utils'
+import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
 import { createUser } from '../models/user-model'
 import { sq } from 'date-fns/locale'
 

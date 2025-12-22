@@ -1,5 +1,5 @@
 import sql from "@/lib/config/db"
-import { dataNotDeleted } from "../utils/sql-utils"
+import { dataNotDeleted } from "../utils/server/sql"
 
 const UserRoleDAL = {
   //TODO: Test this function

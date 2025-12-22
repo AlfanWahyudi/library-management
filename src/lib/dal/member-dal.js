@@ -1,9 +1,9 @@
 import 'server-only'
 
 import sql from '../config/db'
-import { getPaginatedList } from '@/lib/utils/datatable'
+import { getPaginatedList } from '@/lib/utils/server/datatable'
 import { createMember } from '../models/member-model'
-import { dataNotDeleted } from '../utils/sql-utils'
+import { dataNotDeleted } from '../utils/server/sql'
 
 const tableName = 'members'
 

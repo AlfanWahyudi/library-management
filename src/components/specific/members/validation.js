@@ -1,7 +1,7 @@
 'use client';
 
 import z from "zod";
-import { getErrMsgZod } from "@/lib/utils/zod-utils";
+import { getErrMsgZod } from "@/lib/utils/zod";
 import { checkDuplicationMember } from "@/lib/http/member-http";
 
 const validateMember = {

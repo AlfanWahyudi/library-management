@@ -1,6 +1,6 @@
 import 'server-only'
-import sql from '../config/db'
 
+import sql from '../../config/db'
 
 export const getPaginatedList = async ({
   page,

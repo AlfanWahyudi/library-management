@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { downloadPdfAuthorAll } from "@/lib/http/author-http"
 import { Loader2Icon } from "lucide-react"
 import { useEffect } from "react"
-import { downloadBlobData } from "@/lib/utils/download-util"
+import { downloadBlobData } from "@/lib/utils/client/download"
 import { toast } from "sonner"
 
 export default function DownloadPdfButton({}) {

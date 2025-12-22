@@ -1,4 +1,4 @@
-import { decrypt } from "@/lib/utils/session"
+import { decrypt } from "@/lib/utils/server/session"
 import { cookies } from "next/headers"
 import { cache } from "react"
 

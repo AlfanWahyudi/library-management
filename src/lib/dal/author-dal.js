@@ -2,7 +2,7 @@ import 'server-only'
 
 import sql from '../config/db'
 import { createAuthor } from '../models/author-model'
-import { dataDeleted, dataNotDeleted } from '../utils/sql-utils'
+import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
 import { createBook } from '../models/book-model'
 
 const tableName = 'authors'

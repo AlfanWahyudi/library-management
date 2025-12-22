@@ -8,7 +8,7 @@ import TextareaControlForm from "@/components/common/form/textarea-control-form"
 import { Button } from "@/components/ui/button";
 import useFetch from "@/hooks/use-fetch";
 import { saveMember } from "@/lib/http/member-http";
-import { formatDate } from "@/lib/utils/date-utils";
+import { formatDate } from "@/lib/utils/date";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
