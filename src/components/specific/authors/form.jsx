@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { authorClientSchema } from "@/lib/schemas/author/author-client-schema";
 import AlertMain from "@/components/common/alert-main";
 import useFetch from "@/hooks/use-fetch";
-import { deleteAuthor, saveAuthor } from "@/lib/http/author-http";
 import { useEffect } from "react";
 import { getAllCountry } from "@/lib/http/country-http";
 
@@ -15,10 +14,8 @@ import MainContentForm from "@/components/common/form/main-content-form";
 import InputControlForm from "@/components/common/form/input-control-form";
 import TextareaControlForm from "@/components/common/form/textarea-control-form";
 import SelectControlForm from "@/components/common/form/select-control-form";
-import { Loader2Icon } from "lucide-react";
-import AlertDialogMain from "@/components/common/alert-dialog/alert-dialog-main";
-import { toast } from "sonner";
-
+import AuthorAlertDialogForm from "./alert-dialog/alert-dialog-form";
+import AuthorAlertDialogDelete from "./alert-dialog/alert-dialog-delete";
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
 //TODO: Styling untuk input yang digunakan pada Detail View
@@ -29,19 +26,25 @@ export default function AuthorForm({
   viewOnly = false,
   children,
 }) {
-  const formCreate = !viewOnly && !author
-  const formUpdate = !viewOnly && author
-  const formView = viewOnly && author
+  const formType = 
+  viewOnly && author 
+    ? 'view'
+    : !viewOnly && author
+      ? 'update'
+      : !viewOnly && !author
+        ? 'create'
+        : null
 
-  const formTitle = formCreate 
+  const formTitle = formType === 'create' 
     ? 'Tambah pengarang'
-    : formUpdate
+    : formType === 'update'
       ? 'Update pengarang'
-      : formView
+      : formType === 'view'
         ? 'Detail pengarang'
         : 'Form pengarang'
 
   const inputRequired = viewOnly ? false : true
+  const inputDisabled = formType === 'view'
 
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
@@ -57,95 +60,28 @@ export default function AuthorForm({
   })
 
   const {
-    error: errorSaved,
-    isPending: pendingSaved,
-    runFetch: runSaveAuthor,
-    fetchedData: saved,
-  } = useFetch({ initialValue: undefined })
-
-
-  const {
     error: errorCountry,
     runFetch: runFetchCountry,
     fetchedData: countries,
     reset: resetCountries,
   } = useFetch({ initialValue: [] })
 
-
-  const {
-    error: errorDelete,
-    isPending: pendingDeleted,
-    runFetch: runDelete,
-    fetchedData: deleted,
-  } = useFetch({ initialValue: undefined })
-
-
   useEffect(() => {
     const fetchingData = async () => {
       await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
     }
 
-    const handleSuccAction = () => {
-      let msg =  ''
-      
-      if (saved && formCreate) {
-        msg = 'Berhasil menambahkan data pengarang'
-      }
-
-      if (saved && formUpdate) {
-        msg = 'Berhasil memperbarui data pengarang'  
-      }
-  
-      if (deleted && formView) {
-        msg = 'Berhasil menghapus data pengarang'
-      }
-      
-      if (msg !== '') {
-        cbSuccess()
-
-        setTimeout(() => {
-          toast.success(msg)
-        }, 200)
-      }
-    }
-
-    const handleErrAction = () => {
-      const msg = errorSaved || errorDelete
-      if (msg !== '') {
-        toast.error(msg)
-      }
-    }
-
     if (openForm) {
       fetchingData()
 
-      handleSuccAction()
-      handleErrAction()
     } else {
       resetCountries()
     }
-  }, [openForm, saved, errorSaved, deleted, errorDelete])
-
-  const onSubmit = async (data, e) => {
-    const id = author !== null ? author.id : null
-
-    if (!formView) {
-      await runSaveAuthor({ 
-        fetchFn: async() => await saveAuthor({data, id})
-      })
-    }
-  }
-  
-  const onDelete = async (id) => {
-    await runDelete({
-      fetchFn: async() => await deleteAuthor({ id })
-    })
-  }
+  }, [openForm])
 
   return (
     <MainContentForm 
       useFormProp={form} 
-      onSubmitForm={onSubmit} 
       className="flex-1 flex flex-col gap-4"
       noValidate
     >
@@ -164,7 +100,7 @@ export default function AuthorForm({
             name="fullName"
             label="Nama Lengkap"
             isRequired={inputRequired}
-            disabled={formView}
+            disabled={inputDisabled}
           />
           <SelectControlForm 
             control={form.control}
@@ -173,45 +109,41 @@ export default function AuthorForm({
             isRequired={inputRequired}
             placeholder="Pilih kebangsaan"
             items={countries.map((country) => ({ val: country.code, label: country.name }))}
-            disabled={errorCountry || formView}
+            disabled={errorCountry || inputDisabled}
           />
           <InputControlForm 
             control={form.control}
             name="activeSince"
             label="Aktif Sejak"
             type="number"
-            disabled={formView}
+            disabled={inputDisabled}
           />
           <TextareaControlForm 
             control={form.control}
             name="about"
             label="Tentang"
             rows={10}
-            disabled={formView}
+            disabled={inputDisabled}
           />
         </div>
         {children}
       </section>
       <SheetFooter>
-        {/* TODO: Add confirmation to before submitting   */}
-        {!formView && (
-          <Button type="submit" size='sm' disabled={pendingSaved}>
-            {pendingSaved && <Loader2Icon className="animate-spin" />}
-            {pendingSaved 
-              ? 'Mohon tunggu'
-              : 'Simpan'
-            }
-          </Button>
+        {formType !== 'view' && (
+          <AuthorAlertDialogForm 
+            form={form}
+            formTitle={formTitle}
+            formType={formType}
+            author={author}
+            onSuccSubmit={cbSuccess}
+          />
         )}
-        {formView && (
-          <AlertDialogMain
-            title='Hapus pengarang'
-            triggerLabel='Hapus pengarang'
-            actionLabel='Hapus'
-            cbAfterActionClicked={async () => await onDelete(author?.id)}
-          >
-            Apakah anda yakin untuk menghapus pengarang ini?
-          </AlertDialogMain>
+        {formType === 'view' && (
+          <AuthorAlertDialogDelete 
+            formType={formType}
+            author={author}
+            onSuccDelete={cbSuccess}
+          />
         )}
         <SheetClose asChild>
           <Button type="button" size='sm' variant="outline">Tutup</Button>

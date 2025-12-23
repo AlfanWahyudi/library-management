@@ -6,16 +6,11 @@ import MainContentForm from "@/components/common/form/main-content-form"
 import SelectControlForm from "@/components/common/form/select-control-form"
 import TextareaControlForm from "@/components/common/form/textarea-control-form"
 import { Button } from "@/components/ui/button"
-import useFetch from "@/hooks/use-fetch"
-import { checkEmailExist, updateProfile } from "@/lib/http/user-http"
-import { getErrMsgZod } from "@/lib/utils/zod"
-import { Loader2Icon } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import z from "zod"
 import validateUserProfile from "./validate"
+import UserProfileAlertDialogForm from "./alert-dialog/alert-dialog-form"
 
 const genderOpt = [
   { val: 'm', label: 'Laki-Laki' }, 
@@ -23,8 +18,8 @@ const genderOpt = [
 ]
 
 //TODO: e2e testing
-//TODO: cleaning the code
 //TODO: styling this form
+//TODO: perbaiki pengecekan duplikasi email selalu dilakukan, padahal tidak lagi input si email nya
 export default function UserProfileForm({ username, fullName, email, gender, address }) {
   const router = useRouter()
 
@@ -49,38 +44,9 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     },
   })
 
-  const {
-    error,
-    isPending,
-    runFetch,
-    fetchedData: user,
-    reset: fetchReset,
-  } = useFetch({ initialValue: undefined })
-
-  const {
-    error: checkEmailError,
-    runFetch: runFetchCheckEmail,
-    fetchedData: isEmailExist,
-  } = useFetch({ initialValue: undefined })
-
-  const disableSubmitBtn = isPending || !form.formState.isDirty || error || checkEmailError
-
-  useEffect(() => {
-    if (user) {
-      toast.success('Berhasil memperbarui data profile.')
-
-      setTimeout(() => {
-        fetchReset()
-
-        router.refresh()
-      }, 200)
-    }
-
-    if (error) {
-      toast.error(error)
-    }
-
-  }, [user, error])
+  const onSuccess = () => {
+    router.refresh()
+  }
 
   const changeFormView = (view) => {
     setFormState({
@@ -95,38 +61,13 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     }
   }
 
-  const mapData = ({ username, fullName, email, gender, address }) => {
-    return {
-      username,
-      email,
-      gender,
-      fullName: fullName.trim(),
-      address: address.trim(),
-    }
-  }
-
-  const onSubmit = async (data, e) => {
-    const dataMapped = mapData(data)
-    if (formState.update) {
-      await runFetch({
-        fetchFn: async() => await updateProfile({...dataMapped, username})
-      })
-    }
-  }
-
   return (
     <MainContentForm
       useFormProp={form}
       className="pt-4"
-      onSubmitForm={onSubmit}
       noValidate
     >
       <section className="flex flex-col gap-5 mb-8">
-        {checkEmailError && (
-          <AlertMain title='Error melakukan pengecekan duplikasi email' variant="error">
-            <p>{checkEmailError}</p>
-          </AlertMain>
-        )}
         <InputControlForm
           control={form.control}
           name="username"
@@ -196,16 +137,10 @@ export default function UserProfileForm({ username, fullName, email, gender, add
         {/* TODO: Add confirmation to before submitting   */}
         {formState.update && (
           <>
-            <Button 
-              type="submit" 
-              disabled={disableSubmitBtn}
-            >
-              {isPending && <Loader2Icon className="animate-spin" />}
-              {isPending
-                ? 'Mohon tunggu'
-                : 'Simpan Perubahan'
-              }
-            </Button>
+            <UserProfileAlertDialogForm 
+              form={form}
+              onSuccSubmit={onSuccess}
+            />
             <Button 
               type="button" 
               variant='outline' 

@@ -6,16 +6,11 @@ import MainContentForm from "@/components/common/form/main-content-form";
 import SelectControlForm from "@/components/common/form/select-control-form";
 import TextareaControlForm from "@/components/common/form/textarea-control-form";
 import { Button } from "@/components/ui/button";
-import useFetch from "@/hooks/use-fetch";
-import { saveMember } from "@/lib/http/member-http";
-import { formatDate } from "@/lib/utils/date";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import validateMember from "./validate";
 import { ROUTE } from "@/lib/constants/route";
-import MemberAlertDialogForm from "./alert-dialog-form";
+import MemberAlertDialogForm from "./alert-dialog/alert-dialog-form";
 
 
 const genderOpt = [
@@ -38,9 +33,16 @@ export default function MemberForm({
           ? 'create'
           : null
 
-  const disabledInput = formType === 'view'
+  const formTitle = formType === 'create' 
+    ? 'Tambah Anggota'
+    : formType === 'update'
+      ? 'Update Anggota'
+      : formType === 'view'
+        ? 'Detail Anggota'
+        : 'Form Anggota'
 
   const inputRequired = viewOnly ? false : true
+  const disabledInput = formType === 'view'
 
   const router = useRouter()
 
@@ -57,66 +59,8 @@ export default function MemberForm({
     },
   })
 
-  const {
-    error: errorSaved,
-    runFetch: runSaveMember,
-    isPending: pendingSaved,
-    fetchedData: saveData,
-    reset: fetchSaveReset
-  } = useFetch({ initialValue: undefined })
-
-  const disableSubmitBtn = pendingSaved ||!form.formState.isDirty || !form.formState.isValid
-
-  useEffect(() => {
-    if (saveData) {
-      if (formType === 'create') {
-        toast.success('Berhasil menambahkan data anggota baru')
-      }
-
-      if (formType === 'update') {
-        toast.success('Berhasil update data anggota')
-      }
-
-      fetchSaveReset()
-      router.push(ROUTE.MEMBERS.url)
-    }
-
-    if (errorSaved) {
-      toast.error(errorSaved)
-    }
-  }, [saveData, errorSaved])
-
-
-  const mapData = ({ fullName, email, phone, address, birthDate, gender }) => {
-    return {
-      email,
-      phone,
-      gender,
-      fullName: fullName.trim(),
-      address: address.trim(),
-      birthDate: formatDate({ date: birthDate }),
-    }
-  }
-
-  const onTrigger = (evt) => {
-    form.trigger()
-
-    if (!form.formState.isValid) {
-      evt.preventDefault()
-    }
-  }
-
-  const onSubmit = async (evt) => {
-    if (form.formState.isValid) {
-      const id = member ? member.id : null
-
-      const data = form.getValues()
-      const mappedData = mapData(data)
-
-      await runSaveMember({
-        fetchFn: async () => await saveMember({ data: mappedData, id })
-      })
-    }
+  const onSuccSubmit = () => {
+    router.push(ROUTE.MEMBERS.url)
   }
 
   const onReset = () => {
@@ -199,17 +143,17 @@ export default function MemberForm({
             type="button" 
             variant='outline' 
             onClick={onReset}
-            disabled={pendingSaved}
           >
             Reset
           </Button>
         )}
         {formType !== 'view' && (
           <MemberAlertDialogForm 
+            form={form}
             formType={formType}
-            onSubmit={onSubmit}
-            triggerDisabled={disableSubmitBtn}
-            onTrigger={onTrigger}
+            formTitle={formTitle}
+            member={member}
+            onSuccSubmit={onSuccSubmit}
           />
         )}
       </section>

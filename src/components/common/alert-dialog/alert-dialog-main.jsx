@@ -17,9 +17,14 @@ import { useState } from "react"
 
 export default function AlertDialogMain({
   title,
-  triggerLabel,
-  actionLabel = 'Oke',
+  triggerLabel = 'Confirm',
+  triggerDisabled = false,
+  triggerVariant = 'default',
+  onTriggerClick = (evt) => {},
   cancelLabel = 'Cancel',
+  cancelVariant = 'outline',
+  actionLabel = 'Oke',
+  actionVariant = 'default',
   cbAfterActionClicked = async () => {},
   cbAfterCancelClicked = () => {},
   children,
@@ -48,7 +53,13 @@ export default function AlertDialogMain({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">{triggerLabel}</Button>
+        <Button 
+          variant={triggerVariant}
+          onClick={onTriggerClick} 
+          disabled={triggerDisabled}
+        >
+          {triggerLabel}
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -58,12 +69,28 @@ export default function AlertDialogMain({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => cbAfterCancelClicked()} disabled={actionClicked}>
-            {cancelLabel}
-            </AlertDialogCancel>
-          <AlertDialogAction onClick={handleActionClicked} disabled={actionClicked}>
-            {actionClicked && <Loader2Icon className="animate-spin" />} 
-            {actionLabel}
+          <AlertDialogCancel 
+            asChild={true}
+          >
+            <Button
+              onClick={() => cbAfterCancelClicked()} 
+              disabled={actionClicked}
+              variant={cancelVariant}
+            >
+              {cancelLabel}
+            </Button>
+          </AlertDialogCancel>
+          <AlertDialogAction 
+            asChild={true}
+          >
+            <Button 
+              onClick={handleActionClicked} 
+              disabled={actionClicked}
+              variant={actionVariant}
+            >
+              {actionClicked && <Loader2Icon className="animate-spin" />} 
+              {actionLabel}
+            </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
