@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button";
 import useFetch from "@/hooks/use-fetch";
 import { saveMember } from "@/lib/http/member-http";
 import { formatDate } from "@/lib/utils/date";
-import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import validateMember from "./validate";
+import { ROUTE } from "@/lib/constants/route";
+import MemberAlertDialogForm from "./alert-dialog-form";
+
 
 const genderOpt = [
   { val: 'm', label: 'Laki-Laki' }, 
@@ -22,13 +24,21 @@ const genderOpt = [
 ]
 
 //TODO: styling form, must be responsive
+//TODO: perbaiki selalu request untuk check email dan phone nya, padahal kedua field itu sedang tidak diinputkan
 export default function MemberForm({
   member = null,
   viewOnly = false,
 }) {
-  const formCreate = !viewOnly && !member
-  const formUpdate = !viewOnly && member
-  const formView = viewOnly && member
+  const formType = 
+    viewOnly && member 
+      ? 'view'
+      : !viewOnly && member
+        ? 'update'
+        : !viewOnly && !member
+          ? 'create'
+          : null
+
+  const disabledInput = formType === 'view'
 
   const inputRequired = viewOnly ? false : true
 
@@ -55,23 +65,20 @@ export default function MemberForm({
     reset: fetchSaveReset
   } = useFetch({ initialValue: undefined })
 
-  const disableSubmitBtn = pendingSaved || !form.formState.isDirty
+  const disableSubmitBtn = pendingSaved ||!form.formState.isDirty || !form.formState.isValid
 
   useEffect(() => {
     if (saveData) {
-      if (formCreate) {
+      if (formType === 'create') {
         toast.success('Berhasil menambahkan data anggota baru')
       }
 
-      if (formUpdate) {
+      if (formType === 'update') {
         toast.success('Berhasil update data anggota')
       }
 
-      setTimeout(() => {
-        fetchSaveReset()
-
-        router.push('/dashboard/members')
-      }, 100)
+      fetchSaveReset()
+      router.push(ROUTE.MEMBERS.url)
     }
 
     if (errorSaved) {
@@ -91,13 +98,25 @@ export default function MemberForm({
     }
   }
 
-  const onSubmit = async (data, e) => {
-    const id = member ? member.id : null
-    const mappedData = mapData(data)
+  const onTrigger = (evt) => {
+    form.trigger()
 
-    await runSaveMember({
-      fetchFn: async () => await saveMember({ data: mappedData, id })
-    })
+    if (!form.formState.isValid) {
+      evt.preventDefault()
+    }
+  }
+
+  const onSubmit = async (evt) => {
+    if (form.formState.isValid) {
+      const id = member ? member.id : null
+
+      const data = form.getValues()
+      const mappedData = mapData(data)
+
+      await runSaveMember({
+        fetchFn: async () => await saveMember({ data: mappedData, id })
+      })
+    }
   }
 
   const onReset = () => {
@@ -108,7 +127,6 @@ export default function MemberForm({
     <MainContentForm
       useFormProp={form}
       className='grid gap-5'
-      onSubmitForm={onSubmit}
       noValidate
     >
       <section>
@@ -121,8 +139,9 @@ export default function MemberForm({
         rules={{
           validate: validateMember.fullName
         }}
-        disabled={formView}
+        disabled={disabledInput}
       />
+      {/* TODO: perbaiki error isDirty form nya tidak berfungsi, padahal tanggal sudah dipilih */}
       <CalendarControlForm 
         control={form.control}
         name='birthDate'
@@ -131,7 +150,7 @@ export default function MemberForm({
         rules={{
           validate: validateMember.birthDate
         }}
-        disabled={formView}
+        disabled={disabledInput}
       />
       <SelectControlForm 
         control={form.control}
@@ -142,7 +161,7 @@ export default function MemberForm({
         rules={{
           validate: validateMember.gender
         }}
-        disabled={formView}
+        disabled={disabledInput}
       />
       <InputControlForm 
         control={form.control}
@@ -152,7 +171,7 @@ export default function MemberForm({
         rules={{
           validate: (email) => (validateMember.email(email, member?.id)) 
         }}
-        disabled={formView}
+        disabled={disabledInput}
       />
       <InputControlForm 
         control={form.control}
@@ -162,7 +181,7 @@ export default function MemberForm({
         rules={{
           validate: (phone) => (validateMember.phone(phone, member?.id))
         }}
-        disabled={formView}
+        disabled={disabledInput}
       />
       <TextareaControlForm 
         control={form.control}
@@ -172,10 +191,10 @@ export default function MemberForm({
         rules={{
           validate: validateMember.address
         }}
-        disabled={formView}
+        disabled={disabledInput}
       />
       <section className="mt-5 flex flex-col gap-4">
-        {formUpdate && (
+        {formType === 'update' && (
           <Button
             type="button" 
             variant='outline' 
@@ -185,15 +204,13 @@ export default function MemberForm({
             Reset
           </Button>
         )}
-        {/* TODO: Add confirmation to before submitting   */}
-        {!formView && (
-          <Button type="submit" disabled={disableSubmitBtn}>
-            {pendingSaved && <Loader2Icon className="animate-spin" />}
-            {pendingSaved 
-              ? 'Mohon tunggu'
-              : 'Simpan'
-            }
-          </Button>
+        {formType !== 'view' && (
+          <MemberAlertDialogForm 
+            formType={formType}
+            onSubmit={onSubmit}
+            triggerDisabled={disableSubmitBtn}
+            onTrigger={onTrigger}
+          />
         )}
       </section>
     </MainContentForm>
