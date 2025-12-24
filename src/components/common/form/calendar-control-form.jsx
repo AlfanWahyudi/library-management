@@ -40,7 +40,7 @@ export default function CalendarControlForm({
             <FormLabel htmlFor="date">
               {label} {isRequired && <span className="text-destructive">*</span>} 
             </FormLabel>
-            <Popover open={open} onOpenChange={setOpen} >
+            <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button variant="outline" id="date" className={`${ fieldState.invalid ? 'border-destructive' : ''} justify-between font-normal`} disabled={disabled}>
                   {date ? date.toLocaleDateString() : placeholder}
@@ -54,7 +54,13 @@ export default function CalendarControlForm({
                   selected={date}
                   captionLayout="dropdown"
                   onSelect={(date) => {
-                    field.onChange(date)
+                    const val = date || null
+
+                    // trigger input
+                    field.onChange(val)
+                    field.onBlur()
+                    
+                    // close popover
                     setOpen(false)
                   }} />
               </PopoverContent>

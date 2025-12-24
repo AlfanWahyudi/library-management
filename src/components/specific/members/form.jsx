@@ -84,7 +84,6 @@ export default function MemberForm({
         }}
         disabled={disabledInput}
       />
-      {/* TODO: perbaiki error isDirty form nya tidak berfungsi, padahal tanggal sudah dipilih */}
       <CalendarControlForm 
         control={form.control}
         name='birthDate'
