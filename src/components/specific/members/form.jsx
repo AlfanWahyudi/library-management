@@ -19,7 +19,6 @@ const genderOpt = [
 ]
 
 //TODO: styling form, must be responsive
-//TODO: perbaiki selalu request untuk check email dan phone nya, padahal kedua field itu sedang tidak diinputkan
 export default function MemberForm({
   member = null,
   viewOnly = false,
@@ -47,7 +46,7 @@ export default function MemberForm({
   const router = useRouter()
 
   const form = useForm({
-    mode: 'onChange',
+    mode: 'onBlur',
     criteriaMode: 'all',
     defaultValues: {
       fullName: member?.fullName || '',

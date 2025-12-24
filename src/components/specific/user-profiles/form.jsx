@@ -19,7 +19,6 @@ const genderOpt = [
 
 //TODO: e2e testing
 //TODO: styling this form
-//TODO: perbaiki pengecekan duplikasi email selalu dilakukan, padahal tidak lagi input si email nya
 export default function UserProfileForm({ username, fullName, email, gender, address }) {
   const router = useRouter()
 
@@ -31,7 +30,7 @@ export default function UserProfileForm({ username, fullName, email, gender, add
   const inputRequired = formState.viewOnly ? false : true
 
   const form = useForm({
-    mode: 'onChange',
+    mode: 'onBlur',
     // by setting validateCriteriaMode to 'all',
     // all validation errors for single field will display at once
     criteriaMode: 'all',

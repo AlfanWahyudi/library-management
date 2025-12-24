@@ -15,7 +15,7 @@ export default function ChangeUsernameForm({
   const formTitle = 'Ganti Username'
 
   const form = useForm({
-    mode: 'onChange',
+    mode: 'onBlur',
     criteriaMode: 'all',
     defaultValues: {
       newUsername: ''

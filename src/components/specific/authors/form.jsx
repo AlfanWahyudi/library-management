@@ -49,6 +49,7 @@ export default function AuthorForm({
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
     // all validation errors for single field will display at once
+    mode: 'onBlur',
     criteriaMode: 'all',
     defaultValues: {
       fullName: author?.fullName || '',
