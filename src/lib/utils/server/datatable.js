@@ -1,6 +1,29 @@
 import 'server-only'
 
 import sql from '../../config/db'
+import { dataNotDeleted } from './sql'
+
+const filtering = ({
+  search,
+  filterQueries,
+  searchFields
+}) => {
+  return sql`
+    ${
+      search.trim() !== ''
+        ? sql` AND CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
+        : sql``
+    }
+    ${
+      // TODO: test jika filterQueries nya lebih dari satu, apakan akan tetap berhasil
+      filterQueries && filterQueries.length > 0
+        ? sql`${
+          filterQueries.flatMap(((query) => sql` AND ${query}`))
+        }`
+        : sql``
+    }
+  `
+}
 
 export const getPaginatedList = async ({
   page,
@@ -47,17 +70,15 @@ export const getPaginatedList = async ({
     throw new Error(`filterQueries must be non-empty array`)
   }
 
-  const data = await sql`
+  const queryCount = await sql`
     SELECT
-      *
+      COUNT(*)
     FROM ${sql(tableName)}
-    ${
-      search.trim() !== ''
-        ? sql`WHERE CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
-        : sql``
-    }
+    WHERE ${ dataNotDeleted() }
+    ${ filtering({ search, searchFields, filterQueries }) }
   `
-  const itemsCount = data.length
+  
+  const itemsCount = queryCount[0].count
   const pageCount = Math.ceil(itemsCount/limit)
 
   const offset = page * limit
@@ -65,34 +86,12 @@ export const getPaginatedList = async ({
     SELECT
       *
     FROM ${sql(tableName)}
-    ${
-      search.trim() !== '' || (filterQueries && filterQueries.length > 0)
-        ? sql`WHERE 
-          ${search.trim() !== ''
-            ? sql`CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
-            : sql``
-          }
-          ${
-            // TODO: test jika filterQueries nya lebih dari satu, apakan akan tetap berhasil
-            filterQueries && filterQueries.length > 0
-            ? sql`${
-              filterQueries.flatMap(((query, idx) => (
-                [
-                  idx > 0 
-                    ? sql`AND` 
-                    : search.trim() !== '' ? sql`AND` : sql``, 
-                  sql`${query}`,
-                ]
-              )))
-            }`
-            : sql``
-          }
-        `
-        : sql``
-    }
+    WHERE ${ dataNotDeleted() }
+    ${ filtering({ search, searchFields, filterQueries }) }
     ORDER BY ${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
     LIMIT ${limit} OFFSET ${offset}
   `
+
   return {
     data: dataWithLimit,
     meta: {
