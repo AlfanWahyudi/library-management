@@ -6,24 +6,46 @@ import { dataNotDeleted } from './sql'
 const filtering = ({
   search,
   filterQueries,
-  searchFields
+  searchFields,
+  isSoftDeleted
 }) => {
   return sql`
     ${
+      isSoftDeleted 
+        ? sql`WHERE ${ dataNotDeleted() }`
+        : sql``
+    }
+    ${
       search.trim() !== ''
-        ? sql` AND CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
+        ? sql` ${isSoftDeleted ? sql`AND` : sql`WHERE`} CONCAT_WS(' ', ${sql(searchFields)}) ILIKE ${'%' + search + '%'}`
         : sql``
     }
     ${
       // TODO: test jika filterQueries nya lebih dari satu, apakan akan tetap berhasil
       filterQueries && filterQueries.length > 0
         ? sql`${
-          filterQueries.flatMap(((query) => sql` AND ${query}`))
+          // filterQueries.flatMap(((query) => sql` AND ${query}`))
+          filterQueries.flatMap(((query, idx) => {
+            return idx === 0
+              ? sql `
+                ${
+                  isSoftDeleted
+                    ? sql `AND`
+                    : search.trim() !== ''
+                      ? sql `AND`
+                      : sql `WHERE`
+                }
+                ${query}
+              `
+              : sql ` AND ${query}`
+          }))
         }`
         : sql``
     }
+
   `
 }
+
 
 export const getPaginatedList = async ({
   page,
@@ -33,6 +55,7 @@ export const getPaginatedList = async ({
   search,
   searchFields,
   tableName,
+  isSoftDeleted = false,
   filterQueries = [],
 }) => {
   if (page === null || page === undefined) {
@@ -74,8 +97,7 @@ export const getPaginatedList = async ({
     SELECT
       COUNT(*)
     FROM ${sql(tableName)}
-    WHERE ${ dataNotDeleted() }
-    ${ filtering({ search, searchFields, filterQueries }) }
+    ${ filtering({ search, searchFields, filterQueries, isSoftDeleted }) }
   `
   
   const itemsCount = queryCount[0].count
@@ -86,8 +108,7 @@ export const getPaginatedList = async ({
     SELECT
       *
     FROM ${sql(tableName)}
-    WHERE ${ dataNotDeleted() }
-    ${ filtering({ search, searchFields, filterQueries }) }
+    ${ filtering({ search, searchFields, filterQueries, isSoftDeleted }) }
     ORDER BY ${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
     LIMIT ${limit} OFFSET ${offset}
   `
