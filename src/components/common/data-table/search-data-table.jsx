@@ -6,7 +6,9 @@ import { useEffect } from "react";
 import useDebounce from "@/hooks/use-debounce";
 import { Search } from "lucide-react";
 
-export default function SearchDataTable({ searchingFieldItems, table, delay = 400 }) {
+export default function SearchDataTable({ searchingFieldItems, table, delay = 400, className = "" }) {
+  const classes = `flex relative ${className}`
+
   const {
     value,
     handleInputChange
@@ -24,10 +26,10 @@ export default function SearchDataTable({ searchingFieldItems, table, delay = 40
   }, [table, debounceValue])
 
   return (
-    <div className="flex relative">
+    <div className={classes}>
       <Search className="text-neutral-400 w-5 md:w-4 absolute top-1.5 left-2" />
       <Input 
-        className="w-100 ps-9 md:ps-8" 
+        className="ps-9 md:ps-8" 
         placeholder={`Cari ${searchingFields}...`}
         value={value}
         onChange={(e) => {
