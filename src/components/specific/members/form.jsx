@@ -69,73 +69,77 @@ export default function MemberForm({
   return (
     <MainContentForm
       useFormProp={form}
-      className='grid gap-5'
+      className='grid gap-6'
       noValidate
     >
-      <section>
+      <section className="flex flex-col gap-4">
+        <div className="grid gap-4 md:grid-cols-2">
+          <InputControlForm 
+            control={form.control}
+            name="fullName"
+            label="Nama Lengkap"
+            isRequired={inputRequired}
+            rules={{
+              validate: validateMember.fullName
+            }}
+            disabled={disabledInput}
+          />
+          <InputControlForm 
+            control={form.control}
+            name="email"
+            label="Email"
+            isRequired={inputRequired}
+            rules={{
+              validate: (email) => (validateMember.email(email, member?.id)) 
+            }}
+            disabled={disabledInput}
+          />
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <CalendarControlForm 
+            control={form.control}
+            name='birthDate'
+            label='Tanggal Lahir'
+            isRequired={inputRequired}
+            rules={{
+              validate: validateMember.birthDate
+            }}
+            disabled={disabledInput}
+          />
+          <SelectControlForm 
+            control={form.control}
+            name="gender"
+            label="Jenis Kelamin"
+            items={genderOpt}
+            isRequired={inputRequired}
+            rules={{
+              validate: validateMember.gender
+            }}
+            disabled={disabledInput}
+          />
+          <InputControlForm 
+            control={form.control}
+            name="phone"
+            label="No Telepon"
+            isRequired={inputRequired}
+            rules={{
+              validate: (phone) => (validateMember.phone(phone, member?.id))
+            }}
+            disabled={disabledInput}
+          />
+        </div>
+        <TextareaControlForm 
+          control={form.control}
+          name="address"
+          label="Alamat Lengkap"
+          isRequired={inputRequired}
+          rules={{
+            validate: validateMember.address
+          }}
+          disabled={disabledInput}
+        />
       </section>
-      <InputControlForm 
-        control={form.control}
-        name="fullName"
-        label="Nama Lengkap"
-        isRequired={inputRequired}
-        rules={{
-          validate: validateMember.fullName
-        }}
-        disabled={disabledInput}
-      />
-      <CalendarControlForm 
-        control={form.control}
-        name='birthDate'
-        label='Tanggal Lahir'
-        isRequired={inputRequired}
-        rules={{
-          validate: validateMember.birthDate
-        }}
-        disabled={disabledInput}
-      />
-      <SelectControlForm 
-        control={form.control}
-        name="gender"
-        label="Jenis Kelamin"
-        items={genderOpt}
-        isRequired={inputRequired}
-        rules={{
-          validate: validateMember.gender
-        }}
-        disabled={disabledInput}
-      />
-      <InputControlForm 
-        control={form.control}
-        name="email"
-        label="Email"
-        isRequired={inputRequired}
-        rules={{
-          validate: (email) => (validateMember.email(email, member?.id)) 
-        }}
-        disabled={disabledInput}
-      />
-      <InputControlForm 
-        control={form.control}
-        name="phone"
-        label="No Telepon"
-        isRequired={inputRequired}
-        rules={{
-          validate: (phone) => (validateMember.phone(phone, member?.id))
-        }}
-        disabled={disabledInput}
-      />
-      <TextareaControlForm 
-        control={form.control}
-        name="address"
-        label="Alamat Lengkap"
-        isRequired={inputRequired}
-        rules={{
-          validate: validateMember.address
-        }}
-        disabled={disabledInput}
-      />
-      <section className="mt-5 flex flex-col gap-4">
+      <section className="flex flex-col gap-4 md:flex-row">
         {formType === 'update' && (
           <Button
             type="button" 
