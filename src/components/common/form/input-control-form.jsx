@@ -25,11 +25,11 @@ export default function InputControlForm({
       name={name}
       rules={rules}
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>
+        <FormItem className="block">
+          <FormLabel className="mb-2">
             {label} {isRequired && <span className="text-destructive">*</span>} 
           </FormLabel>
-          <FormControl>
+          <FormControl className="mb-1.5">
             <Input {...field} {...props}  />
           </FormControl>
           {children && (

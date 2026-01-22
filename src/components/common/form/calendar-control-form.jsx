@@ -36,13 +36,13 @@ export default function CalendarControlForm({
         const date = field.value
 
         return (
-          <FormItem className="flex flex-col gap-3">
-            <FormLabel htmlFor="date">
+          <FormItem className="block">
+            <FormLabel htmlFor="date" className="mb-2">
               {label} {isRequired && <span className="text-destructive">*</span>} 
             </FormLabel>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" id="date" className={`${ fieldState.invalid ? 'border-destructive' : ''} justify-between font-normal`} disabled={disabled}>
+                <Button variant="outline" id="date" className={`${ fieldState.invalid ? 'border-destructive' : ''} justify-between font-normal w-full mb-1.5`} disabled={disabled}>
                   {date ? date.toLocaleDateString() : placeholder}
                   <ChevronDownIcon />
                 </Button>

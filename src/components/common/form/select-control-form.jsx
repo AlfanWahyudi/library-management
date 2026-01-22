@@ -40,13 +40,13 @@ export default function SelectControlForm({
           : field.value
 
         return (
-          <FormItem>
-            <FormLabel>
+          <FormItem className="block">
+            <FormLabel className="mb-2">
               {label} {isRequired && <span className="text-destructive">*</span>} 
             </FormLabel>
             <Select value={field.value} onValueChange={field.onChange} defaultValue={defaultValue} {...props}>
               <FormControl>
-                <SelectTrigger className='w-[100%]'>
+                <SelectTrigger className='w-[100%] mb-1.5'>
                   <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
               </FormControl>
