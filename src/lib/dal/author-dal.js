@@ -140,8 +140,7 @@ const AuthorDAL = {
       JOIN 
         book_authors ba ON ba.book_id = b.id
       WHERE
-        ba.author_id = ${id} AND
-        ${ dataNotDeleted('b') }
+        ba.author_id = ${id}
     `
 
     return books.map((book) => createBook({...book}))

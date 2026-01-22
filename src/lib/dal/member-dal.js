@@ -13,9 +13,7 @@ const tempUsername = 'superadmin1' //
 const findByQuery = async ({ field, value }) => {
   return await sql`
     SELECT * FROM ${ sql(tableName) }
-    WHERE
-      ${ sql(field) } = ${value} AND
-      ${ dataNotDeleted() }
+    WHERE ${ sql(field) } = ${value}
   `
 }
 
@@ -122,8 +120,7 @@ const MemberDAL = {
           updated_by = ${ tempUsername }, 
           updated_at = NOW()
         WHERE
-          id = ${id} AND
-          ${ dataNotDeleted() }
+          id = ${id} 
         RETURNING *
       `
     }
