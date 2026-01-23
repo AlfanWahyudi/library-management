@@ -1,6 +1,5 @@
 import 'server-only'
 
-import sql from '../config/db'
 import { createAuthor } from '../models/author-model'
 import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
 import { createBook } from '../models/book-model'
@@ -10,28 +9,33 @@ const tableName = 'authors'
 //TODO: get curr user
 const tempUsername = 'superadmin1' // later change this
 
-const AuthorDAL = {
-  findById: async ({ id }) => {
-    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+const mapResult = (author) => {
+  return author
+    ? createAuthor(author)
+    : null
+}
 
-    const authors = await sql`
+const AuthorDAL = {
+  findById: async (sql, authorId) => {
+    if (typeof(authorId) !== 'number') throw new Error('authorId must be a number.')
+
+    const [author] = await sql`
       SELECT * FROM ${ sql(tableName) }
       WHERE
-        id = ${id} AND
+        id = ${authorId} AND
         ${ dataNotDeleted() }
     `
-    return authors.length === 0 
-      ? null
-      : createAuthor({...authors[0]})
+
+    return mapResult(author)
   },
 
-  save: async ({
-    id = null,
-    fullName,
-    countryCode,
-    about,
-    activeSince,
-  }) => {
+  save: async (
+    sql,
+    data,
+    authorId = null,
+  ) => {
+    const { fullName, countryCode, about, activeSince } = data
+
     activeSince = activeSince && parseInt(activeSince)
 
     if (activeSince !== null && activeSince < 0) {
@@ -39,7 +43,7 @@ const AuthorDAL = {
     }
 
     let authors = []
-    if (id === null) {
+    if (authorId === null) {
       authors = await sql`
         INSERT INTO ${ sql(tableName) }
           (full_name, country_code, active_since, about, created_by, created_at, updated_by, updated_at)
@@ -67,7 +71,7 @@ const AuthorDAL = {
           updated_by = ${ tempUsername }, 
           updated_at = NOW()
         WHERE
-          id = ${id} AND
+          id = ${authorId} AND
           ${ dataNotDeleted() }
         RETURNING *
       `
@@ -78,45 +82,42 @@ const AuthorDAL = {
       : createAuthor({...authors[0]})
   },
 
-  delete: async ({ id }) => {
-    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+  delete: async (sql, authorId) => {
+    if (typeof(authorId) !== 'number') throw new Error('authorId must be a number.')
 
-    const authors = await sql`
+    const [author] = await sql`
       UPDATE ${ sql(tableName) } 
       SET 
         deleted_by = ${ tempUsername }, 
         deleted = NOW()
       WHERE
-        id = ${id} AND
+        id = ${authorId} AND
         ${ dataNotDeleted() }
-      RETURNING id
+      RETURNING *
     `
 
-    if (authors.length === 0) {
-      throw new Error(`Failed to remove author, id: ${id}`)
-    }
+    return mapResult(author)
   },
 
-  restore: async ({ id }) => {
-    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+  restore: async (sql, authorId) => {
+    if (typeof(authorId) !== 'number') throw new Error('authorId must be a number.')
 
-    const authors = await sql`
+    const [author] = await sql`
       UPDATE ${ sql(tableName) } 
       SET
         deleted_by = NULL, 
         deleted_at = NULL
       WHERE
-        id = ${id} AND
+        id = ${authorId} AND
         ${ dataDeleted() }
       RETURNING *
     `
-    return authors.length === 0 
-      ? null
-      : createAuthor({...authors[0]})
+
+    return mapResult(author)
   },
 
-  getBooks: async ({ id }) => {
-    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+  getBooks: async (sql, authorId) => {
+    if (typeof(authorId) !== 'number') throw new Error('id must be a number.')
     
     const books = await sql`
       SELECT 
@@ -138,7 +139,7 @@ const AuthorDAL = {
       JOIN 
         book_authors ba ON ba.book_id = b.id
       WHERE
-        ba.author_id = ${id}
+        ba.author_id = ${authorId}
     `
 
     return books.map((book) => createBook({...book}))

@@ -8,6 +8,7 @@ import { createCountry } from '../models/country-model'
 import { generateAuthorExcel } from '../excel/author-excel'
 import { NotFoundError } from '../errors/not-found-error'
 import { ActionFailedError } from '../errors/action-failed-error'
+import sql from '../config/db'
 
 const resourceCode = 'AUT'
 
@@ -35,7 +36,7 @@ const AuthorService = {
   // },
 
   exportToExcel: async () => {
-    const authors = await AuthorViewDAL.getAllForExcel()
+    const authors = await AuthorViewDAL.getAllForExcel(sql)
     const fileBuffer = await generateAuthorExcel({ authors })
 
     return fileBuffer
@@ -76,7 +77,7 @@ const AuthorService = {
     }
 
     if (id !== null) {
-      const author = await AuthorDAL.findById({ id: parseInt(id) })
+      const author = await AuthorDAL.findById(sql, parseInt(id))
 
       if (author === null) {
         throw new NotFoundError('id', 'author id is not found.')
@@ -95,24 +96,24 @@ const AuthorService = {
   },
 
   delete: async({id}) => {
-    const author = await AuthorDAL.findById({ id: parseInt(id) })
+    const author = await AuthorDAL.findById(sql, parseInt(id))
 
     if (author === null) {
       throw new NotFoundError('id', 'author id is not found.')
     }
 
-    await AuthorDAL.delete({ id: author.id })
+    await AuthorDAL.delete(sql, author.id)
   },
 
   getBooks: async({ id }) => {
     const authorId = parseInt(id)
-    const author = await AuthorDAL.findById({ id: authorId })
+    const author = await AuthorDAL.findById(sql, authorId)
 
     if (author === null) {
       throw new NotFoundError('id', 'author id is not found.')
     }
 
-    return await AuthorDAL.getBooks({ id: authorId })  
+    return await AuthorDAL.getBooks(sql, authorId)  
   }
 }
 

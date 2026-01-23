@@ -8,11 +8,11 @@ const tableName = 'authors_view'
 const tableFields = ['id', 'full_name', 'book_count', 'country_code', 'country_name', 'active_since', 'about', 'created_at', 'updated_at']
 
 const AuthorViewDAL = {
-  getAll: async () => {
+  getAll: async (sql) => {
     return await sql`select * from ${ sql(tableName) }`
   },
 
-  getAllForExcel: async () => {
+  getAllForExcel: async (sql) => {
     const result = []
 
     await sql`
