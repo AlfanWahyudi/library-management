@@ -45,31 +45,33 @@ const MemberDAL = {
     return mapResult({ members })
   },
 
-  getAllPaginated: async ({ 
-    page = 0, 
-    limit = 10, 
-    orderBy = 'updated_at',
-    orderDir = 'desc',
-    search = '',
-    searchFields = [],
-    gender = 'all',
-  }) => {
+  getAllPaginated: async (
+    sql,
+    data = { 
+      page: 0, 
+      limit: 0, 
+      orderBy: '',
+      orderDir: '',
+      search: '',
+      searchFields: [],
+      gender: 'all',
+    }
+  ) => {
+    const { gender } = data
+
     const filterQueries = []
 
     if (gender !== 'all') {
       filterQueries.push(sql`${sql('gender')} = ${gender}`)
     }
 
-    const paginatedItems = await getPaginatedList({
-      page,
-      limit,
-      orderBy,
-      orderDir,
-      search,
-      searchFields,
+    const paginatedData = {
+      ...data,
       tableName,
-      filterQueries
-    })
+      filterQueries  
+    }
+
+    const paginatedItems = await getPaginatedList(sql, paginatedData)
 
     paginatedItems.data = paginatedItems.data.map((item) => createMember({...item}))
 

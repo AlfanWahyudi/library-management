@@ -1,14 +1,33 @@
 import 'server-only'
 
-import sql from '../../config/db'
 import { dataNotDeleted } from './sql'
 
-const filtering = ({
-  search,
-  filterQueries,
-  searchFields,
-  isSoftDeleted
-}) => {
+const filtering = (
+  sql,
+  data,
+) => {
+  const {
+    search,
+    filterQueries,
+    searchFields,
+    isSoftDeleted
+  } = data
+
+  if (
+    (search === null || search === undefined) &&
+    searchFields.length === 0 
+  ) {
+    throw new Error('search and searchFields properties must not be empty.')
+  }
+
+  if ((search && search.length > 0) && (searchFields.length === 0)) {
+    throw new Error(`searchFields must not be empty when search is already filled.`)
+  }
+
+  if (filterQueries && !Array.isArray(filterQueries)) {
+    throw new Error(`filterQueries must be non-empty array`)
+  }
+
   return sql`
     ${
       isSoftDeleted 
@@ -47,17 +66,32 @@ const filtering = ({
 }
 
 
-export const getPaginatedList = async ({
-  page,
-  limit,
-  orderBy,
-  orderDir,
-  search,
-  searchFields,
-  tableName,
-  isSoftDeleted = false,
-  filterQueries = [],
-}) => {
+export const getPaginatedList = async (
+  sql,
+  data = {
+    tableName: '',
+    page: 0, 
+    limit: 0, 
+    orderBy: '',
+    orderDir: '',
+    search: '',
+    searchFields: [],
+    isSoftDeleted: false,
+    filterQueries: [],
+  },
+) => {
+  const { 
+    tableName,
+    page = 0, 
+    limit = 10, 
+    orderBy = 'updated_at',
+    orderDir = 'desc',
+    search = '',
+    searchFields = [],
+    isSoftDeleted = false,
+    filterQueries = [],
+  } = data
+
   if (page === null || page === undefined) {
     throw new Error('page property must not be empty.')
   }
@@ -78,26 +112,13 @@ export const getPaginatedList = async ({
     throw new Error('tableName property must not be empty.')
   }
 
-  if (
-    (search === null || search === undefined) &&
-    searchFields.length === 0 
-  ) {
-    throw new Error('search and searchFields properties must not be empty.')
-  }
-
-  if ((search && search.length > 0) && (searchFields.length === 0)) {
-    throw new Error(`searchFields must not be empty when search is already filled.`)
-  }
-
-  if (filterQueries && !Array.isArray(filterQueries)) {
-    throw new Error(`filterQueries must be non-empty array`)
-  }
+  const filterData = { search, searchFields, filterQueries, isSoftDeleted }
 
   const queryCount = await sql`
     SELECT
       COUNT(*)
     FROM ${sql(tableName)}
-    ${ filtering({ search, searchFields, filterQueries, isSoftDeleted }) }
+    ${ filtering(sql, filterData) }
   `
   
   const itemsCount = queryCount[0].count
@@ -108,7 +129,7 @@ export const getPaginatedList = async ({
     SELECT
       *
     FROM ${sql(tableName)}
-    ${ filtering({ search, searchFields, filterQueries, isSoftDeleted }) }
+    ${ filtering(sql, filterData) }
     ORDER BY ${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
     LIMIT ${limit} OFFSET ${offset}
   `

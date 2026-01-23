@@ -4,6 +4,7 @@ import MemberDAL from '../dal/member-dal'
 import { createMemberDTO } from '../dto/member-dto'
 import { NotFoundError } from '../errors/not-found-error'
 import { ActionFailedError } from '../errors/action-failed-error'
+import sql from '../config/db'
 
 const isFound = async ({ id }) => {
   return await MemberDAL.findById({id}) !== null
@@ -54,8 +55,17 @@ const MemberService = {
     searchFields = [],
     gender = 'all',
   }) => {
+    const data = {
+      page, 
+      limit, 
+      orderBy,
+      orderDir,
+      search,
+      searchFields,
+      gender,
+    }
 
-    const items = await MemberDAL.getAllPaginated({ page, limit, orderBy, orderDir, search, searchFields, gender})
+    const items = await MemberDAL.getAllPaginated(sql, data)
     const dataMapped = items.data.map((member) => createMemberDTO(member))
 
     return {

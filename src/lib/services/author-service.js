@@ -51,7 +51,8 @@ const AuthorService = {
     searchFields = [],
   }) => {
 
-    const items = await AuthorViewDAL.getAllPaginated({ page, limit, orderBy, orderDir, search, searchFields})
+    const data = { page, limit, orderBy, orderDir, search, searchFields }
+    const items = await AuthorViewDAL.getAllPaginated(sql, data)
     const dataMapped = items.data.map((author) => {
       const country = createCountry({ code: author.countryCode, name: author.countryName  })
       return createAuthorDTO({...author, country})
@@ -83,7 +84,7 @@ const AuthorService = {
         throw new NotFoundError('id', 'author id is not found.')
       }
     }
-    
+
     const data = {fullName, countryCode, about, activeSince}
     const author = await AuthorDAL.save(sql, data, id)
     if (author === null) {
