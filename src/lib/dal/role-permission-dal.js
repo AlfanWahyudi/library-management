@@ -1,12 +1,10 @@
 import 'server-only'
 
-import sql from '@/lib/config/db'
-
 const tblName = 'role_permissions'
 
 const RolePermissionDAL = {
-  hasAccess: async ({ roleId, permissionName }) => {
-    const data = await sql`
+  getSpecificItems: async (sql, roleId, permissionName) => {
+    const items = await sql`
       select 
         rp.role_id ,
         rp.permission_id,
@@ -15,7 +13,8 @@ const RolePermissionDAL = {
       join permissions p on p.id = rp.permission_id
       where rp.role_id = ${roleId} and p.name = ${permissionName}
     `
-    return data.length > 0
+
+    return items
   }
 }
 

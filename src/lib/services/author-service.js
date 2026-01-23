@@ -71,7 +71,7 @@ const AuthorService = {
     about = null,
     activeSince = null,
   }) => {
-    const country = await CountryDAL.getByCode({ code: countryCode })
+    const country = await CountryDAL.getByCode(sql, countryCode)
 
     if (country === null) {
       throw new NotFoundError('countryCode', 'countryCode property is not found.')

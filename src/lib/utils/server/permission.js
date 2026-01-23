@@ -1,7 +1,7 @@
 import 'server-only'
 
-import RolePermissionDAL from '@/lib/dal/role-permission-dal'
 import SessionDAL from '@/lib/dal/session-dal'
+import RolePermissionService from '@/lib/services/role-permission-service'
 
 const isUserAllowed = async ({ name }) => {
     const result = {
@@ -11,7 +11,7 @@ const isUserAllowed = async ({ name }) => {
 
     const session = await SessionDAL.verify()
     if (session.isAuth) {
-      const hasPermission = await RolePermissionDAL.hasAccess({
+      const hasPermission = await RolePermissionService.hasAccess({
         roleId: session.role.code,
         name
       })

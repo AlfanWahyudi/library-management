@@ -10,24 +10,28 @@ const tableName = 'users'
 //TODO: get curr user
 const tempUsername = 'superadmin1' // later change this
 
+const mapResult = (user) => {
+  return user
+    ? createUser(user)
+    : null
+}
+
 const UserDAL = {
-  getById: async (id) => {
-    const users = await sql`
+  getById: async (sql, roleId) => {
+    const [user] = await sql`
       select 
         * 
       from users
       WHERE
-        id = ${id} AND
+        id = ${roleId} AND
         ${ dataNotDeleted() }
     `
 
-    return users.length === 0
-      ? null
-      : createUser(users[0]) 
+    return mapResult(user)
   },
 
-  getByUsername: async (username) => {
-    const users = await sql`
+  getByUsername: async (sql, username) => {
+    const [user] = await sql`
       select 
         * 
       from users
@@ -35,12 +39,10 @@ const UserDAL = {
         username = ${username} AND
         ${ dataNotDeleted() }
     `
-    return users.length === 0
-      ? null
-      : createUser(users[0])
+    return mapResult(user)
   },
 
-  getRoles: async ({ id }) => {
+  getRoles: async (sql, userId) => {
     return await sql`
       select 
         r.id,
@@ -49,15 +51,25 @@ const UserDAL = {
       join users u ON ur.user_id = u.id
       join roles r ON ur.role_id = r.id 
       where 
-        ur.user_id = ${id} AND
+        ur.user_id = ${userId} AND
         ${ dataNotDeleted('u') }
     `
   },
 
-  updateProfile: async ({ username, email, fullName, gender, address }) => {
+  updateProfile: async (
+    sql, 
+    data = { username: '', 
+      email: '', 
+      fullName: '', 
+      gender: '', 
+      address: '' 
+    }
+  ) => {
+    const { username, email, fullName, gender, address } = data
+
     if (username === null || username === '') throw new Error('username must not be null or empty')
 
-    const users = await sql`
+    const [user] = await sql`
       UPDATE ${ sql(tableName) }
       SET
         full_name = ${ fullName },
@@ -72,64 +84,60 @@ const UserDAL = {
       RETURNING *
     `
 
-    return users.length === 0
-      ? null
-      : createUser({...users[0]})
+    return mapResult(user)
   },
 
-  checkEmailExist: async ({id, email}) => {
-    if (id === null) throw new Error('id must not be null')
+  checkEmailExist: async (sql, userId, email) => {
+    if (userId === null) throw new Error('userId must not be null')
     if (email === null) throw new Error('email must not be null')
 
-    const users = await sql`
+    const [user] = await sql`
       SELECT 
         * 
       FROM 
         ${ sql(tableName) }
       WHERE
         email = ${email} AND
-        id != ${id} AND
+        id != ${userId} AND
         ${ dataNotDeleted() }
     `
 
-    return users.length > 0
+    return mapResult(user)
   },
 
-  checkUsernameExist: async ({ id, username }) => {
-    if (id === null) throw new Error('id must not be null')
+  checkUsernameExist: async (sql, userId, username) => {
+    if (userId === null) throw new Error('userId must not be null')
     if (username === null) throw new Error('username must not be null')
 
-    const users = await sql`
+    const [user] = await sql`
       SELECT 
         * 
       FROM 
         ${ sql(tableName) }
       WHERE
         username = ${username} AND
-        id != ${id} AND
+        id != ${userId} AND
         ${ dataNotDeleted() }
     `
 
-    return users.length > 0
+    return mapResult(user)
   },
 
-  changeUsername: async ({ id, newUsername }) => {
-    if (id === null) throw new Error('id must not be null')
+  changeUsername: async (sql, userId, newUsername) => {
+    if (userId === null) throw new Error('userId must not be null')
     if (newUsername === null) throw new Error('newUsername must not be null')
 
-    const users = await sql`
+    const [user] = await sql`
       UPDATE ${ sql(tableName) }
       SET
         username = ${newUsername}
       WHERE
-        id = ${id} AND
+        id = ${userId} AND
         ${ dataNotDeleted() }
       RETURNING *
     `
 
-    return users.length === 0
-      ? null
-      : createUser({...users[0]})
+    return mapResult(user)
   }
 }
 

@@ -1,18 +1,18 @@
 import 'server-only'
 
+import sql from '../config/db'
 import MemberDAL from '../dal/member-dal'
 import { createMemberDTO } from '../dto/member-dto'
 import { NotFoundError } from '../errors/not-found-error'
 import { ActionFailedError } from '../errors/action-failed-error'
-import sql from '../config/db'
 
 const isFound = async ({ id }) => {
-  return await MemberDAL.findById({id}) !== null
+  return await MemberDAL.findById(sql, id) !== null
 }
 
 const MemberService = {
   findById: async ({ id }) => {
-    const member = await MemberDAL.findById({ id })
+    const member = await MemberDAL.findById(sql, id)
     
     if (member === null) {
       throw new NotFoundError('id', 'member id is not found')
@@ -27,10 +27,10 @@ const MemberService = {
     let member = null
     switch (field) {
       case 'email':
-        member = await MemberDAL.findByEmail({ email: value })
+        member = await MemberDAL.findByEmail(sql, value)
         break;
       case 'phone':
-        member = await MemberDAL.findByPhone({ phone: value })
+        member = await MemberDAL.findByPhone(sql, value)
         break;
     }
 
@@ -100,7 +100,8 @@ const MemberService = {
       throw new NotFoundError('phone', 'phone is already in use.')
     }
 
-    const member = await MemberDAL.save({ id, fullName, email, phone, address, birthDate, gender })
+    const data = { fullName, email, phone, address, birthDate, gender }
+    const member = await MemberDAL.save(sql, data, id)
     if (member === null) {
       throw new ActionFailedError('failed to save member data')
     }

@@ -1,9 +1,7 @@
 import 'server-only'
 
-import sql from '@/lib/config/db'
 import { getPaginatedList } from '@/lib/utils/server/datatable'
 import { createAuthorViewModel } from '@/lib/models/author-view-model'
-import { sq } from 'date-fns/locale'
 
 const tableName = 'authors_view'
 const tableFields = ['id', 'full_name', 'book_count', 'country_code', 'country_name', 'active_since', 'about', 'created_at', 'updated_at']

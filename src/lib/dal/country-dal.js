@@ -1,11 +1,11 @@
 import 'server-only'
-import sql from '../config/db'
+
 import { createCountry } from '../models/country-model'
 
 const tableName = 'countries'
 
 const CountryDAL = {
-  getByCode: async({ code }) => {
+  getByCode: async(sql, code) => {
     code = code.toString().toUpperCase()
 
     const countries = await sql`
@@ -18,10 +18,18 @@ const CountryDAL = {
       : createCountry({...countries[0]})
   },
 
-  getAll: async ({ 
-    orderDir = 'ASC',
-    orderBy = 'name'
-  }) => {
+  getAll: async (
+    sql,
+    data = { 
+      orderDir: '',
+      orderBy: ''
+    }
+  ) => {
+    const {
+      orderDir = 'ASC',
+      orderBy = 'name'
+    } = data
+
     const countries = await sql`
       SELECT * FROM ${ sql(tableName) }
       ORDER BY ${ sql(orderBy) } ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}

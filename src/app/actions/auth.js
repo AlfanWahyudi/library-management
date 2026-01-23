@@ -7,6 +7,7 @@ import { createSession } from '@/lib/utils/server/session'
 import { cookies } from 'next/headers'
 import UserDAL from '@/lib/dal/user-dal'
 import UserService from '@/lib/services/user-service'
+import sql from '@/lib/config/db'
 
 
 export async function login(prevState, formData) {
@@ -32,7 +33,7 @@ export async function login(prevState, formData) {
     return error
   }
 
-  const user = await UserDAL.getByUsername(fd.username)
+  const user = await UserDAL.getByUsername(sql, fd.username)
 
   const isMatch = await UserService.checkCredential({ user: user, password: fd.password })
   if (!isMatch) {
@@ -40,7 +41,7 @@ export async function login(prevState, formData) {
     return error
   }
 
-  const roles = await UserDAL.getRoles({ id: user.id })
+  const roles = await UserDAL.getRoles(sql, user.id)
 
   await createSession({
     userId: user.id,

@@ -1,48 +1,48 @@
 import 'server-only'
 
-import sql from '../config/db'
 import { getPaginatedList } from '@/lib/utils/server/datatable'
 import { createMember } from '../models/member-model'
-import { dataNotDeleted } from '../utils/server/sql'
 
 const tableName = 'members'
 
 //TODO: get curr user
 const tempUsername = 'superadmin1' // 
 
-const findByQuery = async ({ field, value }) => {
-  return await sql`
+const findByQuery = async ({ sql, field, value }) => {
+  const [data] = await sql`
     SELECT * FROM ${ sql(tableName) }
     WHERE ${ sql(field) } = ${value}
   `
+
+  return data
 }
 
-const mapResult = ({ members }) => {
-  return members.length === 0 
-    ? null
-    : createMember({...members[0]})
+const mapResult = (member) => {
+  return member
+    ? createMember(member)
+    : null
 }
 
 const MemberDAL = {
-  findById: async ({ id }) => {
-    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+  findById: async (sql, memberId) => {
+    if (typeof(memberId) !== 'number') throw new Error('memberId must be a number.')
 
-    const members = await findByQuery({ field: 'id', value: id })
-    return mapResult({ members })
+    const member = await findByQuery({ sql, field: 'id', value: memberId })
+    return mapResult(member)
   },
 
-  findByEmail: async ({ email }) => {
+  findByEmail: async (sql, email) => {
     if (typeof(email) !== 'string') throw new Error('email must be a string.')
 
-    const members = await findByQuery({ field: 'email', value: email })
-    return mapResult({ members })
+    const member = await findByQuery({ sql, field: 'email', value: email })
+    return mapResult(member)
   },
 
-  findByPhone: async({ phone }) => {
+  findByPhone: async(sql, phone) => {
     if (typeof(phone) !== 'string') throw new Error('phone must be a string.')
 
-    const members = await findByQuery({ field: 'phone', value: phone })
-    return mapResult({ members })
+    const member = await findByQuery({ sql, field: 'phone', value: phone })
+    return mapResult(member)
   },
 
   getAllPaginated: async (
@@ -78,20 +78,24 @@ const MemberDAL = {
     return paginatedItems
   },
 
-  save: async ({
-    id = null,
+  save: async (
+    sql,
+    data,
+    memberId = null
+) => {
+  const {
     fullName,
     email,
     phone,
     address,
     birthDate,
     gender
-  }) => {
+  } = data
 
-    let members = [] 
+    let result = null
 
-    if (id === null) {
-      members = await sql`
+    if (memberId === null) {
+      const [member] = await sql`
         INSERT INTO ${ sql(tableName) }
           (full_name, email, phone, address, birth_date, gender, created_by, created_at, updated_by, updated_at)
         VALUES
@@ -109,8 +113,10 @@ const MemberDAL = {
           )
         RETURNING *
       `
+
+      result = member
     } else {
-     members = await sql`
+     const [member] = await sql`
         UPDATE ${ sql(tableName) } 
         SET 
           full_name = ${ fullName }, 
@@ -122,12 +128,14 @@ const MemberDAL = {
           updated_by = ${ tempUsername }, 
           updated_at = NOW()
         WHERE
-          id = ${id} 
+          id = ${memberId} 
         RETURNING *
       `
+
+      result = member
     }
 
-    return mapResult({ members })
+    return mapResult(result)
   },
 
 }

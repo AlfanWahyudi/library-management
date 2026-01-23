@@ -1,5 +1,6 @@
 import 'server-only'
 
+import sql from '../config/db'
 import bcrypt from 'bcrypt'
 import UserDAL from '../dal/user-dal'
 import SessionDAL from '../dal/session-dal'
@@ -22,7 +23,7 @@ const UserService = {
   },
 
   getById: async (id) => {
-    const user = await UserDAL.getById(id)
+    const user = await UserDAL.getById(sql, id)
 
     if (user == null) {
       throw new NotFoundError('id', 'user id is not found')
@@ -32,11 +33,13 @@ const UserService = {
   },
 
   checkEmailExist: async ({ id, email }) => {
-    return await UserDAL.checkEmailExist({ id, email })
+    const user = await UserDAL.checkEmailExist(sql, id, email)
+    return user !== null
   },
 
   checkUsernameExist: async ({ id, username }) => {
-    return await UserDAL.checkUsernameExist({ id, username })
+    const user =  await UserDAL.checkUsernameExist(sql, id, username)
+    return user !== null
   },
 
   updateProfile: async ({ username, email, fullName, gender, address }) => {
@@ -52,18 +55,19 @@ const UserService = {
       throw new ForbiddenError(`You don't have any permission to update this user data.`)
     }
 
-    const isEmailExist = await UserDAL.checkEmailExist({ id: user.id, email: user.email })
+    const isEmailExist = await UserDAL.checkEmailExist(sql, user.id, user.email)
     if (isEmailExist) {
       throw new BadRequestError('email', `email is already taken.`)
     }
 
-    const data = await UserDAL.updateProfile({ username, email, fullName, gender, address })
+    const data = { username, email, fullName, gender, address }
+    const updatedUser = await UserDAL.updateProfile(sql, data)
 
-    if (data === null) {
+    if (updatedUser === null) {
       throw new ActionFailedError(`Failed to update user profile data.`)
     }
 
-    return createUserDTO(data)
+    return createUserDTO(updatedUser)
   },
 
   changeUsername: async ({ newUsername }) => {
@@ -74,12 +78,12 @@ const UserService = {
       throw new UnauthorizeError('User is not authenticated')
     }
 
-    const user = await UserDAL.getById(session.userId)
+    const user = await UserDAL.getById(sql, session.userId)
     if (user.username === newUsername) {
       throw new BadRequestError('newUsername', 'newUsername must not be same with prev username')
     }
 
-    const data = await UserDAL.changeUsername({ id: user.id, newUsername })
+    const data = await UserDAL.changeUsername(sql, user.id, newUsername)
 
     if (!data) {
       throw new ActionFailedError('Failed to change username for user id: ' + user.id)
