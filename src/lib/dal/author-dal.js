@@ -36,15 +36,14 @@ const AuthorDAL = {
   ) => {
     const { fullName, countryCode, about, activeSince } = data
 
-    activeSince = activeSince && parseInt(activeSince)
-
-    if (activeSince !== null && activeSince < 0) {
+    if (activeSince !== null && parseInt(activeSince) < 0) {
       throw new Error('activeSince property cannot less than 0.')
     }
 
-    let authors = []
+    let result = null
+
     if (authorId === null) {
-      authors = await sql`
+      const [author] = await sql`
         INSERT INTO ${ sql(tableName) }
           (full_name, country_code, active_since, about, created_by, created_at, updated_by, updated_at)
         VALUES
@@ -60,8 +59,10 @@ const AuthorDAL = {
           )
         RETURNING *
       `
+
+      result = author
     } else {
-     authors = await sql`
+     const [author] = await sql`
         UPDATE ${ sql(tableName) } 
         SET 
           full_name = ${ fullName }, 
@@ -75,11 +76,11 @@ const AuthorDAL = {
           ${ dataNotDeleted() }
         RETURNING *
       `
+
+      result = author
     }
 
-    return authors.length === 0 
-      ? null
-      : createAuthor({...authors[0]})
+    return mapResult(result)
   },
 
   delete: async (sql, authorId) => {

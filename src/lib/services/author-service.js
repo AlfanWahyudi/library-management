@@ -83,8 +83,9 @@ const AuthorService = {
         throw new NotFoundError('id', 'author id is not found.')
       }
     }
-
-    const author = await AuthorDAL.save({ id, fullName, countryCode, about, activeSince })
+    
+    const data = {fullName, countryCode, about, activeSince}
+    const author = await AuthorDAL.save(sql, data, id)
     if (author === null) {
       throw new ActionFailedError('failed to save author data')
     }
