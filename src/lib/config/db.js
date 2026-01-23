@@ -16,6 +16,7 @@ const sql = postgres(DATABASE.POSTGRES.CONNECTION, {
   connect_timeout      : 30,            // Connect timeout in seconds
   prepare              : true,          // Automatic creation of prepared statements
   types                : [],            // Array of custom types, see more below
+  transform : postgres.toCamel,
 })
 
 export default sql

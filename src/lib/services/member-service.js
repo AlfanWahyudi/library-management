@@ -100,13 +100,21 @@ const MemberService = {
       throw new NotFoundError('phone', 'phone is already in use.')
     }
 
-    const data = { fullName, email, phone, address, birthDate, gender }
-    const member = await MemberDAL.save(sql, data, id)
-    if (member === null) {
+    const savedData = await sql.begin(async sql => {
+      const data = { fullName, email, phone, address, birthDate, gender }
+
+      const [savedData] = id === null
+        ? await MemberDAL.create(sql, data)
+        : await MemberDAL.update(sql, data, id)
+
+      return savedData
+    })
+
+    if (savedData === null) {
       throw new ActionFailedError('failed to save member data')
     }
 
-    return createMemberDTO(member)
+    return createMemberDTO(savedData)
   },
 }
 

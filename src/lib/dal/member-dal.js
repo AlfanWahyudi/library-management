@@ -78,66 +78,62 @@ const MemberDAL = {
     return paginatedItems
   },
 
-  save: async (
-    sql,
-    data,
-    memberId = null
-) => {
-  const {
-    fullName,
-    email,
-    phone,
-    address,
-    birthDate,
-    gender
-  } = data
+  create: async (sql, data) => {
+    const {
+      fullName,
+      email,
+      phone,
+      address,
+      birthDate,
+      gender
+    } = data
 
-    let result = null
-
-    if (memberId === null) {
-      const [member] = await sql`
-        INSERT INTO ${ sql(tableName) }
-          (full_name, email, phone, address, birth_date, gender, created_by, created_at, updated_by, updated_at)
-        VALUES
-          (
-            ${ fullName }, 
-            ${ email }, 
-            ${ phone }, 
-            ${ address }, 
-            ${ birthDate }, 
-            ${ gender }, 
-            ${ tempUsername },
-            NOW(), 
-            ${ tempUsername },
-            NOW()
-          )
-        RETURNING *
-      `
-
-      result = member
-    } else {
-     const [member] = await sql`
-        UPDATE ${ sql(tableName) } 
-        SET 
-          full_name = ${ fullName }, 
-          email = ${ email }, 
-          phone = ${ phone }, 
-          address = ${ address }, 
-          birth_date = ${ birthDate }, 
-          gender = ${ gender }, 
-          updated_by = ${ tempUsername }, 
-          updated_at = NOW()
-        WHERE
-          id = ${memberId} 
-        RETURNING *
-      `
-
-      result = member
-    }
-
-    return mapResult(result)
+    return await sql`
+      INSERT INTO ${ sql(tableName) }
+        (full_name, email, phone, address, birth_date, gender, created_by, created_at, updated_by, updated_at)
+      VALUES
+        (
+          ${ fullName }, 
+          ${ email }, 
+          ${ phone }, 
+          ${ address }, 
+          ${ birthDate }, 
+          ${ gender }, 
+          ${ tempUsername },
+          NOW(), 
+          ${ tempUsername },
+          NOW()
+        )
+      RETURNING *
+    `
   },
 
+  update: async (sql, data, memberId) => {
+    const {
+      fullName,
+      email,
+      phone,
+      address,
+      birthDate,
+      gender
+    } = data
+
+    return await sql`
+      UPDATE ${ sql(tableName) } 
+      SET 
+        full_name = ${ fullName }, 
+        email = ${ email }, 
+        phone = ${ phone }, 
+        address = ${ address }, 
+        birth_date = ${ birthDate }, 
+        gender = ${ gender }, 
+        updated_by = ${ tempUsername }, 
+        updated_at = NOW()
+      WHERE
+        id = ${memberId} 
+      RETURNING *
+    `
+  },
 }
 
 export default MemberDAL
