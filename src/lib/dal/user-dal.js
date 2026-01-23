@@ -58,7 +58,8 @@ const UserDAL = {
 
   updateProfile: async (
     sql, 
-    data = { username: '', 
+    data = { 
+      username: '', 
       email: '', 
       fullName: '', 
       gender: '', 
@@ -69,7 +70,7 @@ const UserDAL = {
 
     if (username === null || username === '') throw new Error('username must not be null or empty')
 
-    const [user] = await sql`
+    return await sql`
       UPDATE ${ sql(tableName) }
       SET
         full_name = ${ fullName },
@@ -83,8 +84,6 @@ const UserDAL = {
         ${ dataNotDeleted() }
       RETURNING *
     `
-
-    return mapResult(user)
   },
 
   checkEmailExist: async (sql, userId, email) => {
@@ -127,7 +126,7 @@ const UserDAL = {
     if (userId === null) throw new Error('userId must not be null')
     if (newUsername === null) throw new Error('newUsername must not be null')
 
-    const [user] = await sql`
+    return await sql`
       UPDATE ${ sql(tableName) }
       SET
         username = ${newUsername}
@@ -136,8 +135,6 @@ const UserDAL = {
         ${ dataNotDeleted() }
       RETURNING *
     `
-
-    return mapResult(user)
   }
 }
 

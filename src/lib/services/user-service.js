@@ -60,8 +60,12 @@ const UserService = {
       throw new BadRequestError('email', `email is already taken.`)
     }
 
-    const data = { username, email, fullName, gender, address }
-    const updatedUser = await UserDAL.updateProfile(sql, data)
+    const updatedUser = await sql.begin(async sql => {
+      const data = { username, email, fullName, gender, address }
+      const [updatedUser] = await UserDAL.updateProfile(sql, data)
+
+      return updatedUser
+    })
 
     if (updatedUser === null) {
       throw new ActionFailedError(`Failed to update user profile data.`)
@@ -83,7 +87,11 @@ const UserService = {
       throw new BadRequestError('newUsername', 'newUsername must not be same with prev username')
     }
 
-    const data = await UserDAL.changeUsername(sql, user.id, newUsername)
+    const data = await sql.begin(async sql => {
+      const [data] = await UserDAL.changeUsername(sql, user.id, newUsername)
+
+      return data
+    })
 
     if (!data) {
       throw new ActionFailedError('Failed to change username for user id: ' + user.id)
