@@ -31,20 +31,11 @@ export async function DELETE(req, { params }) {
   try {
     const { id } = await params
     
-    // delete data service class
-    const success = await AuthorService.delete({id})
+    await AuthorService.delete({id})
 
-    if (success) {
-      return NextResponse.json(
-        createSuccessRes({ message: 'Author successfully deleted, id: ' + id })
-      )
-    } else {
-      return NextResponse.json(
-        createErrorRes({ error: `Failed to remove author, id: ${id}. Please try again later`}),
-        { status : 500 }
-      )
-    }
-    
+    return NextResponse.json(
+      createSuccessRes({ message: 'Author successfully deleted, id: ' + id })
+    )
   } catch (err) {
     console.error(err)
 

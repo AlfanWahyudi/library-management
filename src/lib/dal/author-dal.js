@@ -85,14 +85,16 @@ const AuthorDAL = {
       UPDATE ${ sql(tableName) } 
       SET 
         deleted_by = ${ tempUsername }, 
-        deleted_at = NOW()
+        deleted = NOW()
       WHERE
         id = ${id} AND
         ${ dataNotDeleted() }
-      RETURNING *
+      RETURNING id
     `
 
-    return authors.length > 0
+    if (authors.length === 0) {
+      throw new Error(`Failed to remove author, id: ${id}`)
+    }
   },
 
   restore: async ({ id }) => {
@@ -111,10 +113,6 @@ const AuthorDAL = {
     return authors.length === 0 
       ? null
       : createAuthor({...authors[0]})
-  },
-
-  forceDelete: () => {
-    //TODO
   },
 
   getBooks: async ({ id }) => {

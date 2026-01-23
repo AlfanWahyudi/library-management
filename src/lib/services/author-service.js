@@ -101,7 +101,7 @@ const AuthorService = {
       throw new NotFoundError('id', 'author id is not found.')
     }
 
-    return await AuthorDAL.delete({ id: author.id })
+    await AuthorDAL.delete({ id: author.id })
   },
 
   getBooks: async({ id }) => {
