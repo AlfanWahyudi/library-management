@@ -8,7 +8,7 @@ import { useEffect } from "react"
 import { downloadBlobData } from "@/lib/utils/client/download"
 import { toast } from "sonner"
 
-export default function DownloadPdfButton({}) {
+export default function DownloadExcelButton({}) {
   const {
     error,
     isPending,
@@ -46,7 +46,7 @@ export default function DownloadPdfButton({}) {
   return (
     <Button variant='outline' size='sm' onClick={handleDownload} disabled={isPending}>
       {isPending && <Loader2Icon className="animate-spin" />}
-      {isPending ? 'Downloading...' : 'Download PDF'}
+      {isPending ? 'Downloading...' : 'Download Excel'}
     </Button>
   )
 }
