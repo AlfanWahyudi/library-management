@@ -4,7 +4,6 @@ import { getPaginatedList } from '@/lib/utils/server/datatable'
 import { createAuthorViewModel } from '@/lib/models/author-view-model'
 
 const tableName = 'authors_view'
-const tableFields = ['id', 'full_name', 'book_count', 'country_code', 'country_name', 'active_since', 'about', 'created_at', 'updated_at']
 
 const AuthorViewDAL = {
   getAll: async (sql) => {
@@ -12,16 +11,10 @@ const AuthorViewDAL = {
   },
 
   getAllForExcel: async (sql) => {
-    const result = []
-
-    await sql`
+    return await sql`
       select * from ${ sql(tableName) } 
-      order by ${ sql(tableFields[8]) } desc
-    `.forEach(row => {
-      result.push(createAuthorViewModel({...row}))
-    })
-
-    return result
+      order by updated_at desc
+    `
   },
 
   getAllPaginated: async (
@@ -40,11 +33,7 @@ const AuthorViewDAL = {
       tableName, 
     }
 
-    const paginatedItems = await getPaginatedList(sql, paginatedData)
-
-    paginatedItems.data = paginatedItems.data.map((item) => createAuthorViewModel({...item}))
-
-    return paginatedItems
+    return getPaginatedList(sql, paginatedData)
   },
 }
 
@@ -52,5 +41,4 @@ export default AuthorViewDAL
 
 export {
   tableName,
-  tableFields
 }

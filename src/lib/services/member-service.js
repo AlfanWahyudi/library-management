@@ -7,14 +7,16 @@ import { NotFoundError } from '../errors/not-found-error'
 import { ActionFailedError } from '../errors/action-failed-error'
 
 const isFound = async ({ id }) => {
-  return await MemberDAL.findById(sql, id) !== null
+  const [member] = MemberDAL.findById(sql, id)
+
+  return member !== undefined
 }
 
 const MemberService = {
   findById: async ({ id }) => {
-    const member = await MemberDAL.findById(sql, id)
+    const [member] = await MemberDAL.findById(sql, id)
     
-    if (member === null) {
+    if (!member) {
       throw new NotFoundError('id', 'member id is not found')
     }
 
@@ -24,14 +26,14 @@ const MemberService = {
   isDataExist: async ({ id = null, field, value }) => {
     let result = false
 
-    let member = null
-    switch (field) {
-      case 'email':
-        member = await MemberDAL.findByEmail(sql, value)
-        break;
-      case 'phone':
-        member = await MemberDAL.findByPhone(sql, value)
-        break;
+    const [member] = field === 'email'
+      ? await MemberDAL.findByEmail(sql, value)
+      : field === 'phone'
+        ? await MemberDAL.findByPhone(sql, value)
+        : []
+
+    if (!member) {
+      throw new NotFoundError(field, `${field} of member is not found`)
     }
 
     if (id) {

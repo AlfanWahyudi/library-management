@@ -9,12 +9,10 @@ const tableName = 'members'
 const tempUsername = 'superadmin1' // 
 
 const findByQuery = async ({ sql, field, value }) => {
-  const [data] = await sql`
+  return await sql`
     SELECT * FROM ${ sql(tableName) }
     WHERE ${ sql(field) } = ${value}
   `
-
-  return data
 }
 
 const mapResult = (member) => {
@@ -27,22 +25,19 @@ const MemberDAL = {
   findById: async (sql, memberId) => {
     if (typeof(memberId) !== 'number') throw new Error('memberId must be a number.')
 
-    const member = await findByQuery({ sql, field: 'id', value: memberId })
-    return mapResult(member)
+    return await findByQuery({ sql, field: 'id', value: memberId })
   },
 
   findByEmail: async (sql, email) => {
     if (typeof(email) !== 'string') throw new Error('email must be a string.')
 
-    const member = await findByQuery({ sql, field: 'email', value: email })
-    return mapResult(member)
+    return await findByQuery({ sql, field: 'email', value: email })
   },
 
   findByPhone: async(sql, phone) => {
     if (typeof(phone) !== 'string') throw new Error('phone must be a string.')
 
-    const member = await findByQuery({ sql, field: 'phone', value: phone })
-    return mapResult(member)
+    return await findByQuery({ sql, field: 'phone', value: phone })
   },
 
   getAllPaginated: async (
@@ -71,11 +66,7 @@ const MemberDAL = {
       filterQueries  
     }
 
-    const paginatedItems = await getPaginatedList(sql, paginatedData)
-
-    paginatedItems.data = paginatedItems.data.map((item) => createMember({...item}))
-
-    return paginatedItems
+    return await getPaginatedList(sql, paginatedData)
   },
 
   create: async (sql, data) => {

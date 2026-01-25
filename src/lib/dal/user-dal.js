@@ -10,15 +10,9 @@ const tableName = 'users'
 //TODO: get curr user
 const tempUsername = 'superadmin1' // later change this
 
-const mapResult = (user) => {
-  return user
-    ? createUser(user)
-    : null
-}
-
 const UserDAL = {
   getById: async (sql, roleId) => {
-    const [user] = await sql`
+    return await sql`
       select 
         * 
       from users
@@ -26,12 +20,10 @@ const UserDAL = {
         id = ${roleId} AND
         ${ dataNotDeleted() }
     `
-
-    return mapResult(user)
   },
 
   getByUsername: async (sql, username) => {
-    const [user] = await sql`
+    return await sql`
       select 
         * 
       from users
@@ -39,7 +31,6 @@ const UserDAL = {
         username = ${username} AND
         ${ dataNotDeleted() }
     `
-    return mapResult(user)
   },
 
   getRoles: async (sql, userId) => {
@@ -90,7 +81,7 @@ const UserDAL = {
     if (userId === null) throw new Error('userId must not be null')
     if (email === null) throw new Error('email must not be null')
 
-    const [user] = await sql`
+    return await sql`
       SELECT 
         * 
       FROM 
@@ -100,15 +91,13 @@ const UserDAL = {
         id != ${userId} AND
         ${ dataNotDeleted() }
     `
-
-    return mapResult(user)
   },
 
   checkUsernameExist: async (sql, userId, username) => {
     if (userId === null) throw new Error('userId must not be null')
     if (username === null) throw new Error('username must not be null')
 
-    const [user] = await sql`
+    return await sql`
       SELECT 
         * 
       FROM 
@@ -118,8 +107,6 @@ const UserDAL = {
         id != ${userId} AND
         ${ dataNotDeleted() }
     `
-
-    return mapResult(user)
   },
 
   changeUsername: async (sql, userId, newUsername) => {

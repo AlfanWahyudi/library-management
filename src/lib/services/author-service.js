@@ -71,36 +71,45 @@ const AuthorService = {
     about = null,
     activeSince = null,
   }) => {
-    const country = await CountryDAL.getByCode(sql, countryCode)
+    const [country] = await CountryDAL.getByCode(sql, countryCode)
 
     if (country === null) {
       throw new NotFoundError('countryCode', 'countryCode property is not found.')
     }
 
     if (id !== null) {
-      const author = await AuthorDAL.findById(sql, parseInt(id))
+      const [author] = await AuthorDAL.findById(sql, parseInt(id))
 
-      if (author === null) {
+      if (!author) {
         throw new NotFoundError('id', 'author id is not found.')
       }
     }
 
-    const data = {fullName, countryCode, about, activeSince}
-    const author = await AuthorDAL.save(sql, data, id)
-    if (author === null) {
+    const savedData = await sql.begin(async (sql) => {
+      const data = {fullName, countryCode, about, activeSince}
+
+      const [savedData] = id === null
+        ? await AuthorDAL.create(sql, data)
+        : await AuthorDAL.update(sql, data, id)
+
+      return savedData
+    })
+
+    if (!savedData) {
       throw new ActionFailedError('failed to save author data')
     }
 
     return createAuthorDTO({
-      ...author,
+      ...savedData,
       country
     })
   },
 
+  // TODO: delete data only when it not used by book data
   delete: async({id}) => {
-    const author = await AuthorDAL.findById(sql, parseInt(id))
+    const [author] = await AuthorDAL.findById(sql, parseInt(id))
 
-    if (author === null) {
+    if (!author) {
       throw new NotFoundError('id', 'author id is not found.')
     }
 
@@ -109,9 +118,9 @@ const AuthorService = {
 
   getBooks: async({ id }) => {
     const authorId = parseInt(id)
-    const author = await AuthorDAL.findById(sql, authorId)
+    const [author] = await AuthorDAL.findById(sql, authorId)
 
-    if (author === null) {
+    if (!author) {
       throw new NotFoundError('id', 'author id is not found.')
     }
 

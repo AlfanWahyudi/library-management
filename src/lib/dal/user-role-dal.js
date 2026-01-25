@@ -4,8 +4,7 @@ import { dataNotDeleted } from "../utils/server/sql"
 const UserRoleDAL = {
   //TODO: Test this function
   getById: async ({ userId }) => {
-
-    const data = await sql`
+    return await sql`
       select 
         u.id as user_id,
         u.username,
@@ -26,26 +25,6 @@ const UserRoleDAL = {
         u.id = ${userId} AND
         ${ dataNotDeleted('u') }
     `
-    return data.map((item) => {
-      return {
-        user: {
-          id: item.user_id,
-          username: item.username,
-          email: item.email,
-          fullName: item.full_name,
-          gender: item.gender,
-          address: item.address,
-          createdAt: item.user_created_at,
-          updatedAt: item.user_updated_at
-        },
-        role: {
-          code: item.role_code,
-          name: item.name
-        },
-        createdAt: item.user_role_created_at,
-        updatedAt: item.user_role_updated_at
-      }
-    })
   }
 }
 

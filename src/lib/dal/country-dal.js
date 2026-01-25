@@ -8,14 +8,10 @@ const CountryDAL = {
   getByCode: async(sql, code) => {
     code = code.toString().toUpperCase()
 
-    const countries = await sql`
+    return await sql`
       SELECT * FROM ${ sql(tableName) }
       WHERE code = ${code}
     `
-
-    return countries.length === 0 
-      ? null
-      : createCountry({...countries[0]})
   },
 
   getAll: async (
@@ -30,12 +26,10 @@ const CountryDAL = {
       orderBy = 'name'
     } = data
 
-    const countries = await sql`
+    return await sql`
       SELECT * FROM ${ sql(tableName) }
       ORDER BY ${ sql(orderBy) } ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
       `
-
-    return countries.map((country) => createCountry({...country}))
   }
 }
 

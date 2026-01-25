@@ -8,6 +8,7 @@ import { cookies } from 'next/headers'
 import UserDAL from '@/lib/dal/user-dal'
 import UserService from '@/lib/services/user-service'
 import sql from '@/lib/config/db'
+import { NotFoundError } from '@/lib/errors/not-found-error'
 
 
 export async function login(prevState, formData) {
@@ -33,7 +34,11 @@ export async function login(prevState, formData) {
     return error
   }
 
-  const user = await UserDAL.getByUsername(sql, fd.username)
+  const [user] = await UserDAL.getByUsername(sql, fd.username)
+
+  if (!user) {
+    throw new NotFoundError('username', 'username is not found')
+  }
 
   const isMatch = await UserService.checkCredential({ user: user, password: fd.password })
   if (!isMatch) {
@@ -45,7 +50,7 @@ export async function login(prevState, formData) {
 
   await createSession({
     userId: user.id,
-    fullName: user.full_name,
+    fullName: user.fullName,
     roles,
   })
 

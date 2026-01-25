@@ -1,92 +1,76 @@
 import 'server-only'
 
-import { createAuthor } from '../models/author-model'
 import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
-import { createBook } from '../models/book-model'
 
 const tableName = 'authors'
 
 //TODO: get curr user
 const tempUsername = 'superadmin1' // later change this
 
-const mapResult = (author) => {
-  return author
-    ? createAuthor(author)
-    : null
-}
-
 const AuthorDAL = {
   findById: async (sql, authorId) => {
     if (typeof(authorId) !== 'number') throw new Error('authorId must be a number.')
 
-    const [author] = await sql`
+    return await sql`
       SELECT * FROM ${ sql(tableName) }
       WHERE
         id = ${authorId} AND
         ${ dataNotDeleted() }
     `
-
-    return mapResult(author)
   },
 
-  save: async (
-    sql,
-    data,
-    authorId = null,
-  ) => {
+  create: async (sql, data) => {
     const { fullName, countryCode, about, activeSince } = data
+    
+    if (activeSince !== null && parseInt(activeSince) < 0) {
+      throw new Error('activeSince property cannot less than 0.')
+    }
+    
+    return await sql`
+      INSERT INTO ${ sql(tableName) }
+        (full_name, country_code, active_since, about, created_by, created_at, updated_by, updated_at)
+      VALUES
+        (
+          ${ fullName }, 
+          ${ countryCode }, 
+          ${ activeSince }, 
+          ${ about }, 
+          ${ tempUsername },
+          NOW(), 
+          ${ tempUsername },
+          NOW()
+        )
+      RETURNING *
+    `
+  },
 
+  update: async (sql, data, authorId) => {
+    const { fullName, countryCode, about, activeSince } = data
+    
     if (activeSince !== null && parseInt(activeSince) < 0) {
       throw new Error('activeSince property cannot less than 0.')
     }
 
-    let result = null
-
-    if (authorId === null) {
-      const [author] = await sql`
-        INSERT INTO ${ sql(tableName) }
-          (full_name, country_code, active_since, about, created_by, created_at, updated_by, updated_at)
-        VALUES
-          (
-            ${ fullName }, 
-            ${ countryCode }, 
-            ${ activeSince }, 
-            ${ about }, 
-            ${ tempUsername },
-            NOW(), 
-            ${ tempUsername },
-            NOW()
-          )
-        RETURNING *
-      `
-
-      result = author
-    } else {
-     const [author] = await sql`
-        UPDATE ${ sql(tableName) } 
-        SET 
-          full_name = ${ fullName }, 
-          country_code = ${ countryCode }, 
-          active_since = ${ activeSince },
-          about = ${ about }, 
-          updated_by = ${ tempUsername }, 
-          updated_at = NOW()
-        WHERE
-          id = ${authorId} AND
-          ${ dataNotDeleted() }
-        RETURNING *
-      `
-
-      result = author
-    }
-
-    return mapResult(result)
+    return await sql`
+      UPDATE ${ sql(tableName) } 
+      SET 
+        full_name = ${ fullName }, 
+        country_code = ${ countryCode }, 
+        active_since = ${ activeSince },
+        about = ${ about }, 
+        updated_by = ${ tempUsername }, 
+        updated_at = NOW()
+      WHERE
+        id = ${authorId} AND
+        ${ dataNotDeleted() }
+      RETURNING *
+    `
   },
 
   delete: async (sql, authorId) => {
     if (typeof(authorId) !== 'number') throw new Error('authorId must be a number.')
 
-    const [author] = await sql`
+    return await sql`
       UPDATE ${ sql(tableName) } 
       SET 
         deleted_by = ${ tempUsername }, 
@@ -96,14 +80,12 @@ const AuthorDAL = {
         ${ dataNotDeleted() }
       RETURNING *
     `
-
-    return mapResult(author)
   },
 
   restore: async (sql, authorId) => {
     if (typeof(authorId) !== 'number') throw new Error('authorId must be a number.')
 
-    const [author] = await sql`
+    return await sql`
       UPDATE ${ sql(tableName) } 
       SET
         deleted_by = NULL, 
@@ -113,14 +95,12 @@ const AuthorDAL = {
         ${ dataDeleted() }
       RETURNING *
     `
-
-    return mapResult(author)
   },
 
   getBooks: async (sql, authorId) => {
     if (typeof(authorId) !== 'number') throw new Error('id must be a number.')
     
-    const books = await sql`
+    return await sql`
       SELECT 
         b.id,
         b.isbn,
@@ -142,8 +122,6 @@ const AuthorDAL = {
       WHERE
         ba.author_id = ${authorId}
     `
-
-    return books.map((book) => createBook({...book}))
   }
 }
 

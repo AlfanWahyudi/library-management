@@ -23,9 +23,9 @@ const UserService = {
   },
 
   getById: async (id) => {
-    const user = await UserDAL.getById(sql, id)
+    const [user] = await UserDAL.getById(sql, id)
 
-    if (user == null) {
+    if (!user) {
       throw new NotFoundError('id', 'user id is not found')
     }
 
@@ -33,13 +33,13 @@ const UserService = {
   },
 
   checkEmailExist: async ({ id, email }) => {
-    const user = await UserDAL.checkEmailExist(sql, id, email)
-    return user !== null
+    const [user] = await UserDAL.checkEmailExist(sql, id, email)
+    return user !== undefined
   },
 
   checkUsernameExist: async ({ id, username }) => {
-    const user =  await UserDAL.checkUsernameExist(sql, id, username)
-    return user !== null
+    const [user] = await UserDAL.checkUsernameExist(sql, id, username)
+    return user !== undefined
   },
 
   updateProfile: async ({ username, email, fullName, gender, address }) => {

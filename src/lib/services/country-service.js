@@ -6,9 +6,9 @@ import CountryDAL from '../dal/country-dal';
 
 const CountryService = {
   getByCode: async ({ code }) => {
-    const country = await CountryDAL.getByCode(sql, code)
+    const [country] = await CountryDAL.getByCode(sql, code)
 
-    return country !== null
+    return country
       ? country
       : null
   },
