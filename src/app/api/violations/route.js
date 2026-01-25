@@ -1,5 +1,7 @@
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import { dataTableParamSchema } from "@/lib/schemas/datatable-param-schema";
+import { violationDataTableParamSchema } from "@/lib/schemas/violation/violation-datatable-param-schema";
+import { violationServerSchema } from "@/lib/schemas/violation/violation-server-schema";
 import ViolationService from "@/lib/services/violation-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
 import { NextResponse } from "next/server";
@@ -15,10 +17,18 @@ export async function GET(req) {
       searchFields: searchParams.get('searchFields') || '',
       orderBy: searchParams.get('orderBy') || 'updated_at',
       orderDir: searchParams.get('orderDir') || 'desc',
+      levels: searchParams.get('levels') || 'all'
     }
 
-    const parsedQuery = dataTableParamSchema.parse(query)
-    const violationPaginatedList = await ViolationService.getAllPaginated(parsedQuery)
+    const { 
+      levels, 
+      ...defaultQuery 
+    } = query
+    
+    const parsedDefault = dataTableParamSchema.parse(defaultQuery)
+    const parsedFilter = violationDataTableParamSchema.parse({ levels })
+
+    const violationPaginatedList = await ViolationService.getAllPaginated({...parsedDefault, ...parsedFilter})
 
     return NextResponse.json(
       createSuccessRes({
@@ -37,18 +47,17 @@ export async function GET(req) {
   }
 }
 
-//TODO
 export async function POST(req) {
   try {
     const body = await req.json()
-    // const parsed = memberServerSchema.parse(body)
+    const parsed = violationServerSchema.parse(body)
 
-    // const member = await MemberService.save({...parsed})
+    const violation = await ViolationService.save({...parsed})
 
     return NextResponse.json(
       createSuccessRes({
-        message: 'Member successfully created.', 
-        data: member 
+        message: 'Violation successfully created.', 
+        data: violation 
       }), 
       { status: 201 }
     )

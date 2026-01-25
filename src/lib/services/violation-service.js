@@ -4,9 +4,12 @@ import sql from '../config/db'
 import { NotFoundError } from '../errors/not-found-error'
 import ViolationDAL from '../dal/violation-dal'
 import { createViolationDTO } from '../dto/violation-dto'
+import LoanViolationDAL from '../dal/loan-violation-dal'
+import { ActionFailedError } from '../errors/action-failed-error'
+import { BadRequestError } from '../errors/bad-request-error'
 
 const isFound = async ({ id }) => {
-  const [violation] = ViolationDAL.findById(sql, id)
+  const [violation] = await ViolationDAL.findById(sql, id)
   return violation !== undefined
 }
 
@@ -28,6 +31,7 @@ const ViolationService = {
     orderDir,
     search,
     searchFields = [],
+    levels = []
   }) => {
     const data = {
       page, 
@@ -36,6 +40,7 @@ const ViolationService = {
       orderDir,
       search,
       searchFields,
+      levels
     }
 
     const items = await ViolationDAL.getAllPaginated(sql, data)
@@ -47,48 +52,84 @@ const ViolationService = {
     }
   },
 
-  // save: async ({
-  //   id = null,
-  //   fullName,
-  //   email,
-  //   phone,
-  //   address,
-  //   birthDate,
-  //   gender
-  // }) => {
-  //   if (id !== null) {
-  //     const memberFound = await isFound({id})
-  //     if (!memberFound) {
-  //       throw new NotFoundError('id', 'member id is not found.')
-  //     }
-  //   }
+  save: async ({
+    id = null,
+    title,
+    level,
+    description,
+  }) => {
+    if (id !== null) {
+      const found = await isFound({id})
+      if (!found) {
+        throw new NotFoundError('id', 'violation id is not found.')
+      }
+    }
 
-  //   const emailExist = await ViolationService.isDataExist({ id, field: 'email', value: email })
-  //   if (emailExist) {
-  //     throw new NotFoundError('email', 'email is already in use.')
-  //   }
+    const savedData = await sql.begin(async sql => {
+      const data = { title, level, description }
 
-  //   const phoneExist = await ViolationService.isDataExist({ id, field: 'phone', value: phone })
-  //   if (phoneExist) {
-  //     throw new NotFoundError('phone', 'phone is already in use.')
-  //   }
+      const [savedData] = id === null
+        ? await ViolationDAL.create(sql, data)
+        : await ViolationDAL.update(sql, data, id)
 
-  //   const savedData = await sql.begin(async sql => {
-  //     const data = { fullName, email, phone, address, birthDate, gender }
+      return savedData
+    })
 
-  //     const [savedData] = id === null
-  //       ? await MemberDAL.create(sql, data)
-  //       : await MemberDAL.update(sql, data, id)
+    if (!savedData) {
+      throw new ActionFailedError('failed to save violation data')
+    }
 
-  //     return savedData
-  //   })
+    return createViolationDTO(savedData)
+  },
 
-  //   if (savedData === null) {
-  //     throw new ActionFailedError('failed to save member data')
-  //   }
+  isIncludeOnLoanViolation: async ({ violationId }) => {
+    const items = await LoanViolationDAL.findByViolationId(sql, violationId)
+    return items.length > 0
+  },
 
-  //   return createMemberDTO(savedData)
-  // },
+  //TODO
+  delete: async ({ id }) => {
+    const found = await isFound({id})
+    if (!found) {
+      throw new NotFoundError('id', 'violation id is not found.')
+    }
+
+    const isOnLoanViolation = await ViolationService.isIncludeOnLoanViolation({ violationId: id })
+    if (isOnLoanViolation) {
+      throw new BadRequestError('violation_id','Failed delete: violation data is already used in loan violation')
+    }
+
+    const deletedData = await sql.begin(async (sql) => {
+      const [deletedData] = await ViolationDAL.delete(sql, id)
+
+      return deletedData
+    })
+
+    if (!deletedData) {
+      throw new ActionFailedError('failed to delete violation data')
+    }
+
+    return createViolationDTO(deletedData)
+  },
+
+  restore: async ({ id }) =>{
+    const found = await isFound({id})
+    if (found) {
+      throw new BadRequestError('id', `violation data is not deleted, id: ${id}`)
+    }
+
+    const restoredData = await sql.begin(async (sql) => {
+      const [restoredData] = await ViolationDAL.restore(sql, id)
+
+      return restoredData
+    })
+
+    if (!restoredData) {
+      throw new ActionFailedError('failed to restore violation data')
+    }
+    
+    return createViolationDTO(restoredData)
+  }
 }
 
 export default ViolationService
