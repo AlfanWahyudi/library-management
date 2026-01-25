@@ -74,7 +74,7 @@ const AuthorDAL = {
       UPDATE ${ sql(tableName) } 
       SET 
         deleted_by = ${ tempUsername }, 
-        deleted = NOW()
+        deleted_at = NOW()
       WHERE
         id = ${authorId} AND
         ${ dataNotDeleted() }
