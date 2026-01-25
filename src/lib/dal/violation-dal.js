@@ -1,37 +1,20 @@
 import 'server-only'
 
 import { getPaginatedList } from '@/lib/utils/server/datatable'
-import { createMember } from '../models/member-model'
 
-const tableName = 'members'
+const tableName = 'violations'
 
 //TODO: get curr user
 const tempUsername = 'superadmin1' // 
 
-const findByQuery = async ({ sql, field, value }) => {
-  return await sql`
-    SELECT * FROM ${ sql(tableName) }
-    WHERE ${ sql(field) } = ${value}
-  `
-}
+const ViolationDAL = {
+  findById: async (sql, violationId) => {
+    if (typeof(violationId) !== 'number') throw new Error('violationId must be a number.')
 
-const MemberDAL = {
-  findById: async (sql, memberId) => {
-    if (typeof(memberId) !== 'number') throw new Error('memberId must be a number.')
-
-    return await findByQuery({ sql, field: 'id', value: memberId })
-  },
-
-  findByEmail: async (sql, email) => {
-    if (typeof(email) !== 'string') throw new Error('email must be a string.')
-
-    return await findByQuery({ sql, field: 'email', value: email })
-  },
-
-  findByPhone: async(sql, phone) => {
-    if (typeof(phone) !== 'string') throw new Error('phone must be a string.')
-
-    return await findByQuery({ sql, field: 'phone', value: phone })
+    return await sql`
+      SELECT * FROM ${ sql(tableName) }
+      WHERE id = ${violationId}
+    `
   },
 
   getAllPaginated: async (
@@ -43,26 +26,18 @@ const MemberDAL = {
       orderDir: '',
       search: '',
       searchFields: [],
-      gender: 'all',
     }
   ) => {
-    const { gender } = data
-
-    const filterQueries = []
-
-    if (gender !== 'all') {
-      filterQueries.push(sql`${sql('gender')} = ${gender}`)
-    }
 
     const paginatedData = {
       ...data,
       tableName,
-      filterQueries  
     }
 
     return await getPaginatedList(sql, paginatedData)
   },
 
+  //TODO
   create: async (sql, data) => {
     const {
       fullName,
@@ -93,6 +68,7 @@ const MemberDAL = {
     `
   },
 
+  //TODO
   update: async (sql, data, memberId) => {
     const {
       fullName,
@@ -119,9 +95,17 @@ const MemberDAL = {
       RETURNING *
     `
   },
+
+  restore: async (sql, violationId) => {
+    //TODO
+  },
+
+  delete: async (sql, violationId) => {
+    //TODO
+  },
 }
 
-export default MemberDAL
+export default ViolationDAL
 
 export {
   tableName,
