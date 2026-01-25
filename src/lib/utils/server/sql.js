@@ -14,10 +14,10 @@ const dataNotDeleted = (alias = '') => {
 
 const dataDeleted = (alias = '') => {
   if (alias.trim() === '') {
-    return sql`deleted_by IS NULL AND deleted_at IS NULL `
+    return sql`deleted_by IS NOT NULL AND deleted_at IS NOT NULL `
   }
 
-  return sql`${ sql(alias + '.deleted_by') } IS NULL AND ${ sql(alias + '.deleted_at') } IS NULL`
+  return sql`${ sql(alias + '.deleted_by') } IS NOT NULL AND ${ sql(alias + '.deleted_at') } IS NOT NULL`
 }
 
 export {
