@@ -87,8 +87,9 @@ const ViolationService = {
     return items.length > 0
   },
 
-  //TODO
-  delete: async ({ id }) => {
+  canDataDeleted: async ({ id }) => {
+    let result = true
+
     const found = await isFound({id})
     if (!found) {
       throw new NotFoundError('id', 'violation id is not found.')
@@ -96,6 +97,20 @@ const ViolationService = {
 
     const isOnLoanViolation = await ViolationService.isIncludeOnLoanViolation({ violationId: id })
     if (isOnLoanViolation) {
+      result = false
+    }
+
+    return result
+  },
+
+  delete: async ({ id }) => {
+    const found = await isFound({id})
+    if (!found) {
+      throw new NotFoundError('id', 'violation id is not found.')
+    }
+
+    const dataCanDelete = await ViolationService.canDataDeleted({ id })
+    if (!dataCanDelete) {
       throw new BadRequestError('violation_id','Failed delete: violation data is already used in loan violation')
     }
 
