@@ -17,16 +17,16 @@ export async function GET(req) {
       searchFields: searchParams.get('searchFields') || '',
       orderBy: searchParams.get('orderBy') || 'updated_at',
       orderDir: searchParams.get('orderDir') || 'desc',
-      levels: searchParams.get('levels') || 'all'
+      level: searchParams.get('level') || 'all'
     }
 
     const { 
-      levels, 
+      level, 
       ...defaultQuery 
     } = query
     
     const parsedDefault = dataTableParamSchema.parse(defaultQuery)
-    const parsedFilter = violationDataTableParamSchema.parse({ levels })
+    const parsedFilter = violationDataTableParamSchema.parse({ level })
 
     const violationPaginatedList = await ViolationService.getAllPaginated({...parsedDefault, ...parsedFilter})
 

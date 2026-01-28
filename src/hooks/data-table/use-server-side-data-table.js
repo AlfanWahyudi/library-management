@@ -94,7 +94,7 @@ export default function useServerSideDataTable({
 
   useEffect(() => {
     const startFetching = async () => {
-      const authorParam = {
+      const queryParam = {
         searchFields: searchFields,
         page: pagination.pageIndex,
         limit: pagination.pageSize,
@@ -104,11 +104,11 @@ export default function useServerSideDataTable({
       }
 
       colFilters.forEach((colFilter) => {
-        authorParam[colFilter.id] = colFilter.value
+        queryParam[colFilter.id] = colFilter.value
       })
 
       await runFetch({ 
-        fetchFn: async() => await fetchingData(authorParam)
+        fetchFn: async() => await fetchingData(queryParam)
       })
     }
 

@@ -61,6 +61,10 @@ const searchingItemsViolation = [
 const getSearchItemsIdViolation = (separator = ',') => searchingItemsViolation.map(item => item.id).join(separator)
 
 const defaultColFiltersViolation = [
+  {
+    id: 'level',
+    value: 'all',
+  }
 ]
 
 export {

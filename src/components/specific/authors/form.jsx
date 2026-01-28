@@ -68,6 +68,8 @@ export default function AuthorForm({
   } = useFetch({ initialValue: [] })
 
   useEffect(() => {
+
+    // TODO: fix running fetch nya 2x
     const fetchingData = async () => {
       await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
     }

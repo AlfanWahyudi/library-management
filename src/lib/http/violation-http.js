@@ -1,5 +1,5 @@
-const getPaginatedListViolation = async ({ page, limit, search, searchFields, orderBy, orderDir }) => {
-  const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir}).toString();
+const getPaginatedListViolation = async ({ page, limit, search, searchFields, orderBy, orderDir, level = 'all' }) => {
+  const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir, level }).toString();
   const res = await fetch(`/api/violations?${query}`)
   
   if (!res.ok) {

@@ -30,16 +30,16 @@ const ViolationDAL = {
       orderDir: '',
       search: '',
       searchFields: [],
-      levels: [],
+      level: [],
     }
   ) => {
-    const { levels = Object.keys(VIOLATION_LEVEL) } = data
+    const { level = Object.keys(VIOLATION_LEVEL) } = data
 
-    const filterLevels = sql`level in ${sql(levels)}`
+    const filterLevel = sql`level in ${sql(level)}`
     const paginatedData = {
       ...data,
       tableName,
-      filterQueries: [filterLevels],
+      filterQueries: [filterLevel],
       isSoftDeleted: true,
     }
 

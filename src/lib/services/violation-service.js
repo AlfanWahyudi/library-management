@@ -31,7 +31,7 @@ const ViolationService = {
     orderDir,
     search,
     searchFields = [],
-    levels = []
+    level = []
   }) => {
     const data = {
       page, 
@@ -40,7 +40,7 @@ const ViolationService = {
       orderDir,
       search,
       searchFields,
-      levels
+      level
     }
 
     const items = await ViolationDAL.getAllPaginated(sql, data)
