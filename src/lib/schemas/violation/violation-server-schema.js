@@ -20,5 +20,6 @@ export const violationServerSchema = z.object({
     .string()
     .trim()
     .nullable()
+    .transform((val) => val || null)
     .default(null)
 })
