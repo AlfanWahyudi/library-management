@@ -16,6 +16,8 @@ import TextareaControlForm from "@/components/common/form/textarea-control-form"
 import SelectControlForm from "@/components/common/form/select-control-form";
 import AuthorAlertDialogForm from "./alert-dialog/alert-dialog-form";
 import AuthorAlertDialogDelete from "./alert-dialog/alert-dialog-delete";
+import ButtonDisableDesc from "@/components/common/button/button-disable-desc";
+import { canDeleteAuthor } from "@/lib/http/author-http";
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
 //TODO: Styling untuk input yang digunakan pada Detail View
@@ -67,7 +69,20 @@ export default function AuthorForm({
     reset: resetCountries,
   } = useFetch({ initialValue: [] })
 
+  const {
+    error: errorCanDelete,
+    runFetch: runFetchCanDataDeleted,
+    fetchedData: canDelete,
+    reset: resetCanDelete,
+  } = useFetch({ initialValue: true })
+
   useEffect(() => {
+
+    // TODO: fix running fetch nya 2x
+    const handleCheckDataCanDeleted = async () => {
+      const id = author ? author.id : null
+      await runFetchCanDataDeleted({ fetchFn: async () => await canDeleteAuthor({ id }) })
+    }
 
     // TODO: fix running fetch nya 2x
     const fetchingData = async () => {
@@ -77,10 +92,48 @@ export default function AuthorForm({
     if (openForm) {
       fetchingData()
 
+      if (formType === 'view') {
+        handleCheckDataCanDeleted()
+      }
+
     } else {
       resetCountries()
+      resetCanDelete()
     }
-  }, [openForm])
+    
+  }, [openForm, formType, author])
+
+  const saveBtn = formType !== 'view'
+    ? (
+      <AuthorAlertDialogForm 
+        form={form}
+        formTitle={formTitle}
+        formType={formType}
+        author={author}
+        onSuccSubmit={cbSuccess}
+      />
+    )
+    : undefined
+
+
+  const deleteBtn = (formType === 'view' && !errorCanDelete) 
+    ? canDelete
+      ? (
+          <AuthorAlertDialogDelete 
+            formType={formType}
+            author={author}
+            onSuccDelete={cbSuccess}
+          />
+      ) : (
+        <ButtonDisableDesc
+          desc="Tidak dapat dihapus, data pengarang telah digunakan."
+          variant="destructive"
+          labelClasses="text-destructive"
+        >
+          Hapus Pengarang
+        </ButtonDisableDesc>
+      )
+    : undefined
 
   return (
     <MainContentForm 
@@ -97,6 +150,14 @@ export default function AuthorForm({
             <AlertMain title='Error menampilkan daftar negara pada field kebangsaan' variant="error">
               <p>{errorCountry}</p>
             </AlertMain>  
+          )}
+          {errorCanDelete && (
+            <AlertMain 
+              title="Error cek data pengarang" 
+              variant="error"
+            >
+              <p>{errorCanDelete}</p>
+            </AlertMain>
           )}
           <InputControlForm 
             control={form.control}
@@ -132,22 +193,8 @@ export default function AuthorForm({
         {children}
       </section>
       <SheetFooter>
-        {formType !== 'view' && (
-          <AuthorAlertDialogForm 
-            form={form}
-            formTitle={formTitle}
-            formType={formType}
-            author={author}
-            onSuccSubmit={cbSuccess}
-          />
-        )}
-        {formType === 'view' && (
-          <AuthorAlertDialogDelete 
-            formType={formType}
-            author={author}
-            onSuccDelete={cbSuccess}
-          />
-        )}
+        {saveBtn}
+        {deleteBtn}
         <SheetClose asChild>
           <Button type="button" size='sm' variant="outline">Tutup</Button>
         </SheetClose>

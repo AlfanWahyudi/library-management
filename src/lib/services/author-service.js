@@ -9,8 +9,15 @@ import { generateAuthorExcel } from '../excel/author-excel'
 import { NotFoundError } from '../errors/not-found-error'
 import { ActionFailedError } from '../errors/action-failed-error'
 import sql from '../config/db'
+import BookAuthorDAL from '../dal/book-author-dal'
+import { BadRequestError } from '../errors/bad-request-error'
 
 const resourceCode = 'AUT'
+
+const isFound = async ({ id }) => {
+  const [violation] = await AuthorDAL.findById(sql, id)
+  return violation !== undefined
+}
 
 const AuthorService = {
   // getById: async ({id}) => {
@@ -64,6 +71,7 @@ const AuthorService = {
     }
   },
 
+  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   save: async({
     id = null,
     fullName,
@@ -105,15 +113,76 @@ const AuthorService = {
     })
   },
 
-  // TODO: delete data only when it not used by book data
-  delete: async({id}) => {
-    const [author] = await AuthorDAL.findById(sql, parseInt(id))
+  isIncludeOnBookAuthor: async ({ id }) => {
+    const items = await BookAuthorDAL.findByAuthorId(sql, id)
+    return items.length > 0
+  },
 
-    if (!author) {
+  canDataDeleted: async ({ id }) => {
+    let result = true
+
+    const found = await isFound({id})
+    if (!found) {
       throw new NotFoundError('id', 'author id is not found.')
     }
 
-    await AuthorDAL.delete(sql, author.id)
+    const isOnBookAuthor = await AuthorService.isIncludeOnBookAuthor({ id })
+    if (isOnBookAuthor) {
+      result = false
+    }
+
+    return result
+  },
+
+  delete: async({id}) => {
+    const found = await isFound({id})
+    if (!found) {
+      throw new NotFoundError('id', 'author id is not found.')
+    }
+
+    const dataCanDelete = await AuthorService.canDataDeleted({ id })
+    if (!dataCanDelete) {
+      throw new BadRequestError('author_id','Failed delete: author data is already used in book author')
+    }
+
+    const result = await sql.begin(async (sql) => {
+      const [data] = await AuthorDAL.delete(sql, id)
+      if (!data) {
+        throw new ActionFailedError('failed to delete author data')
+      }
+
+      const [country] = await CountryDAL.getByCode(sql, data.countryCode)
+
+      return createAuthorDTO({
+        ...data,
+        country
+      })
+    })
+
+    return result
+  },
+
+  restore: async ({ id }) =>{
+    const found = await isFound({id})
+    if (found) {
+      throw new BadRequestError('id', `author data is not deleted, id: ${id}`)
+    }
+
+    const result = await sql.begin(async (sql) => {
+      const [data] = await AuthorDAL.restore(sql, id)
+      if (!data) {
+        throw new ActionFailedError('failed to restore author data')
+      }
+      
+      const [country] = await CountryDAL.getByCode(sql, data.countryCode)
+
+      return createAuthorDTO({
+        ...data,
+        country
+      })
+    })
+
+    return result
   },
 
   getBooks: async({ id }) => {

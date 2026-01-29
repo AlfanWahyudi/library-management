@@ -19,6 +19,9 @@ import AlertMain from "@/components/common/alert-main";
 import { canDeleteViolation } from "@/lib/http/violation-http";
 
 
+const violationLevels = Object.entries(VIOLATION_LEVEL)
+  .map(([key, value]) => ({ val: key, label: value }))
+
 export default function ViolationForm({
   openForm,
   cbSuccess = () => {},
@@ -42,10 +45,6 @@ export default function ViolationForm({
       : formType === 'view'
         ? 'Detail Pelanggaran'
         : 'Form Pelanggaran'
-
-
-  const violationLevels = Object.entries(VIOLATION_LEVEL)
-    .map(([key, value]) => ({ val: key, label: value }))
 
   const inputRequired = formType === 'view' ? false : true
   const inputDisabled = formType === 'view'

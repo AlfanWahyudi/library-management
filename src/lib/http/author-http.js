@@ -90,10 +90,26 @@ const getBooksByAuthorId = async ({ id }) => {
   return resJson.data
 }
 
+const canDeleteAuthor = async ({ id }) => {
+  const res = await fetch('/api/authors/' + id + '/can-delete', {
+    method: 'GET'
+  })      
+
+  if (!res.ok) {
+    throw new Error('Gagal melakukan pengecekan, apakah data pengarang dapat dihapus atau tidak. Mohon untuk mencoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+  const result = resJson.data.authorCanDelete
+
+  return result
+}
+
 export {
   getPaginatedListAuthor,
   saveAuthor,
   deleteAuthor,
   downloadPdfAuthorAll,
   getBooksByAuthorId,
+  canDeleteAuthor
 }
