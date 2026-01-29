@@ -75,7 +75,7 @@ const MemberService = {
       meta: items.meta,
     }
   },
-
+  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   save: async ({
     id = null,
     fullName,

@@ -41,7 +41,7 @@ const UserService = {
     const [user] = await UserDAL.checkUsernameExist(sql, id, username)
     return user !== undefined
   },
-
+  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   updateProfile: async ({ username, email, fullName, gender, address }) => {
     if (username === null || username === '') throw new BadRequestError('username', 'username must not be null or empty')
 
@@ -73,7 +73,7 @@ const UserService = {
 
     return createUserDTO(updatedUser)
   },
-
+  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   changeUsername: async ({ newUsername }) => {
     if (!newUsername || (newUsername && newUsername.trim() === '')) throw new Error('newUsername must not be null, undefined, or empty')
 

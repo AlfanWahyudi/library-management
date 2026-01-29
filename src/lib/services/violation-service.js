@@ -51,7 +51,7 @@ const ViolationService = {
       meta: items.meta,
     }
   },
-
+  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   save: async ({
     id = null,
     title,
@@ -102,7 +102,7 @@ const ViolationService = {
 
     return result
   },
-
+  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   delete: async ({ id }) => {
     const found = await isFound({id})
     if (!found) {
@@ -126,7 +126,8 @@ const ViolationService = {
 
     return createViolationDTO(deletedData)
   },
-
+  
+  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   restore: async ({ id }) =>{
     const found = await isFound({id})
     if (found) {
