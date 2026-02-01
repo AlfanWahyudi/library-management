@@ -1,3 +1,5 @@
+import { getFilenameFromRes } from "../utils/http";
+
 const getPaginatedListMember = async ({ page, limit, search, searchFields, orderBy, orderDir, gender }) => {
   const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir, gender}).toString();
   const res = await fetch(`/api/members?${query}`)
@@ -54,8 +56,31 @@ const saveMember = async ({ data, id = null }) => {
   return resJson.data
 }
 
+const downloadExcelMemberAll = async () => {
+  const res = await fetch('/api/members/files?extension=xlsx')      
+
+  if (!res.ok) {
+    throw new Error('Gagal download data anggota, mohon dicoba lagi nanti.')
+  }
+
+  let filename = "members-file";
+
+  const filenameRes = getFilenameFromRes(res)
+  if (filenameRes) {
+    filename = filenameRes
+  }
+
+  const blobData = await res.blob()
+
+  return {
+    filename,
+    blobData
+  }
+}
+
 export {
   getPaginatedListMember,
   checkDuplicationMember,
-  saveMember
+  saveMember,
+  downloadExcelMemberAll
 }

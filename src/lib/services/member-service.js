@@ -5,6 +5,8 @@ import MemberDAL from '../dal/member-dal'
 import { createMemberDTO } from '../dto/member-dto'
 import { NotFoundError } from '../errors/not-found-error'
 import { ActionFailedError } from '../errors/action-failed-error'
+import { generateMemberExcel } from '../excel/member-excel'
+import { GENDER } from '../constants/gender'
 
 const isFound = async ({ id }) => {
   const [member] = MemberDAL.findById(sql, id)
@@ -74,7 +76,8 @@ const MemberService = {
       data: dataMapped,
       meta: items.meta,
     }
-  },
+  }, 
+
   // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   save: async ({
     id = null,
@@ -117,6 +120,15 @@ const MemberService = {
     }
 
     return createMemberDTO(savedData)
+  },
+
+  exportToExcel: async () => {
+    const members = await MemberDAL.getAllForExcel(sql)
+    
+    const dataMapped = members.map((member) => ({...member, gender: GENDER[member.gender]}))
+    const fileBuffer = await generateMemberExcel({ members: dataMapped }) 
+
+    return fileBuffer
   },
 }
 

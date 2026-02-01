@@ -63,6 +63,13 @@ const MemberDAL = {
     return await getPaginatedList(sql, paginatedData)
   },
 
+  getAllForExcel: async (sql) => {
+    return await sql`
+      select * from ${ sql(tableName) }
+      order by updated_at desc
+    `
+  },
+
   create: async (sql, data) => {
     const {
       fullName,
