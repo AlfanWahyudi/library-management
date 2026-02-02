@@ -7,7 +7,7 @@ export async function GET(req, { params }) {
   try {
     const { id } = await params
 
-    const books = await AuthorService.getBooks({ id })
+    const books = await AuthorService.getBooks({ id: parseInt(id) })
 
     return NextResponse.json(
       createSuccessRes({

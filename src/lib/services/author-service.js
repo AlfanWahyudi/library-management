@@ -15,8 +15,8 @@ import { BadRequestError } from '../errors/bad-request-error'
 const resourceCode = 'AUT'
 
 const isFound = async ({ id }) => {
-  const [violation] = await AuthorDAL.findById(sql, id)
-  return violation !== undefined
+  const [author] = await AuthorDAL.findById(sql, parseInt(id))
+  return author !== undefined
 }
 
 const AuthorService = {
@@ -79,9 +79,8 @@ const AuthorService = {
     activeSince = null,
   }) => {
     if (id !== null) {
-      const [author] = await AuthorDAL.findById(sql, parseInt(id))
-
-      if (!author) {
+      const found = await isFound({ id })
+      if (!found) {
         throw new NotFoundError('id', 'author id is not found.')
       }
     }
@@ -184,14 +183,12 @@ const AuthorService = {
   },
 
   getBooks: async({ id }) => {
-    const authorId = parseInt(id)
-    const [author] = await AuthorDAL.findById(sql, authorId)
-
-    if (!author) {
+    const found = await isFound({ id })
+    if (!found) {
       throw new NotFoundError('id', 'author id is not found.')
     }
 
-    return await AuthorDAL.getBooks(sql, authorId)  
+    return await AuthorDAL.getBooks(sql, id)  
   }
 }
 
