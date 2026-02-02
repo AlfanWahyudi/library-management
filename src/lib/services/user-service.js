@@ -42,7 +42,6 @@ const UserService = {
     return user !== undefined
   },
 
-  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   updateProfile: async ({ username, email, fullName, gender, address }) => {
     if (username === null || username === '') throw new BadRequestError('username', 'username must not be null or empty')
 
@@ -61,21 +60,20 @@ const UserService = {
       throw new BadRequestError('email', `email is already taken.`)
     }
 
-    const updatedUser = await sql.begin(async sql => {
+    const result = await sql.begin(async sql => {
       const data = { username, email, fullName, gender, address }
-      const [updatedUser] = await UserDAL.updateProfile(sql, data)
+      const [user] = await UserDAL.updateProfile(sql, data)
 
-      return updatedUser
+      if (user === null) {
+        throw new ActionFailedError(`Failed to update user profile data.`)
+      }
+  
+      return createUserDTO(user)
     })
 
-    if (updatedUser === null) {
-      throw new ActionFailedError(`Failed to update user profile data.`)
-    }
-
-    return createUserDTO(updatedUser)
+    return result
   },
   
-  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   changeUsername: async ({ newUsername }) => {
     if (!newUsername || (newUsername && newUsername.trim() === '')) throw new Error('newUsername must not be null, undefined, or empty')
 
@@ -89,17 +87,16 @@ const UserService = {
       throw new BadRequestError('newUsername', 'newUsername must not be same with prev username')
     }
 
-    const data = await sql.begin(async sql => {
+    const result = await sql.begin(async sql => {
       const [data] = await UserDAL.changeUsername(sql, user.id, newUsername)
-
-      return data
+      if (!data) {
+        throw new ActionFailedError('Failed to change username for user id: ' + user.id)
+      }
+  
+      return createUserDTO(data)
     })
 
-    if (!data) {
-      throw new ActionFailedError('Failed to change username for user id: ' + user.id)
-    }
-
-    return createUserDTO(data)
+    return result
   }, 
 }
 

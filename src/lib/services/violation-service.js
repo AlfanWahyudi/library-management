@@ -51,7 +51,7 @@ const ViolationService = {
       meta: items.meta,
     }
   },
-  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
+
   save: async ({
     id = null,
     title,
@@ -65,21 +65,21 @@ const ViolationService = {
       }
     }
 
-    const savedData = await sql.begin(async sql => {
+    const result = await sql.begin(async sql => {
       const data = { title, level, description }
 
       const [savedData] = id === null
         ? await ViolationDAL.create(sql, data)
         : await ViolationDAL.update(sql, data, id)
 
-      return savedData
+      if (!savedData) {
+        throw new ActionFailedError('failed to save violation data')
+      }
+  
+      return createViolationDTO(savedData)
     })
 
-    if (!savedData) {
-      throw new ActionFailedError('failed to save violation data')
-    }
-
-    return createViolationDTO(savedData)
+    return result
   },
 
   isIncludeOnLoanViolation: async ({ violationId }) => {
@@ -102,7 +102,7 @@ const ViolationService = {
 
     return result
   },
-  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
+
   delete: async ({ id }) => {
     const found = await isFound({id})
     if (!found) {
@@ -114,37 +114,37 @@ const ViolationService = {
       throw new BadRequestError('violation_id','Failed delete: violation data is already used in loan violation')
     }
 
-    const deletedData = await sql.begin(async (sql) => {
-      const [deletedData] = await ViolationDAL.delete(sql, id)
+    const result = await sql.begin(async (sql) => {
+      const [data] = await ViolationDAL.delete(sql, id)
 
-      return deletedData
+      if (!data) {
+        throw new ActionFailedError('failed to delete violation data')
+      }
+  
+      return createViolationDTO(data)
     })
 
-    if (!deletedData) {
-      throw new ActionFailedError('failed to delete violation data')
-    }
-
-    return createViolationDTO(deletedData)
+    return result
   },
   
-  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   restore: async ({ id }) =>{
     const found = await isFound({id})
     if (found) {
       throw new BadRequestError('id', `violation data is not deleted, id: ${id}`)
     }
 
-    const restoredData = await sql.begin(async (sql) => {
-      const [restoredData] = await ViolationDAL.restore(sql, id)
+    const data = await sql.begin(async (sql) => {
+      const [data] = await ViolationDAL.restore(sql, id)
 
-      return restoredData
+      if (!data) {
+        throw new ActionFailedError('failed to restore violation data')
+      }
+      
+      return createViolationDTO(data)
     })
 
-    if (!restoredData) {
-      throw new ActionFailedError('failed to restore violation data')
-    }
-    
-    return createViolationDTO(restoredData)
+    return data
+
   }
 }
 

@@ -71,7 +71,6 @@ const AuthorService = {
     }
   },
 
-  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   save: async({
     id = null,
     fullName,
@@ -79,12 +78,6 @@ const AuthorService = {
     about = null,
     activeSince = null,
   }) => {
-    const [country] = await CountryDAL.getByCode(sql, countryCode)
-
-    if (country === null) {
-      throw new NotFoundError('countryCode', 'countryCode property is not found.')
-    }
-
     if (id !== null) {
       const [author] = await AuthorDAL.findById(sql, parseInt(id))
 
@@ -93,24 +86,29 @@ const AuthorService = {
       }
     }
 
-    const savedData = await sql.begin(async (sql) => {
+    const result = await sql.begin(async (sql) => {
+      const [country] = await CountryDAL.getByCode(sql, countryCode)
+      if (country === null) {
+        throw new NotFoundError('countryCode', 'countryCode property is not found.')
+      }
+
       const data = {fullName, countryCode, about, activeSince}
 
       const [savedData] = id === null
         ? await AuthorDAL.create(sql, data)
         : await AuthorDAL.update(sql, data, id)
 
-      return savedData
+      if (!savedData) {
+        throw new ActionFailedError('failed to save author data')
+      }
+
+      return createAuthorDTO({
+        ...savedData,
+        country
+      })
     })
 
-    if (!savedData) {
-      throw new ActionFailedError('failed to save author data')
-    }
-
-    return createAuthorDTO({
-      ...savedData,
-      country
-    })
+    return result
   },
 
   isIncludeOnBookAuthor: async ({ id }) => {
