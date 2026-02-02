@@ -34,10 +34,6 @@ const MemberService = {
         ? await MemberDAL.findByPhone(sql, value)
         : []
 
-    if (!member) {
-      throw new NotFoundError(field, `${field} of member is not found`)
-    }
-
     if (id) {
       const diffMember = member && member.id != id
       if (diffMember) {
