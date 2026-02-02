@@ -9,8 +9,7 @@ import { generateMemberExcel } from '../excel/member-excel'
 import { GENDER } from '../constants/gender'
 
 const isFound = async ({ id }) => {
-  const [member] = MemberDAL.findById(sql, id)
-
+  const [member] = await MemberDAL.findById(sql, id)
   return member !== undefined
 }
 
@@ -74,7 +73,6 @@ const MemberService = {
     }
   }, 
 
-  // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   save: async ({
     id = null,
     fullName,
@@ -101,21 +99,21 @@ const MemberService = {
       throw new NotFoundError('phone', 'phone is already in use.')
     }
 
-    const savedData = await sql.begin(async sql => {
+    const result = await sql.begin(async sql => {
       const data = { fullName, email, phone, address, birthDate, gender }
 
       const [savedData] = id === null
         ? await MemberDAL.create(sql, data)
         : await MemberDAL.update(sql, data, id)
 
-      return savedData
+      if (savedData === null) {
+        throw new ActionFailedError('failed to save member data')
+      }
+  
+      return createMemberDTO(savedData)
     })
-
-    if (savedData === null) {
-      throw new ActionFailedError('failed to save member data')
-    }
-
-    return createMemberDTO(savedData)
+    
+    return result
   },
 
   exportToExcel: async () => {
