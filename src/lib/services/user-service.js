@@ -41,6 +41,7 @@ const UserService = {
     const [user] = await UserDAL.checkUsernameExist(sql, id, username)
     return user !== undefined
   },
+
   // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   updateProfile: async ({ username, email, fullName, gender, address }) => {
     if (username === null || username === '') throw new BadRequestError('username', 'username must not be null or empty')
@@ -55,7 +56,7 @@ const UserService = {
       throw new ForbiddenError(`You don't have any permission to update this user data.`)
     }
 
-    const isEmailExist = await UserDAL.checkEmailExist(sql, user.id, user.email)
+    const isEmailExist = await UserService.checkEmailExist({ id: user.id, email: user.email })
     if (isEmailExist) {
       throw new BadRequestError('email', `email is already taken.`)
     }
@@ -73,6 +74,7 @@ const UserService = {
 
     return createUserDTO(updatedUser)
   },
+  
   // TODO: perbaiki transaction db nya, semuanya yang berhubungan dengan pengubahan db simpan dalam transaction
   changeUsername: async ({ newUsername }) => {
     if (!newUsername || (newUsername && newUsername.trim() === '')) throw new Error('newUsername must not be null, undefined, or empty')
@@ -82,7 +84,7 @@ const UserService = {
       throw new UnauthorizeError('User is not authenticated')
     }
 
-    const user = await UserDAL.getById(sql, session.userId)
+    const user = await UserService.getById(session.userId)
     if (user.username === newUsername) {
       throw new BadRequestError('newUsername', 'newUsername must not be same with prev username')
     }
