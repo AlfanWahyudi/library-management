@@ -1,13 +1,54 @@
 import 'server-only'
 
-import CountryDAL from '../dal/country-dal'
 import sql from '../config/db'
+import CountryDAL from '../dal/country-dal'
+import BookDAL from '../dal/book-dal'
 
-export const attachCountryToAuthor = async (author) => {
+export const attachCountryToOneAuthor = async (author) => {
   const [country] = await CountryDAL.getByCode(sql, author.countryCode)
 
   return {
     ...author,
     country
   }
+}
+
+export const attachCountriesToAuthors = async (authors) => {
+  const cache = new Map()
+
+  const updatedAuthors = await Promise.all(
+    authors.map(async author => {
+      if (!cache.has(author.countryCode)) {
+        const [country] = await CountryDAL.getByCode(sql, author.countryCode)
+        cache.set(author.countryCode, country)
+      }
+      
+      return {
+        ...author,
+        country: cache.get(author.countryCode)
+      }
+    })
+  )
+
+  cache.clear()
+
+  return updatedAuthors
+}
+
+export const attachAuthorsToOneBook = async (book) => {
+  const authors = await BookDAL.getAuthors(sql, book.id)
+  const updatedAuthors = await attachCountriesToAuthors(authors)
+
+  return {
+    ...book,
+    authors: updatedAuthors
+  }
+}
+
+export const attachAuthorsToBooks = async (books) => {
+  return await Promise.all(
+    books.map(async book => {
+      return await attachAuthorsToOneBook(book)
+    })
+  )
 }
