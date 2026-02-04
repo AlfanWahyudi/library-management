@@ -7,6 +7,7 @@ import { NotFoundError } from '../errors/not-found-error'
 import { ActionFailedError } from '../errors/action-failed-error'
 import { generateMemberExcel } from '../excel/member-excel'
 import { GENDER } from '../constants/gender'
+import { BadRequestError } from '../errors/bad-request-error'
 
 const isFound = async ({ id }) => {
   const [member] = await MemberDAL.findById(sql, id)
@@ -91,12 +92,12 @@ const MemberService = {
 
     const emailExist = await MemberService.isDataExist({ id, field: 'email', value: email })
     if (emailExist) {
-      throw new NotFoundError('email', 'email is already in use.')
+      throw new BadRequestError('email', 'email is already in use.')
     }
 
     const phoneExist = await MemberService.isDataExist({ id, field: 'phone', value: phone })
     if (phoneExist) {
-      throw new NotFoundError('phone', 'phone is already in use.')
+      throw new BadRequestError('phone', 'phone is already in use.')
     }
 
     const result = await sql.begin(async sql => {
