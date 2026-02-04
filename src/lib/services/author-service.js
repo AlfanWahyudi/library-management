@@ -12,21 +12,13 @@ import sql from '../config/db'
 import BookAuthorDAL from '../dal/book-author-dal'
 import { BadRequestError } from '../errors/bad-request-error'
 import { createAuthorViewDTO } from '../dto/author-view-dto'
+import { attachCountryToAuthor } from '../helpers/modify-data-helper'
 
 const resourceCode = 'AUT'
 
 const isFound = async ({ id }) => {
   const [author] = await AuthorDAL.findById(sql, parseInt(id))
   return author !== undefined
-}
-
-const attachCountry = async (author) => {
-  const [country] = await CountryDAL.getByCode(sql, author.countryCode)
-
-  return {
-    ...author,
-    country
-  }
 }
 
 const AuthorService = {
@@ -58,7 +50,7 @@ const AuthorService = {
       throw new NotFoundError('id', 'author id is not found')
     }
     
-    const result = await attachCountry(author)
+    const result = await attachCountryToAuthor(author)
     return createAuthorDTO(result)
   },
 
