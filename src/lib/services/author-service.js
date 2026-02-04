@@ -11,6 +11,7 @@ import { ActionFailedError } from '../errors/action-failed-error'
 import sql from '../config/db'
 import BookAuthorDAL from '../dal/book-author-dal'
 import { BadRequestError } from '../errors/bad-request-error'
+import { createAuthorViewDTO } from '../dto/author-view-dto'
 
 const resourceCode = 'AUT'
 
@@ -81,7 +82,7 @@ const AuthorService = {
     const items = await AuthorViewDAL.getAllPaginated(sql, data)
     const dataMapped = items.data.map((author) => {
       const country = createCountry({ code: author.countryCode, name: author.countryName  })
-      return createAuthorDTO({...author, country})
+      return createAuthorViewDTO({...author, country})
     })
 
     return {

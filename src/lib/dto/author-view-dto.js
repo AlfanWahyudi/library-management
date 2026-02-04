@@ -1,6 +1,6 @@
 import 'server-only'
 
-export const createAuthorDTO = ({
+export const createAuthorViewDTO = ({
   id = null,
   fullName,
   country,
@@ -8,6 +8,7 @@ export const createAuthorDTO = ({
   about = null,
   createdAt = null,
   updatedAt = null,
+  bookCount = null
 }) => {
 
   if (typeof(fullName) !== 'string') throw new TypeError('fullName property must be a string')
@@ -21,9 +22,6 @@ export const createAuthorDTO = ({
     activeSince, 
     createdAt, 
     updatedAt, 
+    bookCount,
   }
-}
-
-export const createArrAuthorDTO = (authorArr = []) => {
-  return authorArr.map((author) => createAuthorDTO(author))
 }
