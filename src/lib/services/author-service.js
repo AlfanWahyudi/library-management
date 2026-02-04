@@ -19,6 +19,15 @@ const isFound = async ({ id }) => {
   return author !== undefined
 }
 
+const attachCountry = async (author) => {
+  const [country] = await CountryDAL.getByCode(sql, author.countryCode)
+
+  return {
+    ...author,
+    country
+  }
+}
+
 const AuthorService = {
   // getById: async ({id}) => {
   //   const permission = await Permission.verify({
@@ -41,6 +50,16 @@ const AuthorService = {
 
   //   return await AuthorDAL.getAll()
   // },
+
+  findById: async ({ id }) => {
+    const [author] = await AuthorDAL.findById(sql, parseInt(id))
+    if (!author) {
+      throw new NotFoundError('id', 'author id is not found')
+    }
+    
+    const result = await attachCountry(author)
+    return createAuthorDTO(result)
+  },
 
   exportToExcel: async () => {
     const authors = await AuthorViewDAL.getAllForExcel(sql)
