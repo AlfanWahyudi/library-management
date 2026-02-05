@@ -77,14 +77,11 @@ export default function AuthorForm({
   } = useFetch({ initialValue: true })
 
   useEffect(() => {
-
-    // TODO: fix running fetch nya 2x
     const handleCheckDataCanDeleted = async () => {
       const id = author ? author.id : null
       await runFetchCanDataDeleted({ fetchFn: async () => await canDeleteAuthor({ id }) })
     }
 
-    // TODO: fix running fetch nya 2x
     const fetchingData = async () => {
       await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
     }

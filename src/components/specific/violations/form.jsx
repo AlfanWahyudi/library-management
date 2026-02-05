@@ -67,8 +67,6 @@ export default function ViolationForm({
   } = useFetch({ initialValue: true })
 
   useEffect(() => {
-
-    // TODO: fix running fetch nya 2x
     const handleCheckDataCanDeleted = async () => {
       const id = violation ? violation.id : null
       await runFetchCanDataDeleted({ fetchFn: async () => await canDeleteViolation({ id }) })
