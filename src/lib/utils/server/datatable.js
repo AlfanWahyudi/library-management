@@ -121,7 +121,7 @@ export const getPaginatedList = async (
     ${ filtering(sql, filterData) }
   `
   
-  const itemsCount = queryCount[0].count
+  const itemsCount = parseInt(queryCount[0].count)
   const pageCount = Math.ceil(itemsCount/limit)
 
   const offset = page * limit
