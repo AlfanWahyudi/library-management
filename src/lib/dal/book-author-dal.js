@@ -1,5 +1,9 @@
 import 'server-only'
 
+import { tableName as tableAuthor } from './author-dal'
+import { dataNotDeleted } from '../utils/server/sql'
+import sql from '../config/db'
+
 const tableName = 'book_authors'
 
 
@@ -25,6 +29,52 @@ const BookAuthorDAL = {
 
     return await findByQuery({ sql, field: 'author_id', value: authorId })
   },
+
+  create: async (sql, data) => {
+    const {
+      authorId,
+      bookId,
+    } = data
+
+    return await sql`
+      INSERT INTO ${ sql(tableName) }
+        (author_id, book_id, created_by, created_at)
+      VALUES
+        (
+          ${ authorId }, 
+          ${ bookId }, 
+          ${ tempUsername },
+          NOW()
+        )
+      RETURNING *
+    `
+  },
+
+  delete: async (sql, data) => {
+    const {
+      authorId,
+      bookId,
+    } = data
+
+    return await sql`
+      DELETE 
+        FROM ${ sql(tableName) }
+      WHERE 
+        author_id = ${authorId} AND
+        book_id = ${bookId}
+      RETURNING *
+    `
+  },
+
+  deleteAllByBookId: async (sql, bookId) => {
+    return await sql`
+      DELETE 
+        FROM ${ sql(tableName) }
+      WHERE
+        book_id = ${bookId}
+      RETURNING *
+    `
+  }
 }
 
 export default BookAuthorDAL
