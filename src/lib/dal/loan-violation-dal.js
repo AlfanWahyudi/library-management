@@ -4,7 +4,7 @@ const tableName = 'loan_violations'
 
 
 //TODO: get curr user
-const tempUsername = 'superadmin1' // later change this
+const tempUserId = '1' // later change this
 
 const findByQuery = async ({ sql, field, value }) => {
   return await sql`

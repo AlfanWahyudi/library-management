@@ -7,7 +7,7 @@ import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
 const tableName = 'violations'
 
 //TODO: get curr user
-const tempUsername = 'superadmin1' // 
+const tempUserId = '1' // 
 
 const ViolationDAL = {
   findById: async (sql, violationId) => {
@@ -61,9 +61,9 @@ const ViolationDAL = {
           ${ title }, 
           ${ level }, 
           ${ description }, 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW(), 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW()
         )
       RETURNING *
@@ -83,7 +83,7 @@ const ViolationDAL = {
         title = ${ title }, 
         level = ${ level }, 
         description = ${ description }, 
-        updated_by = ${ tempUsername }, 
+        updated_by = ${ tempUserId }, 
         updated_at = NOW()
       WHERE
         id = ${violationId} AND
@@ -113,7 +113,7 @@ const ViolationDAL = {
     return await sql`
       UPDATE ${ sql(tableName) } 
       SET 
-        deleted_by = ${ tempUsername }, 
+        deleted_by = ${ tempUserId }, 
         deleted_at = NOW()
       WHERE
         id = ${violationId} AND

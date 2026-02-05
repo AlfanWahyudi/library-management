@@ -8,7 +8,7 @@ import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
 const tableName = 'books'
 
 //TODO: get curr user
-const tempUsername = 'superadmin1' // 
+const tempUserId = '1' // 
 
 const findByQuery = async ({ sql, field, value }) => {
   return await sql`
@@ -100,9 +100,9 @@ const BookDAL = {
           ${ page }, 
           ${ language }, 
           ${ edition }, 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW(), 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW()
         )
       RETURNING *
@@ -132,7 +132,7 @@ const BookDAL = {
         page = ${ page }, 
         language = ${ language }, 
         edition = ${ edition }, 
-        updated_by = ${ tempUsername }, 
+        updated_by = ${ tempUserId }, 
         updated_at = NOW()
       WHERE
         id = ${bookId} AND
@@ -147,7 +147,7 @@ const BookDAL = {
     return await sql`
       UPDATE ${ sql(tableName) } 
       SET 
-        deleted_by = ${ tempUsername }, 
+        deleted_by = ${ tempUserId }, 
         deleted_at = NOW()
       WHERE
         id = ${bookId} AND

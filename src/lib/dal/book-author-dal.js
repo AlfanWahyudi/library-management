@@ -1,14 +1,10 @@
 import 'server-only'
 
-import { tableName as tableAuthor } from './author-dal'
-import { dataNotDeleted } from '../utils/server/sql'
-import sql from '../config/db'
-
 const tableName = 'book_authors'
 
 
 //TODO: get curr user
-const tempUsername = 'superadmin1' // later change this
+const tempUserId = '1' // later change this
 
 const findByQuery = async ({ sql, field, value }) => {
   return await sql`
@@ -43,7 +39,7 @@ const BookAuthorDAL = {
         (
           ${ authorId }, 
           ${ bookId }, 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW()
         )
       RETURNING *

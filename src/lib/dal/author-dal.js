@@ -5,7 +5,7 @@ import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
 const tableName = 'authors'
 
 //TODO: get curr user
-const tempUsername = 'superadmin1' // later change this
+const tempUserId = '1' // later change this
 
 const AuthorDAL = {
   findById: async (sql, authorId) => {
@@ -35,9 +35,9 @@ const AuthorDAL = {
           ${ countryCode }, 
           ${ activeSince }, 
           ${ about }, 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW(), 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW()
         )
       RETURNING *
@@ -58,7 +58,7 @@ const AuthorDAL = {
         country_code = ${ countryCode }, 
         active_since = ${ activeSince },
         about = ${ about }, 
-        updated_by = ${ tempUsername }, 
+        updated_by = ${ tempUserId }, 
         updated_at = NOW()
       WHERE
         id = ${authorId} AND
@@ -73,7 +73,7 @@ const AuthorDAL = {
     return await sql`
       UPDATE ${ sql(tableName) } 
       SET 
-        deleted_by = ${ tempUsername }, 
+        deleted_by = ${ tempUserId }, 
         deleted_at = NOW()
       WHERE
         id = ${authorId} AND

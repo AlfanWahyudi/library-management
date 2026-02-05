@@ -6,7 +6,7 @@ import { createMember } from '../models/member-model'
 const tableName = 'members'
 
 //TODO: get curr user
-const tempUsername = 'superadmin1' // 
+const tempUserId = '1' // 
 
 const findByQuery = async ({ sql, field, value }) => {
   return await sql`
@@ -91,9 +91,9 @@ const MemberDAL = {
           ${ address }, 
           ${ birthDate }, 
           ${ gender }, 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW(), 
-          ${ tempUsername },
+          ${ tempUserId },
           NOW()
         )
       RETURNING *
@@ -119,7 +119,7 @@ const MemberDAL = {
         address = ${ address }, 
         birth_date = ${ birthDate }, 
         gender = ${ gender }, 
-        updated_by = ${ tempUsername }, 
+        updated_by = ${ tempUserId }, 
         updated_at = NOW()
       WHERE
         id = ${memberId} 
