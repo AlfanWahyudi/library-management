@@ -41,6 +41,26 @@ export const ROUTE = {
     method: 'get',
   }),
 
+  BOOKS_CREATE: createRouteModel({
+    url: BASE_URL_BOOKS + '/create',
+    title: 'Tambah Buku',
+    method: 'get',
+  }),
+  
+  BOOKS_UPDATE: createRouteModel({
+    url: BASE_URL_BOOKS + '/{id}/update',
+    params: ['id'],
+    title: 'Update Buku',
+    method: 'get',
+  }),
+
+  BOOKS_VIEW: createRouteModel({
+    url: BASE_URL_BOOKS + '/{id}',
+    params: ['id'],
+    title: 'Detail Buku',
+    method: 'get',
+  }),
+
   LOAN_VIOLATIONS: createRouteModel({
     url: BASE_URL_LOAN_VIOLATIONS,
     title: 'Pelanggaran Peminjaman Buku',
