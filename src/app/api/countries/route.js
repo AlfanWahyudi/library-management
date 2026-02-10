@@ -1,5 +1,5 @@
 import { createErrorRes, createSuccessRes } from "@/lib/dto/res-dto"
-import { countryListSchema } from "@/lib/schemas/country-schema"
+import { listSchema } from "@/lib/schemas/list-schema"
 import CountryService from "@/lib/services/country-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
 import { NextResponse } from "next/server"
@@ -11,7 +11,7 @@ export async function GET(req) {
     const orderBy = params.get('orderBy') || 'name'
     const orderDir = params.get('orderDir') || 'asc'
   
-    const parsed = countryListSchema.parse({ orderBy, orderDir })
+    const parsed = listSchema.parse({ orderBy, orderDir })
     if (parsed.orderDir !== 'asc' &&  parsed.orderDir !== 'desc') {
       return NextResponse.json(
         createErrorRes({ error: 'orderDir can only be asc or desc' }),

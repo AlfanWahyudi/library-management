@@ -1,6 +1,6 @@
 import z from "zod";
 
-const countryListSchema = z.object({
+const listSchema = z.object({
   orderBy: z
     .string()
     .trim()
@@ -12,5 +12,5 @@ const countryListSchema = z.object({
 })
 
 export {
-  countryListSchema
+  listSchema
 }
