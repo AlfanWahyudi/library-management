@@ -8,7 +8,10 @@ const listSchema = z.object({
   orderDir: z
     .string()
     .trim()
-    .toLowerCase(),
+    .toLowerCase()
+    .refine((val) => val === 'asc' ||  val === 'desc', {
+      error: `orderDir can only be asc or desc`
+    }),
 })
 
 export {

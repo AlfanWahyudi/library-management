@@ -12,12 +12,6 @@ export async function GET(req) {
     const orderDir = params.get('orderDir') || 'asc'
   
     const parsed = listSchema.parse({ orderBy, orderDir })
-    if (parsed.orderDir !== 'asc' &&  parsed.orderDir !== 'desc') {
-      return NextResponse.json(
-        createErrorRes({ error: 'orderDir can only be asc or desc' }),
-        { status: 400 }
-      )
-    }
   
     const countries = await CountryService.getAll({ ...parsed })
   
