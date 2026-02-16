@@ -33,33 +33,22 @@ export default function ComboboxMultiple({
       items={items}
       {...props}
     >
-      {
-        !invalid && !inputDisabled
-          ? (
-            <ComboboxChips ref={anchor} className={classes}>
-              <ComboboxValue>
-                {(items) => (
-                  <>
-                    {items.map((item) => (
-                      <ComboboxChip key={item.val}>{item.label}</ComboboxChip>
-                    ))}
-                    <ComboboxChipsInput 
-                      placeholder={items.length === 0 ? placeholder : ''} 
-                    />
-                  </>
-                )}
-              </ComboboxValue>
-            </ComboboxChips>
-          )
-          : (
-            <ComboboxInput 
-              placeholder={placeholder}
-              aria-invalid={invalid ? 'true' : ''}
-              disabled={inputDisabled}
-            />
-          )
-      }
-
+      <ComboboxChips ref={anchor} className={classes}>
+        <ComboboxValue>
+          {(items) => (
+            <>
+              {items.map((item) => (
+                <ComboboxChip key={item.val} showRemove={!inputDisabled}>{item.label}</ComboboxChip>
+              ))}
+              <ComboboxChipsInput 
+                placeholder={items.length === 0 ? placeholder : ''} 
+                aria-invalid={invalid ? 'true' : ''}
+                disabled={inputDisabled}
+              />
+            </>
+          )}
+        </ComboboxValue>
+      </ComboboxChips>
       <ComboboxContent anchor={anchor}>
         <ComboboxEmpty>{emptyLabel}</ComboboxEmpty>
         <ComboboxList>
