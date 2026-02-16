@@ -4,7 +4,6 @@ import ContentHead from "@/components/specific/content-head"
 import AuthorService from "@/lib/services/author-service"
 import BookService from "@/lib/services/book-service"
 
-//TODO
 export default async function BookDetailPage({ params }) {
   const { id } = await params
   const book = await BookService.findById({ id: parseInt(id) })
