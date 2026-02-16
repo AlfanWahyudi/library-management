@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
+import sql from '../config/db'
 
 const tableName = 'authors'
 
@@ -8,6 +9,25 @@ const tableName = 'authors'
 const tempUserId = '1' // later change this
 
 const AuthorDAL = {
+  getAll: async (
+    sql,
+    data = { 
+      orderDir: '',
+      orderBy: ''
+    }
+  ) => {
+    const {
+      orderDir = 'ASC',
+      orderBy = 'full_name'
+    } = data
+
+    return await sql`
+      SELECT * FROM ${ sql(tableName) }
+      WHERE ${ dataNotDeleted() }
+      ORDER BY ${ sql(orderBy) } ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
+      `
+  },
+
   findById: async (sql, authorId) => {
     if (typeof(authorId) !== 'number') throw new Error('authorId must be a number.')
 

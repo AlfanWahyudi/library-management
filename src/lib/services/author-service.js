@@ -44,6 +44,14 @@ const AuthorService = {
   //   return await AuthorDAL.getAll()
   // },
 
+  getAll: async ({
+    orderDir = 'ASC',
+    orderBy = 'full_name'
+  }) => {
+    const data = { orderBy, orderDir }
+    return await AuthorDAL.getAll(sql, data)
+  },
+
   findById: async ({ id }) => {
     const [author] = await AuthorDAL.findById(sql, parseInt(id))
     if (!author) {

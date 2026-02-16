@@ -1,17 +1,25 @@
+import BookForm from "@/components/specific/books/form"
 import BookUpdateBreadcrumb from "@/components/specific/books/update/breadcrumb"
 import ContentHead from "@/components/specific/content-head"
+import AuthorService from "@/lib/services/author-service"
+import BookService from "@/lib/services/book-service"
 
 // TODO
 export default async function BookUpdatePage({ params }) {
-  // const { id } = await params
-  // const member = await MemberService.findById({ id: parseInt(id) })
+  const { id } = await params
+  const book = await BookService.findById({ id: parseInt(id) })
+  const authors = await AuthorService.getAll({})
 
   return (
     <>
       <h1 className="sr-only">Halaman Update Buku</h1>
       <BookUpdateBreadcrumb />
       <ContentHead pageTitle='Update Buku'></ContentHead>
-      {/* <MemberForm member={member} viewOnly={false} /> */}
+      <BookForm 
+        book={book} 
+        viewOnly={false} 
+        authorItems={authors.map((author) => ({ val: author.id, label: author.fullName }))}
+      />
     </>
   )
 }

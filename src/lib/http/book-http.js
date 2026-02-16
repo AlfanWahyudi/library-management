@@ -14,16 +14,15 @@ const getPaginatedListBook = async ({ page, limit, search, searchFields, orderBy
   }
 }
 
-// TODO
 const saveBook = async ({ data, id = null }) => {
   let method = 'POST'
   let url = '/api/books'
-  let err = 'Gagal menambahkan data pelanggaran, mohon dicoba lagi nanti.'
+  let err = 'Gagal menambahkan data buku, mohon dicoba lagi nanti.'
 
   if (id !== null) {
     method = 'PUT'
     url += `/${id}`
-    err = 'Gagal update data pelanggaran, mohon dicoba lagi nanti.'
+    err = 'Gagal update data buku, mohon dicoba lagi nanti.'
   }
 
   const res = await fetch(url, {
@@ -41,6 +40,18 @@ const saveBook = async ({ data, id = null }) => {
   const resJson = await res.json()
 
   return resJson.data
+}
+
+const checkDuplicationBook = async ({ id = null, field, value  }) => {
+  const res = await fetch(`/api/books/find-duplicate?id=${id}&field=${field}&value=${value}`)
+
+  if (!res.ok) {
+    throw new Error('Gagal cek duplikasi, mohon dicoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+
+  return resJson.data[field]
 }
 
 // TODO
@@ -76,5 +87,6 @@ export {
   getPaginatedListBook,
   saveBook,
   deleteBook,
-  canDeleteBook
+  canDeleteBook,
+  checkDuplicationBook
 }
