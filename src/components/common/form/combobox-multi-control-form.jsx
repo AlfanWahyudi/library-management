@@ -82,29 +82,29 @@ export default function ComboboxMultiControlForm({
                 
         return (
           <FormItem className="block">
-          <FormLabel className="mb-2">
-            {label} {isRequired && <span className="text-destructive">*</span>} 
-          </FormLabel>
-          <FormControl className="mb-1.5">
-            <ComboboxMultiple 
-              name={name}
-              items={items}
-              value={value}
-              onValueChange={handleValueChange}
-              disabled={disabled}
-              emptyLabel={emptyLabel}
-              placeholder={placeholder}
-              inputDisabled={disabled}
-              invalid={invalid}
-            />
-          </FormControl>
-          {children && (
-            <FormDescription>
-              {children}
-            </FormDescription>
-          )}
-          <FormMessage />
-        </FormItem>
+            <FormLabel className="mb-2">
+              {label} {isRequired && <span className="text-destructive">*</span>} 
+            </FormLabel>
+            <FormControl className="mb-1.5">
+              <ComboboxMultiple 
+                name={name}
+                items={items}
+                value={value}
+                onValueChange={handleValueChange}
+                disabled={disabled}
+                emptyLabel={emptyLabel}
+                placeholder={placeholder}
+                inputDisabled={disabled}
+                invalid={invalid}
+              />
+            </FormControl>
+            {children && (
+              <FormDescription>
+                {children}
+              </FormDescription>
+            )}
+            <FormMessage />
+          </FormItem>
         )
       }}
     />
