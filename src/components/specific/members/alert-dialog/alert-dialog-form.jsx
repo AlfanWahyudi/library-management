@@ -86,7 +86,6 @@ export default function MemberAlertDialogForm({
       const id = member ? member.id : null
 
       const data = form.getValues()
-      console.log(data)
       const mappedData = mapData(data)
 
       await runSaveMember({
