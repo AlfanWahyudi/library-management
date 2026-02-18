@@ -29,7 +29,7 @@ const columnsDefViolation = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => `${formatDateTime({ datetime: new Date(row.updatedAt) })  || '-'}`, {
+  columnHelper.accessor(row => `${row.updatedAt ? formatDateTime({ datetime: new Date(row.updatedAt) }) : '-'}`, {
     id: 'updated_at',
     header: ({ column }) => (
       <ColHeader>
