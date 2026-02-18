@@ -7,9 +7,15 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { ROUTE } from "@/lib/constants/route";
-import BookAlertDialogForm from "./alert-dialog-form";
+import BookAlertDialogForm from "./alert-dialog/alert-dialog-form";
 import ComboboxMultiControlForm from "@/components/common/form/combobox-multi-control-form";
 import validateBook from "./validate";
+import { useEffect } from "react";
+import useFetch from "@/hooks/use-fetch";
+import ButtonDisableDesc from "@/components/common/button/button-disable-desc";
+import AlertMain from "@/components/common/alert-main";
+import { canDeleteBook } from "@/lib/http/book-http";
+import BookAlertDialogDelete from "./alert-dialog/alert-dialog-delete";
 
 export default function BookForm({
   book = null,
@@ -54,6 +60,24 @@ export default function BookForm({
     },
   })
 
+  const {
+    error: errorCanDelete,
+    runFetch: runFetchCanDataDeleted,
+    fetchedData: canDelete,
+  } = useFetch({ initialValue: true })
+
+  useEffect(() => {
+    const handleCheckDataCanDeleted = async () => {
+      const id = book ? book.id : null
+      await runFetchCanDataDeleted({ fetchFn: async () => await canDeleteBook({ id }) })
+    }
+
+    if (formType === 'view') {
+      handleCheckDataCanDeleted()
+    }
+    
+  }, [formType])
+
   const onSuccSubmit = () => {
     router.push(ROUTE.BOOKS.url)
   }
@@ -62,6 +86,46 @@ export default function BookForm({
     form.reset()
   }
 
+  const saveBtn = formType !== 'view'
+    ? (
+      <BookAlertDialogForm 
+        form={form}
+        formType={formType}
+        formTitle={formTitle}
+        book={book}
+        onSuccSubmit={onSuccSubmit}
+      />
+    ) : undefined
+
+  const resetBtn = formType === 'update'
+    ? (
+      <Button
+        type="button" 
+        variant='outline' 
+        onClick={onReset}
+      >
+        Reset
+      </Button>
+    ) : undefined
+
+  const deleteBtn = (formType === 'view' && !errorCanDelete) 
+    ? canDelete
+      ? (
+          <BookAlertDialogDelete 
+            bookId={book?.id}
+            onSuccDelete={onSuccSubmit}
+          />
+      ) : (
+        <ButtonDisableDesc
+          desc="Tidak dapat dihapus, data buku sedang atau sudah selesai dipinjam"
+          variant="destructive"
+          labelClasses="text-destructive"
+        >
+          Hapus Buku
+        </ButtonDisableDesc>
+      )
+    : undefined
+
   return (
     <MainContentForm
       useFormProp={form}
@@ -69,6 +133,16 @@ export default function BookForm({
       noValidate
     >
       <section className="flex flex-col gap-4">
+        <div>
+          {errorCanDelete && (
+            <AlertMain 
+              title="Error cek data buku" 
+              variant="error"
+            >
+              <p>{errorCanDelete}</p>
+            </AlertMain>
+          )}
+        </div>
         <div className="grid gap-4 md:grid-cols-2">
           <InputControlForm
             control={form.control}
@@ -152,24 +226,9 @@ export default function BookForm({
         </div>
       </section>
       <section className="flex flex-col gap-4 md:flex-row">
-        {formType === 'update' && (
-          <Button
-            type="button" 
-            variant='outline' 
-            onClick={onReset}
-          >
-            Reset
-          </Button>
-        )}
-        {formType !== 'view' && (
-          <BookAlertDialogForm 
-            form={form}
-            formType={formType}
-            formTitle={formTitle}
-            book={book}
-            onSuccSubmit={onSuccSubmit}
-          />
-        )}
+        {deleteBtn}
+        {resetBtn}
+        {saveBtn}
       </section>
     </MainContentForm>
   )

@@ -54,7 +54,6 @@ const checkDuplicationBook = async ({ id = null, field, value  }) => {
   return resJson.data[field]
 }
 
-// TODO
 const deleteBook = async ({ id }) => {
   const res = await fetch('/api/books/' + id, {
     method: 'DELETE'
@@ -67,18 +66,17 @@ const deleteBook = async ({ id }) => {
   return true
 }
 
-// TODO
 const canDeleteBook = async ({ id }) => {
   const res = await fetch('/api/books/' + id + '/can-delete', {
     method: 'GET'
   })      
 
   if (!res.ok) {
-    throw new Error('Gagal melakukan pengecekan, apakah data pelanggaran dapat dihapus atau tidak. Mohon untuk mencoba lagi nanti.')
+    throw new Error('Gagal melakukan pengecekan, apakah data buku dapat dihapus atau tidak. Mohon untuk mencoba lagi nanti.')
   }
 
   const resJson = await res.json()
-  const result = resJson.data.violationCanDelete
+  const result = resJson.data.bookCanDelete
 
   return result
 }
