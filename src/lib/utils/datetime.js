@@ -1,7 +1,7 @@
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 
-const defaultDateTimePattern = 'dd MMM yyyy k:m:s'
+const defaultDateTimePattern = 'dd MMM yyyy kk:mm:ss'
 const defaultOptions = {
   locale: id
 }
