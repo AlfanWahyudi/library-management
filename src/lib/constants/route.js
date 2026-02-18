@@ -4,6 +4,7 @@ const BASE_URL_DASHBOARD = '/dashboard'
 
 const BASE_URL_AUTHORS =  BASE_URL_DASHBOARD + '/authors'
 const BASE_URL_BOOK_LOANS =  BASE_URL_DASHBOARD + '/book-loans'
+const BASE_URL_BOOK_LOAN_HISTORIES =  BASE_URL_DASHBOARD + '/book-loan-histories'
 const BASE_URL_BOOKS =  BASE_URL_DASHBOARD + '/books'
 const BASE_URL_LOAN_VIOLATIONS =  BASE_URL_DASHBOARD + '/loan-violations'
 const BASE_URL_MEMBERS =  BASE_URL_DASHBOARD + '/members'
@@ -32,6 +33,12 @@ export const ROUTE = {
   BOOK_LOANS: createRouteModel({
     url: BASE_URL_BOOK_LOANS,
     title: 'Peminjaman Buku',
+    method: 'get',
+  }),
+
+  BOOK_LOAN_HISTORIES: createRouteModel({
+    url: BASE_URL_BOOK_LOAN_HISTORIES,
+    title: 'Riwayat Peminjaman Buku',
     method: 'get',
   }),
 

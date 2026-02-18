@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 
 
-import { LayoutDashboard, Users, UserPen, Gavel, BookText, BookUp, Scale } from "lucide-react";
+import { LayoutDashboard, Users, UserPen, Gavel, BookText, BookUp, Scale, History } from "lucide-react";
 import { ROUTE } from "@/lib/constants/route";
 import SidebarMenuItemDefault from "@/components/common/sidebar-menu/sidebar-menu-item-default";
 import SidebarMenuItemCollapsible from "@/components/common/sidebar-menu/sidebar-menu-item-collapsible";
@@ -25,6 +25,10 @@ const menus = [
 				...ROUTE.MEMBERS,
 				icon: Users,
 			},
+			{
+				...ROUTE.VIOLATIONS,
+				icon: Scale
+			},
 		]
 	},
 	{
@@ -38,18 +42,18 @@ const menus = [
 				...ROUTE.AUTHORS,
 				icon: UserPen,
 			},
+		]
+	},
+	{
+		title: 'Peminjaman Buku',
+		items: [
 			{
 				...ROUTE.BOOK_LOANS,
 				icon: BookUp
 			},
-		]
-	},
-	{
-		title: 'Pelanggaran',
-		items: [
 			{
-				...ROUTE.VIOLATIONS,
-				icon: Scale
+				...ROUTE.BOOK_LOAN_HISTORIES,
+				icon: History
 			},
 			{
 				...ROUTE.LOAN_VIOLATIONS,
