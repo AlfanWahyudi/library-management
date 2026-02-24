@@ -3,6 +3,7 @@ import 'server-only'
 import sql from '../config/db'
 import CountryDAL from '../dal/country-dal'
 import BookDAL from '../dal/book-dal'
+import MemberDAL from '../dal/member-dal'
 
 export const attachCountryToOneAuthor = async (author) => {
   const [country] = await CountryDAL.getByCode(sql, author.countryCode)
@@ -51,4 +52,23 @@ export const attachAuthorsToBooks = async (books) => {
       return await attachAuthorsToOneBook(book)
     })
   )
+}
+
+export const attachBookToOneBookLoan = async (bookLoan) => {
+  const [book] = await BookDAL.findById(sql, bookLoan.bookId)
+  const updatedBook = await attachAuthorsToOneBook(book)
+
+  return {
+    book: updatedBook,
+    ...bookLoan
+  }
+}
+
+export const attachMemberToOneBookLoan = async (bookLoan) => {
+  const [member] = await MemberDAL.findById(sql, bookLoan.memberId)
+
+  return {
+    member,
+    ...bookLoan
+  }
 }
