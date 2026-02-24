@@ -13,6 +13,7 @@ import { ActionFailedError } from '../errors/action-failed-error';
 import { createBookLoanDTO } from '../dto/book-loan-dto';
 import { attachBookToOneBookLoan, attachMemberToOneBookLoan } from '../helpers/modify-data-helper';
 import { DATETIME_PATTERN } from '../constants/datetime-pattern';
+import { createArrBookOnLoanViewDTO } from '../dto/book-on-loan-view-dto';
 
 const isFound = async ({ memberId, bookId }) => {
   //TODO
@@ -29,6 +30,30 @@ const BookLoanService = {
   checkBookIsLoaned: async (bookId) => {
     const data = await BookOnLoanViewDAL.findByBookId(sql, bookId)
     return data.length > 0
+  },
+
+  getAllPaginated: async ({
+    page, 
+    limit, 
+    orderBy,
+    orderDir,
+    search,
+    searchFields = [],
+  }) => {
+    const data = {
+      page, 
+      limit, 
+      orderBy,
+      orderDir,
+      search,
+      searchFields,
+    }
+
+    const items = await BookOnLoanViewDAL.getAllPaginated(sql, data)
+    return {
+      ...items,
+      data: createArrBookOnLoanViewDTO(items.data),
+    }
   },
 
   save: async ({
