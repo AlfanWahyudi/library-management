@@ -1,12 +1,12 @@
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import { DATETIME_PATTERN } from "../constants/datetime-pattern"
 
-const defaultDateTimePattern = 'dd MMM yyyy kk:mm:ss'
 const defaultOptions = {
   locale: id
 }
 
-const formatDateTime = ({ datetime, pattern = defaultDateTimePattern }) => format(new Date(datetime), pattern, {
+const formatDateTime = ({ datetime, pattern = DATETIME_PATTERN.DEFAULT }) => format(new Date(datetime), pattern, {
   ...defaultOptions
 })
 
