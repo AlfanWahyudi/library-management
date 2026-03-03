@@ -1,3 +1,4 @@
 export const DATE_PATTERN = {
-  DEFAULT: 'yyyy-MM-dd'
+  PRIMARY: 'yyyy-MM-dd',
+  INDO_PRIMARY: 'dd-MM-yyyy',
 }

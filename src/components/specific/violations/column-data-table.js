@@ -5,7 +5,8 @@ import { createColumnHelper } from "@tanstack/react-table";
 import ColSortingHeader from "@/components/common/data-table/header/col-sorting-header";
 import ColHeader from "@/components/common/data-table/header/col-header";
 import ActionFieldViolation from "./action-field";
-import { formatDateTime } from "@/lib/utils/datetime";
+import { format } from "date-fns";
+import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
 
 
 const columnHelper = createColumnHelper()
@@ -29,7 +30,7 @@ const columnsDefViolation = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => `${row.updatedAt ? formatDateTime({ datetime: new Date(row.updatedAt) }) : '-'}`, {
+  columnHelper.accessor(row => `${row.updatedAt ? format(new Date(row.updatedAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
     id: 'updated_at',
     header: ({ column }) => (
       <ColHeader>

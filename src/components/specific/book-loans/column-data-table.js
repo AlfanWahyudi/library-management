@@ -4,9 +4,10 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import ColSortingHeader from "@/components/common/data-table/header/col-sorting-header";
 import ColHeader from "@/components/common/data-table/header/col-header";
-import { formatDate } from "@/lib/utils/date";
-import { formatDateTime } from "@/lib/utils/datetime";
 import ActionFieldBookLoan from "./action-field";
+import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
+import { DATE_PATTERN } from "@/lib/constants/date-pattern";
+import { format } from "date-fns";
 
 const columnHelper = createColumnHelper()
 
@@ -48,7 +49,7 @@ const columnsDefBookLoan = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => formatDate({ date: row.startDate }), {
+  columnHelper.accessor(row => format(new Date(row.startDate), DATE_PATTERN.INDO_PRIMARY), {
     id: 'start_date',
     header: ({ column }) => (
       <ColHeader>
@@ -57,7 +58,7 @@ const columnsDefBookLoan = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => formatDate({ date: row.endDate }), {
+  columnHelper.accessor(row => format(new Date(row.endDate), DATE_PATTERN.INDO_PRIMARY), {
     id: 'end_date',
     header: ({ column }) => (
       <ColHeader>
@@ -66,7 +67,7 @@ const columnsDefBookLoan = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => `${row.createdAt ? formatDateTime({ datetime: new Date(row.createdAt) }) : '-'}`, {
+  columnHelper.accessor(row => `${row.createdAt ? format(new Date(row.createdAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
     id: 'created_at',
     header: ({ column }) => (
       <ColHeader>

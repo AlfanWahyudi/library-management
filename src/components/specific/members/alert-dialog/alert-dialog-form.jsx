@@ -2,8 +2,9 @@
 
 import AlertDialogMain from "@/components/common/alert-dialog/alert-dialog-main"
 import useFetch from "@/hooks/use-fetch"
+import { DATE_PATTERN } from "@/lib/constants/date-pattern"
 import { saveMember } from "@/lib/http/member-http"
-import { formatDate } from "@/lib/utils/date"
+import { format } from "date-fns"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
@@ -69,7 +70,7 @@ export default function MemberAlertDialogForm({
       gender,
       fullName: fullName.trim(),
       address: address.trim(),
-      birthDate: formatDate({ date: birthDate }),
+      birthDate: format(new Date(birthDate), DATE_PATTERN.PRIMARY),
     }
   }
 

@@ -2,8 +2,9 @@
 
 import AlertDialogMain from "@/components/common/alert-dialog/alert-dialog-main"
 import useFetch from "@/hooks/use-fetch"
+import { DATE_PATTERN } from "@/lib/constants/date-pattern"
 import { saveBook } from "@/lib/http/book-http"
-import { formatDate } from "@/lib/utils/date"
+import { format } from "date-fns"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
@@ -66,7 +67,7 @@ export default function BookAlertDialogForm({
     return {
       isbn,
       title,
-      publicationDate: formatDate({ date: publicationDate }), 
+      publicationDate: format(new Date(publicationDate), DATE_PATTERN.PRIMARY), 
       subTitle: subTitle.trim() !== '' ? subTitle.trim() : null,
       publisher: publisher.trim() !== '' ? publisher.trim() : null,
       language: language.trim() !== '' ? language.trim() : null,

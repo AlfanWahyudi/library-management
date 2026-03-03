@@ -3,10 +3,11 @@
 import { createColumnHelper } from "@tanstack/react-table";
 
 import ColSortingHeader from "@/components/common/data-table/header/col-sorting-header";
-import { formatDateTime } from "@/lib/utils/datetime";
 import ColHeader from "@/components/common/data-table/header/col-header";
 import ActionFieldBook from "./action-field";
-import { formatDate } from "@/lib/utils/date";
+import { format } from "date-fns";
+import { DATE_PATTERN } from "@/lib/constants/date-pattern";
+import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
 
 const columnHelper = createColumnHelper()
 
@@ -43,7 +44,7 @@ const columnsDefBook = [
       let result = '-'
 
       if (row.publicationDate) {
-        result = formatDate({ date: new Date(row.publicationDate), pattern: 'dd/MM/yyyy' })
+        result = format(new Date(row.publicationDate), DATE_PATTERN.INDO_PRIMARY)
       }
 
       return result
@@ -76,7 +77,7 @@ const columnsDefBook = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => `${row.updatedAt ? formatDateTime({ datetime: new Date(row.updatedAt) }) : '-'}`, {
+  columnHelper.accessor(row => `${row.updatedAt ? format(new Date(row.updatedAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
     id: 'updated_at',
     header: ({ column }) => (
       <ColHeader>

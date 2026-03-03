@@ -12,7 +12,6 @@ import { add, endOfDay, format } from 'date-fns';
 import { ActionFailedError } from '../errors/action-failed-error';
 import { createBookLoanDTO } from '../dto/book-loan-dto';
 import { attachBookToOneBookLoan, attachMemberToOneBookLoan } from '../helpers/modify-data-helper';
-import { DATETIME_PATTERN } from '../constants/datetime-pattern';
 import { createArrBookOnLoanViewDTO } from '../dto/book-on-loan-view-dto';
 
 const isFound = async ({ memberId, bookId }) => {

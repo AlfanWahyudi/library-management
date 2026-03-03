@@ -3,9 +3,10 @@
 import { createColumnHelper } from "@tanstack/react-table";
 
 import ColSortingHeader from "@/components/common/data-table/header/col-sorting-header";
-import { formatDateTime } from "@/lib/utils/datetime";
 import ActionFieldAuthor from "./action-field";
 import ColHeader from "@/components/common/data-table/header/col-header";
+import { format } from "date-fns";
+import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
 
 const columnHelper = createColumnHelper()
 
@@ -46,7 +47,7 @@ const columnsDefAuthor = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => `${row.createdAt ? formatDateTime({ datetime: new Date(row.createdAt) }) : '-'}`, {
+  columnHelper.accessor(row => `${row.createdAt ? format(new Date(row.createdAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
     id: 'created_at',
     header: ({ column }) => (
       <ColHeader>
@@ -55,7 +56,7 @@ const columnsDefAuthor = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => `${row.createdAt ? formatDateTime({ datetime: new Date(row.updatedAt) }) : '-'}`, {
+  columnHelper.accessor(row => `${row.updatedAt ? format(new Date(row.updatedAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
     id: 'updated_at',
     header: ({ column }) => (
       <ColHeader>
