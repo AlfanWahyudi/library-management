@@ -10,6 +10,7 @@ import ActionFieldBookLoan from "./action-field";
 
 const columnHelper = createColumnHelper()
 
+// TODO: ganti format tanggal nya, pake format indo
 const columnsDefBookLoan = [
   columnHelper.accessor(row => row.memberFullName, {
     id: 'member_full_name',
@@ -47,7 +48,7 @@ const columnsDefBookLoan = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => formatDateTime({ datetime: row.startDate }), {
+  columnHelper.accessor(row => formatDate({ date: row.startDate }), {
     id: 'start_date',
     header: ({ column }) => (
       <ColHeader>
@@ -56,11 +57,20 @@ const columnsDefBookLoan = [
     ),
     cell: props => props.getValue(),
   }),
-  columnHelper.accessor(row => formatDateTime({ datetime: row.endDate }), {
+  columnHelper.accessor(row => formatDate({ date: row.endDate }), {
     id: 'end_date',
     header: ({ column }) => (
       <ColHeader>
         <ColSortingHeader column={column} headerName='Tanggal Selesai' />
+      </ColHeader>
+    ),
+    cell: props => props.getValue(),
+  }),
+  columnHelper.accessor(row => `${row.createdAt ? formatDateTime({ datetime: new Date(row.createdAt) }) : '-'}`, {
+    id: 'created_at',
+    header: ({ column }) => (
+      <ColHeader>
+        <ColSortingHeader column={column} headerName='Tanggal Dibuat' />
       </ColHeader>
     ),
     cell: props => props.getValue(),
