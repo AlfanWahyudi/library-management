@@ -2,7 +2,7 @@ import 'server-only'
 
 import sql from '../config/db'
 import MemberDAL from '../dal/member-dal'
-import { createMemberDTO } from '../dto/member-dto'
+import { createArrMemberDTO, createMemberDTO } from '../dto/member-dto'
 import { NotFoundError } from '../errors/not-found-error'
 import { ActionFailedError } from '../errors/action-failed-error'
 import { generateMemberExcel } from '../excel/member-excel'
@@ -124,6 +124,28 @@ const MemberService = {
     const fileBuffer = await generateMemberExcel({ members: dataMapped }) 
 
     return fileBuffer
+  },
+
+  searchableList: async ({
+    orderBy,
+    orderDir,
+    search,
+    searchFields = [],
+  }) => {
+    const data = {
+      orderBy,
+      orderDir,
+      search,
+      searchFields,
+    }
+
+    let result = []
+
+    if (search.trim() !== '') {
+      result = await MemberDAL.searchableList(sql, data)
+    }
+
+    return createArrMemberDTO(result)
   },
 }
 

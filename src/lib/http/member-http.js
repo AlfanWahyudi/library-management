@@ -78,9 +78,23 @@ const downloadExcelMemberAll = async () => {
   }
 }
 
+const searchableListMember = async ({ search = '', searchFields = '', orderDir = '', orderBy = '' }) => {
+  const query = new URLSearchParams({ search, searchFields, orderDir, orderBy }).toString();
+  const res = await fetch(`/api/members/searchable-list?${query}`)      
+
+  if (!res.ok) {
+    throw new Error('Gagal menampilkan daftar anggota yang dicari, mohon untuk dicoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+
+  return resJson.data
+}
+
 export {
   getPaginatedListMember,
   checkDuplicationMember,
   saveMember,
-  downloadExcelMemberAll
+  downloadExcelMemberAll,
+  searchableListMember
 }

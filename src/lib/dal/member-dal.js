@@ -2,6 +2,7 @@ import 'server-only'
 
 import { getPaginatedList } from '@/lib/utils/server/datatable'
 import { createMember } from '../models/member-model'
+import { searchableListQuery } from '../utils/server/sql-query'
 
 const tableName = 'members'
 
@@ -125,6 +126,10 @@ const MemberDAL = {
         id = ${memberId} 
       RETURNING *
     `
+  },
+
+  searchableList: async (sql, data) => {
+    return await searchableListQuery(sql, tableName, data)
   },
 }
 
