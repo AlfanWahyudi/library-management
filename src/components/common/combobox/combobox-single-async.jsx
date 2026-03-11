@@ -13,6 +13,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { useMemo, useState, useTransition } from "react"
 
 
+//TODO
 export default function ComboboxSingleAsync({
   placeholder = 'Cari item...',
   inputDisabled = false,
@@ -22,6 +23,7 @@ export default function ComboboxSingleAsync({
   resourceHttp,
   objLabel,
   customItem = (item) => null,
+  onComboValueChange = (selectedValue) => {},
 }) {
   const classes = className
 
@@ -89,6 +91,8 @@ export default function ComboboxSingleAsync({
         setSelectedValue(nextSelectedValue)
         setSearchValue('')
         setError(null)
+
+        onComboValueChange(nextSelectedValue)
       }}
       onInputValueChange={
         async (

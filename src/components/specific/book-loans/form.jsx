@@ -12,33 +12,15 @@ import SelectControlForm from "@/components/common/form/select-control-form";
 import ButtonDisableDesc from "@/components/common/button/button-disable-desc";
 import BookLoanAlertDialogForm from "./alert-dialog-form";
 
+import { ComboboxItem } from "@/components/ui/combobox"
+import { Item, ItemContent, ItemTitle, ItemDescription } from "@/components/ui/item"
+import ComboboxMultiControlForm from "@/components/common/form/combobox-multi-control-form";
+import ComboboxSingleAsyncControlForm from "@/components/common/form/combobox-single-async-control-form";
+import { searchableListMember } from "@/lib/http/member-http";
+
 // TODO
-export default function BookLoanForm({
-  openForm,
-  cbSuccess = () => {},
-  bookLoan = null,
-  viewOnly = false,
-  children,
-}) {
-  const formType = 
-  viewOnly && bookLoan 
-    ? 'view'
-    : !viewOnly && bookLoan
-      ? 'update'
-      : !viewOnly && !bookLoan
-        ? 'create'
-        : null
-
-  const formTitle = formType === 'create' 
-    ? 'Tambah peminjaman buku'
-    : formType === 'update'
-      ? 'Update peminjaman buku'
-      : formType === 'view'
-        ? 'Detail peminjaman buku'
-        : 'Form peminjaman buku'
-
-  const inputRequired = viewOnly ? false : true
-  const inputDisabled = formType === 'view'
+export default function BookLoanForm() {
+  const formTitle = 'Tambah peminjaman buku'
 
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
@@ -78,42 +60,40 @@ export default function BookLoanForm({
       // await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
     }
 
-    if (openForm) {
-      fetchingData()
+    // if (openForm) {
+    //   fetchingData()
 
-      if (formType === 'view') {
-        handleCheckDataCanDeleted()
-      }
-
-    } else {
+    // } else {
       // resetCountries()
       // resetCanDelete()
-    }
+    // }
     
   }, [])
   // }, [openForm, formType, author])
 
-  const saveBtn = formType !== 'view'
-    ? (
-      <BookLoanAlertDialogForm 
-        form={form}
-        formTitle={formTitle}
-        formType={formType}
-        bookLoan={bookLoan}
-        onSuccSubmit={cbSuccess}
-      />
+  const comboMemberItem = (item) => {
+    return (
+      <ComboboxItem key={item.id} value={item}>
+        <Item size="xs" className="p-0">
+          <ItemContent>
+            <ItemTitle className="whitespace-nowrap">
+              {item.fullName}
+            </ItemTitle>
+            <ItemDescription>
+              {item.email}
+            </ItemDescription>
+          </ItemContent>
+        </Item>
+      </ComboboxItem>
     )
-    : undefined
+  }
 
   return (
     <MainContentForm 
       useFormProp={form} 
-      className="flex-1 flex flex-col gap-4"
+      className="grid gap-6"
       noValidate
     >
-      <SheetHeader>
-        <SheetTitle>{formTitle}</SheetTitle>
-      </SheetHeader>
       <section className="flex-1 px-4">
         <div className='grid auto-rows-min gap-6 mb-10'>
           {/* {errorCountry && (
@@ -159,15 +139,40 @@ export default function BookLoanForm({
             rows={10}
             disabled={inputDisabled}
           /> */}
+          <ComboboxSingleAsyncControlForm 
+            control={form.control}
+            name="member"
+            label="Anggota"
+            placeholder="Cari anggota"
+            objLabel='fullName'
+            itemKey='id'
+            customItem={comboMemberItem}
+            resourceHttp={async (query) => await searchableListMember({ search: query })}
+          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <InputControlForm 
+              control={form.control}
+              name="startDate"
+              label='Tanggal Mulai'
+              value="11-03-2026"
+              disabled={true}
+            />
+            <InputControlForm 
+              control={form.control}
+              name="endDate"
+              label='Tanggal Selesai'
+              value="18-03-2026"
+              disabled={true}
+            />
+          </div>
         </div>
-        {children}
       </section>
-      <SheetFooter>
-        {saveBtn}
-        <SheetClose asChild>
-          <Button type="button" size='sm' variant="outline">Tutup</Button>
-        </SheetClose>
-      </SheetFooter>
+      <section>
+        <BookLoanAlertDialogForm 
+          form={form}
+          formTitle={formTitle}
+        />
+      </section>
     </MainContentForm>
   )
 }

@@ -8,8 +8,6 @@ import { toast } from "sonner"
 //TODO
 export default function BookLoanAlertDialogForm({
   form,
-  bookLoan = null,
-  onSuccSubmit,
   formTitle,
   formType = 'create'
 }) {
@@ -46,7 +44,6 @@ export default function BookLoanAlertDialogForm({
         
         setTimeout(() => {
           reset()
-          onSuccSubmit()
         }, 200)
       }
     }
@@ -81,8 +78,6 @@ export default function BookLoanAlertDialogForm({
   }
 
   const onSubmit = async () => {
-    const id = bookLoan !== null ? bookLoan.id : null
-
     const data = form.getValues()
     const dataMapped = mapData(data)
 
