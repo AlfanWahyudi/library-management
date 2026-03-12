@@ -33,7 +33,7 @@ export default function ComboboxMultiControlForm({
       render={({ field, formState, fieldState }) => {
         const invalid = fieldState.invalid
 
-        const defaultVals = new Set(formState.defaultValues[name].map(item => item.val))
+        const defaultVals = new Set(formState.defaultValues[name]?.map(item => item.val))
         const defaultValue = items.filter((item) => defaultVals.has(item.val))
 
         const [value, setValue] = useState(defaultValue)
