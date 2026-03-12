@@ -13,8 +13,9 @@ import { Spinner } from "@/components/ui/spinner"
 import { useMemo, useState, useTransition } from "react"
 
 
-//TODO
 export default function ComboboxSingleAsync({
+  selectedValue = null,
+  onSelectedValueChange = (val) => {},
   placeholder = 'Cari item...',
   inputDisabled = false,
   invalid = false,
@@ -23,12 +24,10 @@ export default function ComboboxSingleAsync({
   resourceHttp,
   objLabel,
   customItem = (item) => null,
-  onComboValueChange = (selectedValue) => {},
 }) {
   const classes = className
 
   const [searchResults, setSearchResults] = useState([])
-  const [selectedValue, setSelectedValue] = useState(null)
   const [searchValue, setSearchValue] = useState('')
   const [error, setError] = useState(null)
   const [isPending, startTransition] = useTransition()
@@ -77,22 +76,25 @@ export default function ComboboxSingleAsync({
     return null
   }
 
+  const handleValueChange = (nextSelectedValue) => {
+    onSelectedValueChange(nextSelectedValue)
+  }
+
   return (
     <Combobox 
       items={items}
       itemToStringLabel={(item) => item[objLabel]}
       filter={null}
+      value={selectedValue}
       onOpenChangeComplete={(open) => {
         if (!open && selectedValue) {
           setSearchResults([selectedValue])
         }
       }}
       onValueChange={(nextSelectedValue) => {
-        setSelectedValue(nextSelectedValue)
+        handleValueChange(nextSelectedValue)
         setSearchValue('')
         setError(null)
-
-        onComboValueChange(nextSelectedValue)
       }}
       onInputValueChange={
         async (

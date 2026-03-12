@@ -9,10 +9,9 @@ import {
   FormMessage 
 } from "@/components/ui/form";
 import ComboboxSingleAsync from "../combobox/combobox-single-async";
+import { useEffect, useState } from "react";
 
 
-// TODO: test validation
-// TODO: 
 export default function ComboboxSingleAsyncControlForm({
   control, 
   name, 
@@ -34,14 +33,40 @@ export default function ComboboxSingleAsyncControlForm({
       name={name}
       rules={rules}
       render={({ field, formState, fieldState }) => {
+        const [selectedValue, setSelectedValue] = useState(formState.defaultValues[name] || null)
+        
         const invalid = fieldState.invalid
 
-        // const defaultVals = new Set(formState.defaultValues[name].map(item => item.val))
-        // const defaultValue = items.filter((item) => defaultVals.has(item.val))
+        useEffect(() => {
+          const handleResetField = () => {
+            const defaultVal = formState.defaultValues[name]
+            const currVal = field.value
 
-        // const [value, setValue] = useState(defaultValue)
+            if (defaultVal && currVal) {
+              if (defaultVal[itemKey] === currVal[itemKey]) {
+                let fieldNotEqualSelectedValue = true
+                if (selectedValue && (currVal[itemKey] === selectedValue[itemKey])) {
+                  fieldNotEqualSelectedValue = false
+                }
 
-        const handleValueChange = (val) => {
+                if (fieldNotEqualSelectedValue) {
+                  setSelectedValue(defaultVal)
+                }
+              }
+            }
+
+            if (defaultVal === null && currVal === null && selectedValue !== null) {
+              setSelectedValue(null)
+            }
+          }
+
+          handleResetField()
+
+        }, [field])
+
+        const onSelectedValueChange = (val) => {
+          setSelectedValue(val)
+
           field.onChange(val)
           field.onBlur()
         }
@@ -53,7 +78,8 @@ export default function ComboboxSingleAsyncControlForm({
             </FormLabel>
             <FormControl className="mb-1.5">
               <ComboboxSingleAsync 
-                onComboValueChange={handleValueChange}
+                selectedValue={selectedValue}
+                onSelectedValueChange={onSelectedValueChange}
                 disabled={disabled}
                 placeholder={placeholder}
                 inputDisabled={disabled}
