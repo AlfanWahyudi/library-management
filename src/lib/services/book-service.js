@@ -253,6 +253,10 @@ const BookService = {
 
     return result
 
+  },
+
+  includeLoanList: async ({ orderBy, orderDir }) => {
+    return await BookDAL.includeLoanList(sql, {orderBy, orderDir})
   }
 }
 

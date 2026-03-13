@@ -3,7 +3,8 @@ import 'server-only'
 import { getPaginatedList } from '@/lib/utils/server/datatable'
 import { tableName as tableAuthor } from './author-dal'
 import { tableName as tableBookAuthor } from './book-author-dal'
-import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
+import { tableName as tableBookLoan } from './book-loan-dal'
+import { dataNotDeleted } from '../utils/server/sql'
 
 const tableName = 'books'
 
@@ -170,6 +171,45 @@ const BookDAL = {
       RETURNING *
     `
   },
+
+
+  includeLoanList: async (sql, data) => {
+    const {
+      orderDir,
+      orderBy
+    } = data
+
+    if (typeof(orderDir) !== 'string') throw new Error('orderDir must be a string')
+    if (typeof(orderBy) !== 'string') throw new Error('orderBy must be a string')
+
+
+    return await sql`
+      SELECT 
+        b.id,
+        b.isbn,
+        b.title,
+        b.sub_title,
+        b.publisher,
+        b.publication_date,
+        b.page,
+        b.language,
+        b.edition,
+        blm.id as book_loan_id,
+	      blm.finished_date,
+        (CASE
+          WHEN blm.finished_date is null and blm.id is not null THEN true
+          ELSE false
+        END
+        ) AS is_loaned
+      FROM ${ sql(tableName) } AS b
+      LEFT JOIN (
+        SELECT DISTINCT ON (bl.book_id) * FROM ${ sql(tableBookLoan) } bl order by bl.book_id, bl.updated_at DESC
+      ) AS blm
+      ON b.id = blm.book_id 
+      WHERE ${ dataNotDeleted('b') }
+      ORDER BY ${ sql('b.' + orderBy) } ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`};
+    `
+  }
 }
 
 export default BookDAL
