@@ -2,25 +2,21 @@
 
 import AlertDialogMain from "@/components/common/alert-dialog/alert-dialog-main"
 import useFetch from "@/hooks/use-fetch"
+import { saveBookLoan } from "@/lib/http/book-loan-http"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
-//TODO
 export default function BookLoanAlertDialogForm({
   form,
   formTitle,
-  formType = 'create'
+  onSuccSubmit,
 }) {
-  const desc = formType === 'create'
-    ? 'Apakah Anda yakin untuk simpan data peminjaman buku?'
-    : formType === 'update'
-      ? 'Apakah Anda yakin untuk update data peminjaman buku?'
-      : ''
+  const desc = 'Apakah Anda yakin untuk simpan data peminjaman buku?'
 
   const {
     error: errorSaved,
     isPending: pendingSaved,
-    runFetch: runSaveAuthor,
+    runFetch: runSaveBookLoan,
     fetchedData: saved,
     reset
   } = useFetch({ initialValue: undefined })
@@ -28,22 +24,21 @@ export default function BookLoanAlertDialogForm({
   const disableSubmitBtn = pendingSaved || !form.formState.isDirty || !form.formState.isValid
 
   useEffect(() => {
+    let timeout = null
+
     const handleSuccAction = () => {
       let msg =  ''
       
-      if (saved && formType === 'create') {
+      if (saved) {
         msg = 'Berhasil menambahkan data peminjaman buku'
       }
 
-      if (saved && formType === 'update') {
-        msg = 'Berhasil memperbarui data peminjaman buku'  
-      }
-  
       if (msg !== '') {
         toast.success(msg)
         
-        setTimeout(() => {
+        timeout = setTimeout(() => {
           reset()
+          onSuccSubmit()
         }, 200)
       }
     }
@@ -57,8 +52,11 @@ export default function BookLoanAlertDialogForm({
     handleSuccAction()
     handleErrAction()
 
-  }, [saved, errorSaved])
+    if (timeout) {
+      return () => clearTimeout(timeout)
+    }
 
+  }, [saved, errorSaved])
 
   const onTrigger = (evt) => {
     form.trigger()
@@ -68,12 +66,10 @@ export default function BookLoanAlertDialogForm({
     }
   }
   
-  const mapData = ({ fullName, countryCode, activeSince, about }) => {
+  const mapData = ({ member, books }) => {
     return {
-      countryCode,
-      fullName: fullName.trim(),
-      activeSince: parseInt(activeSince),
-      about: about.trim()
+      memberId: parseInt(member.id),
+      bookIds: books.map((book) => parseInt(book.val)),
     }
   }
 
@@ -81,9 +77,9 @@ export default function BookLoanAlertDialogForm({
     const data = form.getValues()
     const dataMapped = mapData(data)
 
-    // await runSaveAuthor({ 
-    //   fetchFn: async() => await saveAuthor({ data: dataMapped, id })
-    // })
+    await runSaveBookLoan({ 
+      fetchFn: async() => await saveBookLoan({ data: dataMapped })
+    })
   }
 
   return (

@@ -78,9 +78,9 @@ const downloadExcelMemberAll = async () => {
   }
 }
 
-const searchableListMember = async ({ search = '', searchFields = '', orderDir = '', orderBy = '' }) => {
+const searchableIncludeLoanListMember = async ({ search = '', searchFields = '', orderDir = '', orderBy = '' }) => {
   const query = new URLSearchParams({ search, searchFields, orderDir, orderBy }).toString();
-  const res = await fetch(`/api/members/searchable-list?${query}`)      
+  const res = await fetch(`/api/members/searchable-include-loan-list?${query}`)      
 
   if (!res.ok) {
     throw new Error('Gagal menampilkan daftar anggota yang dicari, mohon untuk dicoba lagi nanti.')
@@ -96,5 +96,5 @@ export {
   checkDuplicationMember,
   saveMember,
   downloadExcelMemberAll,
-  searchableListMember
+  searchableIncludeLoanListMember
 }

@@ -81,10 +81,25 @@ const canDeleteBook = async ({ id }) => {
   return result
 }
 
+const listIncludeLoan = async ({ orderDir = '', orderBy = '' }) => {
+  const query = new URLSearchParams({orderDir, orderBy }).toString();
+  const res = await fetch(`/api/books/include-loan-list?${query}`)      
+
+  if (!res.ok) {
+    throw new Error('Gagal mengambil daftar buku yang sudah termasuk status peminjaman. Mohon untuk mencoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+  const result = resJson.data
+
+  return result
+}
+
 export {
   getPaginatedListBook,
   saveBook,
   deleteBook,
   canDeleteBook,
-  checkDuplicationBook
+  checkDuplicationBook,
+  listIncludeLoan
 }

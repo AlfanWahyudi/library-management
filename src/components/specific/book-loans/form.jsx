@@ -1,80 +1,111 @@
 'use client';
 
-import { SheetClose, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 import MainContentForm from "@/components/common/form/main-content-form";
 import InputControlForm from "@/components/common/form/input-control-form";
-import TextareaControlForm from "@/components/common/form/textarea-control-form";
-import SelectControlForm from "@/components/common/form/select-control-form";
-import ButtonDisableDesc from "@/components/common/button/button-disable-desc";
 import BookLoanAlertDialogForm from "./alert-dialog-form";
 
-import { ComboboxItem } from "@/components/ui/combobox"
-import { Item, ItemContent, ItemTitle, ItemDescription } from "@/components/ui/item"
+import { ComboboxCollection, ComboboxGroup, ComboboxItem, ComboboxLabel, ComboboxSeparator } from "@/components/ui/combobox"
+import { Item, ItemContent, ItemTitle, ItemDescription, ItemActions } from "@/components/ui/item"
 import ComboboxMultiControlForm from "@/components/common/form/combobox-multi-control-form";
 import ComboboxSingleAsyncControlForm from "@/components/common/form/combobox-single-async-control-form";
-import { searchableListMember } from "@/lib/http/member-http";
+import { searchableIncludeLoanListMember } from "@/lib/http/member-http";
+import { listIncludeLoan } from "@/lib/http/book-http";
+import AlertMain from "@/components/common/alert-main";
+import { BOOK_LOAN } from "@/lib/constants/book-loan";
+import { Badge } from "@/components/ui/badge";
+import validateBookLoan from "./validate";
+import { add, endOfDay, format } from "date-fns";
+import { DATE_PATTERN } from "@/lib/constants/date-pattern";
+import useAutoRefreshAtMidnight from "@/hooks/use-auto-refresh-at-midnight";
+import { useRouter } from "next/navigation";
+import { ROUTE } from "@/lib/constants/route";
 
-// TODO
+// TODO: rapihkan tampilan (responsive)
+// TODO: rapihkan code
 export default function BookLoanForm() {
   const formTitle = 'Tambah peminjaman buku'
+
+  const [books, setBooks] = useState([])
+  const [isPending, startTransition] = useTransition()
+  const [booksError, setBooksError] = useState(null)
 
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
     // all validation errors for single field will display at once
-    mode: 'onBlur',
+    mode: 'onChange',
     criteriaMode: 'all',
-    // defaultValues: {
-    //   fullName: author?.fullName || '',
-    //   countryCode: author?.country.code || '',
-    //   activeSince: author?.activeSince || '',
-    //   about: author?.about || '',
-    // },
-    // resolver: zodResolver(authorClientSchema)
+    defaultValues: {
+      member: null,
+      books: [],
+    },
   })
 
-  // const {
-  //   error: errorCountry,
-  //   runFetch: runFetchCountry,
-  //   fetchedData: countries,
-  //   reset: resetCountries,
-  // } = useFetch({ initialValue: [] })
+  useAutoRefreshAtMidnight()
 
-  // const {
-  //   error: errorCanDelete,
-  //   runFetch: runFetchCanDataDeleted,
-  //   fetchedData: canDelete,
-  //   reset: resetCanDelete,
-  // } = useFetch({ initialValue: true })
+  const router = useRouter()
+
+  const startDate = new Date()
+  const endDate = new Date(endOfDay(add(startDate, { days: BOOK_LOAN.PERIOD_DAY })))
 
   useEffect(() => {
-    const handleCheckDataCanDeleted = async () => {
-      // const id = author ? author.id : null
-      // await runFetchCanDataDeleted({ fetchFn: async () => await canDeleteAuthor({ id }) })
+    const fetchingBooks = () => {
+      startTransition(async () => {
+        setBooksError(null)
+
+        try {
+          const data = await listIncludeLoan({ orderBy: 'title' })
+
+          const onLoan = {
+            name: 'onLoan',
+            value: `Sedang dipinjam (${data.meta.totalOnLoan})`,
+            items: data.onLoan.map((item) => ({ val: item.id, label: item.title, isLoaned: item.isLoaned })),
+          }
+
+          const avail = {
+            name: 'avail',
+            value: `Dapat dipinjam (${data.meta.totalAvail})`,
+            items: data.avail.map((item) => ({ val: item.id, label: item.title, isLoaned: item.isLoaned })),
+          }
+
+          startTransition(() => {
+            setBooks([avail, onLoan])
+          })
+          
+        } catch (error) {
+          setBooksError(error.message)
+        }
+      })
     }
 
-    const fetchingData = async () => {
-      // await runFetchCountry({ fetchFn: async() => await getAllCountry({}) })
+    if (books.length === 0) {
+      fetchingBooks()
     }
 
-    // if (openForm) {
-    //   fetchingData()
+  }, [form.formState])
 
-    // } else {
-      // resetCountries()
-      // resetCanDelete()
-    // }
-    
-  }, [])
-  // }, [openForm, formType, author])
+
+  useEffect(() => {
+    const selectedBooks = form.getValues('books')
+    const memberState = form.getFieldState('member')
+    if (memberState.isDirty && selectedBooks.length > 0) {
+      console.log('form akan di trigger nih')
+      form.trigger('books')
+    }
+  }, [form.formState])
+
+  const onSuccSubmit = () => {
+    router.push(ROUTE.BOOK_LOANS.url)
+  }
 
   const comboMemberItem = (item) => {
+    const memberReachMaxLoan = item.bookOnLoanCount == BOOK_LOAN.MAX
+
     return (
-      <ComboboxItem key={item.id} value={item}>
-        <Item size="xs" className="p-0">
+      <ComboboxItem key={item.id} value={item} disabled={memberReachMaxLoan}>
+        <Item size="xs" className="flex-1 p-0">
           <ItemContent>
             <ItemTitle className="whitespace-nowrap">
               {item.fullName}
@@ -83,8 +114,30 @@ export default function BookLoanForm() {
               {item.email}
             </ItemDescription>
           </ItemContent>
+          {memberReachMaxLoan && (
+            <ItemActions>
+              <Badge variant="destructive">Mencapai Maksimum Peminjaman</Badge>
+            </ItemActions>
+          )}
         </Item>
       </ComboboxItem>
+    )
+  }
+
+  const comboBookItem = (group, index) => {
+    const displaySeparator = (group.name === 'avail' && books[1].items.length !== 0)
+    return (
+      <ComboboxGroup key={group.value} items={group.items}>
+        <ComboboxLabel>{group.value}</ComboboxLabel>
+        <ComboboxCollection>
+          {(item) => (
+            <ComboboxItem key={item.val} value={item} disabled={item.isLoaned}>
+              {item.label}
+            </ComboboxItem>
+          )}
+        </ComboboxCollection>
+        {displaySeparator && <ComboboxSeparator />}
+      </ComboboxGroup>
     )
   }
 
@@ -94,74 +147,55 @@ export default function BookLoanForm() {
       className="grid gap-6"
       noValidate
     >
-      <section className="flex-1 px-4">
-        <div className='grid auto-rows-min gap-6 mb-10'>
-          {/* {errorCountry && (
-            <AlertMain title='Error menampilkan daftar negara pada field kebangsaan' variant="error">
-              <p>{errorCountry}</p>
+      <section className="flex-1">
+        <div className='grid auto-rows-min gap-6'>
+          {booksError && (
+            <AlertMain title={`Error menampilkan daftar buku, pada pilihan "Buku"`} variant="error">
+              <p>{booksError}</p>
             </AlertMain>  
           )}
-          {errorCanDelete && (
-            <AlertMain 
-              title="Error cek data pengarang" 
-              variant="error"
-            >
-              <p>{errorCanDelete}</p>
-            </AlertMain>
-          )} */}
-          {/* <InputControlForm 
-            control={form.control}
-            name="fullName"
-            label="Nama Lengkap"
-            isRequired={inputRequired}
-            disabled={inputDisabled}
-          />
-          <SelectControlForm 
-            control={form.control}
-            name="countryCode"
-            label="Kebangsaan"
-            isRequired={inputRequired}
-            placeholder="Pilih kebangsaan"
-            items={countries.map((country) => ({ val: country.code, label: country.name }))}
-            disabled={errorCountry || inputDisabled}
-          />
-          <InputControlForm 
-            control={form.control}
-            name="activeSince"
-            label="Aktif Sejak"
-            type="number"
-            disabled={inputDisabled}
-          />
-          <TextareaControlForm 
-            control={form.control}
-            name="about"
-            label="Tentang"
-            rows={10}
-            disabled={inputDisabled}
-          /> */}
-          <ComboboxSingleAsyncControlForm 
-            control={form.control}
-            name="member"
-            label="Anggota"
-            placeholder="Cari anggota"
-            objLabel='fullName'
-            itemKey='id'
-            customItem={comboMemberItem}
-            resourceHttp={async (query) => await searchableListMember({ search: query })}
-          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <ComboboxSingleAsyncControlForm 
+              control={form.control}
+              name="member"
+              label="Anggota"
+              placeholder="Cari anggota..."
+              objLabel='fullName'
+              itemKey='id'
+              customItem={comboMemberItem}
+              resourceHttp={async (query) => await searchableIncludeLoanListMember({ search: query })}
+              isRequired={true}
+              rules={{
+                validate: validateBookLoan.member
+              }}
+            />
+            <ComboboxMultiControlForm
+              control={form.control}
+              name="books"
+              label="Buku"
+              items={books}
+              emptyLabel="Buku tidak ditemukan"
+              placeholder="Pilih buku"
+              isRequired={true}
+              customItem={comboBookItem}
+              rules={{
+                validate: (val) => validateBookLoan.book(val, form.getValues('member'))
+              }}
+            />
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
             <InputControlForm 
               control={form.control}
               name="startDate"
               label='Tanggal Mulai'
-              value="11-03-2026"
+              value={format(startDate, DATE_PATTERN.INDO_PRIMARY)}
               disabled={true}
             />
             <InputControlForm 
               control={form.control}
               name="endDate"
               label='Tanggal Selesai'
-              value="18-03-2026"
+              value={format(endDate, DATE_PATTERN.INDO_PRIMARY)}
               disabled={true}
             />
           </div>
@@ -171,6 +205,7 @@ export default function BookLoanForm() {
         <BookLoanAlertDialogForm 
           form={form}
           formTitle={formTitle}
+          onSuccSubmit={onSuccSubmit}
         />
       </section>
     </MainContentForm>
