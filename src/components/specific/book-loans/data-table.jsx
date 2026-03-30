@@ -18,7 +18,7 @@ export default function BookLoanDataTable() {
     table,
   } = useServerSideDataTable({
     orderBy: 'created_at',
-    orderDir: 'asc',
+    orderDir: 'desc',
     fetchingData: getPaginatedListBookOnLoan,
     searchFields: getSearchItemsIdBookLoan(),
     columnsDef: columnsDefBookLoan,
