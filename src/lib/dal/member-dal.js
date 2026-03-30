@@ -2,7 +2,7 @@ import 'server-only'
 
 import { getPaginatedList } from '@/lib/utils/server/datatable'
 import { createMember } from '../models/member-model'
-import { searchableListQuery } from '../utils/server/sql-query'
+import { tableName as tableBookLoan } from './book-loan-dal'
 
 const tableName = 'members'
 
@@ -128,8 +128,44 @@ const MemberDAL = {
     `
   },
 
-  searchableList: async (sql, data) => {
-    return await searchableListQuery(sql, tableName, data)
+  searchableIncludeLoanList: async (sql, data) => {
+    const {
+      orderBy,
+      orderDir,
+      search,
+      searchFields,
+    } = data
+
+    if (typeof(orderBy) !== 'string') throw new Error ('orderBy must be a string')
+    if (typeof(orderDir) !== 'string') throw new Error ('orderDir must be a string')
+    if (typeof(search) !== 'string') throw new Error ('search must be a string')
+    if (!Array.isArray(searchFields)) throw new Error ('searchFields must be an array')
+
+    if (searchFields.length === 0) {
+      throw new Error('searchFields must not be empty')
+    }
+
+    return await sql`
+      SELECT 
+      	m.id,
+        m.full_name,
+        m.email,
+        m.phone,
+        m.address,
+        m.birth_date,
+        m.gender,
+        m.created_at,
+        m.updated_at,
+        (
+          SELECT count(id) FROM ${ sql(tableBookLoan) } bl WHERE bl.member_id = m.id AND bl.finished_date IS NULL
+        ) AS book_on_loan_count
+      FROM 
+        ${ sql(tableName) } AS m
+      WHERE 
+        CONCAT_WS(' ', ${sql(searchFields.map((field) => `m.${field}`))}) ILIKE ${'%' + search + '%'}
+      ORDER BY 
+        m.${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
+    `
   },
 }
 

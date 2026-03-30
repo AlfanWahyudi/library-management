@@ -16,11 +16,11 @@ export async function GET(req) {
     }
 
     const parsed = searchableListSchema.parse(query)
-    const items = await MemberService.searchableList(parsed)
+    const items = await MemberService.searchableIncludeLoanList(parsed)
 
     return NextResponse.json(
       createSuccessRes({
-        message: 'Member searchable list successfully retrieved.', 
+        message: 'Member searchable list include loan data successfully retrieved.', 
         data: items
       }), 
       { status: 200 }

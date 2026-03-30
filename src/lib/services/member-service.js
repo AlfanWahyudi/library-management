@@ -126,7 +126,7 @@ const MemberService = {
     return fileBuffer
   },
 
-  searchableList: async ({
+  searchableIncludeLoanList: async ({
     orderBy,
     orderDir,
     search,
@@ -142,10 +142,10 @@ const MemberService = {
     let result = []
 
     if (search.trim() !== '') {
-      result = await MemberDAL.searchableList(sql, data)
+      result = await MemberDAL.searchableIncludeLoanList(sql, data)
     }
 
-    return createArrMemberDTO(result)
+    return result
   },
 }
 
