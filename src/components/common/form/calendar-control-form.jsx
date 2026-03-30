@@ -5,7 +5,6 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverContent,
@@ -13,6 +12,8 @@ import {
 } from "@/components/ui/popover"
 import { useState } from "react"
 import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { format } from "date-fns"
+import { DATE_PATTERN } from "@/lib/constants/date-pattern"
 
 export default function CalendarControlForm({
   control,
@@ -43,7 +44,7 @@ export default function CalendarControlForm({
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button variant="outline" id="date" className={`${ fieldState.invalid ? 'border-destructive' : ''} justify-between font-normal w-full mb-1.5`} disabled={disabled}>
-                  {date ? date.toLocaleDateString() : placeholder}
+                  {date ? format(date, DATE_PATTERN.INDO_PRIMARY) : placeholder}
                   <ChevronDownIcon />
                 </Button>
               </PopoverTrigger>
