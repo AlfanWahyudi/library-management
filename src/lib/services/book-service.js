@@ -256,7 +256,20 @@ const BookService = {
   },
 
   includeLoanList: async ({ orderBy, orderDir }) => {
-    return await BookDAL.includeLoanList(sql, {orderBy, orderDir})
+    const data = await BookDAL.includeLoanList(sql, {orderBy, orderDir})
+
+    const onLoan = data.filter((data) => data.isLoaned)
+    const avail = data.filter((data) => !data.isLoaned)
+
+    return {
+      avail,
+      onLoan,
+      meta: {
+        totalItem: data.length,
+        totalOnLoan: onLoan.length,
+        totalAvail: avail.length, 
+      }
+    }
   }
 }
 
