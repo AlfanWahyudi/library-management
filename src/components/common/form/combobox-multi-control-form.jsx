@@ -22,6 +22,7 @@ export default function ComboboxMultiControlForm({
   emptyLabel = 'No items found.',
   placeholder = 'Select and item',
   disabled = false,
+  customItem = (item) => null,
   children,
 }) {
 
@@ -96,6 +97,7 @@ export default function ComboboxMultiControlForm({
                 placeholder={placeholder}
                 inputDisabled={disabled}
                 invalid={invalid}
+                customItem={customItem}
               />
             </FormControl>
             {children && (

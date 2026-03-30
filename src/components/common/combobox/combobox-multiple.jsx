@@ -16,16 +16,30 @@ import {
 
 export default function ComboboxMultiple({ 
   items, 
-  className, 
+  className = '', 
   placeholder = 'Pilih salah satu opsi',
   emptyLabel = 'Opsi tidak ditemukan.',
   inputDisabled = false,
   invalid = false,
+  customItem = (item) => null,
   ...props 
 }) {
   const anchor = useComboboxAnchor()
 
   const classes = `w-full ${className}`
+
+  const defaultItem = (item) => {
+    if (!item['label'] || !item['val']) throw new Error(`item obj must contain label and val prop`)
+
+    return (
+      <ComboboxItem 
+        key={item.val} 
+        value={item}
+      >
+        {item.label}
+      </ComboboxItem>
+    )
+  }
 
   return (
     <Combobox 
@@ -52,18 +66,9 @@ export default function ComboboxMultiple({
       <ComboboxContent anchor={anchor}>
         <ComboboxEmpty>{emptyLabel}</ComboboxEmpty>
         <ComboboxList>
-          {(item) => {
-            if (!item['label'] || !item['val']) throw new Error(`item obj must contain label and val prop`)
-
-            return (
-              <ComboboxItem 
-                key={item.val} 
-                value={item}
-              >
-                {item.label}
-              </ComboboxItem>
-            )
-          }}
+          {(item) => (
+            customItem(item) || defaultItem(item)
+          )}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
