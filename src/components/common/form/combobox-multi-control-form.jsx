@@ -22,7 +22,7 @@ export default function ComboboxMultiControlForm({
   emptyLabel = 'No items found.',
   placeholder = 'Select and item',
   disabled = false,
-  customItem = (item) => null,
+  customItem = (item, index) => null,
   children,
 }) {
 
