@@ -23,7 +23,6 @@ import useAutoRefreshAtMidnight from "@/hooks/use-auto-refresh-at-midnight";
 import { useRouter } from "next/navigation";
 import { ROUTE } from "@/lib/constants/route";
 
-// TODO: rapihkan tampilan (responsive)
 // TODO: rapihkan code
 export default function BookLoanForm() {
   const formTitle = 'Tambah peminjaman buku'
@@ -61,13 +60,19 @@ export default function BookLoanForm() {
           const onLoan = {
             name: 'onLoan',
             value: `Sedang dipinjam (${data.meta.totalOnLoan})`,
-            items: data.onLoan.map((item) => ({ val: item.id, label: item.title, isLoaned: item.isLoaned })),
+            items: data.onLoan.map((item) => {
+              const {id, title, ...remain} = item
+              return { val: id, label: title, ...remain }
+            }),
           }
 
           const avail = {
             name: 'avail',
             value: `Dapat dipinjam (${data.meta.totalAvail})`,
-            items: data.avail.map((item) => ({ val: item.id, label: item.title, isLoaned: item.isLoaned })),
+            items: data.avail.map((item) => {
+              const {id, title, ...remain} = item
+              return { val: id, label: title, ...remain }
+            }),
           }
 
           startTransition(() => {
@@ -132,7 +137,15 @@ export default function BookLoanForm() {
         <ComboboxCollection>
           {(item) => (
             <ComboboxItem key={item.val} value={item} disabled={item.isLoaned}>
-              {item.label}
+              <Item size="xs" className="flex-1 p-0">
+                <ItemContent>
+                  <ItemTitle className="whitespace-nowrap">{item.label}</ItemTitle>
+                  <ItemDescription>
+                    <p>isbn : {item.isbn}</p>
+                    <p>edisi : {item.edition === null ? '-' : item.edition}</p>
+                  </ItemDescription>
+                </ItemContent>
+              </Item>
             </ComboboxItem>
           )}
         </ComboboxCollection>
@@ -201,7 +214,7 @@ export default function BookLoanForm() {
           </div>
         </div>
       </section>
-      <section>
+      <section className="flex flex-col gap-4 md:flex-row">
         <BookLoanAlertDialogForm 
           form={form}
           formTitle={formTitle}
