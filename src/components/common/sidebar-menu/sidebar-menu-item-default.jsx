@@ -9,12 +9,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function SidebarMenuItemDefault({ isMenuActive = false, item }) {
-  const pathname = usePathname()
+  const pathname = usePathname() // contoh hasilnya: /dashboard/books/create
+
+  const totalMainPathExcludeDashboard = 3
+
+  const currPathCount = pathname.split('/').length
+  const activateItem = currPathCount > totalMainPathExcludeDashboard
+    ? item.url === pathname.split('/').slice(0, -1).join('/')
+    : pathname === item.url
 
   return (
     <SidebarMenuItem>
       <SidebarMenuButton 
-        isActive={pathname === item.url} 
+        isActive={activateItem} 
         asChild
       >
         <Link 
