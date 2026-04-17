@@ -23,7 +23,6 @@ import useAutoRefreshAtMidnight from "@/hooks/use-auto-refresh-at-midnight";
 import { useRouter } from "next/navigation";
 import { ROUTE } from "@/lib/constants/route";
 
-// TODO: rapihkan code
 export default function BookLoanForm() {
   const formTitle = 'Tambah peminjaman buku'
 

@@ -3,7 +3,6 @@ import BookForm from "@/components/specific/books/form";
 import ContentHead from "@/components/specific/content-head";
 import AuthorService from "@/lib/services/author-service";
 
-//TODO
 export default async function BookCreatePage() {
   const authors = await AuthorService.getAll({})
 

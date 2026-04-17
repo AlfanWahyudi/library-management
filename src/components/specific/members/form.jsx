@@ -18,7 +18,6 @@ const genderOpt = [
   { val: 'f', label: 'Perempuan' }
 ]
 
-//TODO: styling form, must be responsive
 export default function MemberForm({
   member = null,
   viewOnly = false,
