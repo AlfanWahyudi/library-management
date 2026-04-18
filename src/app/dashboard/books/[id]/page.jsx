@@ -19,6 +19,7 @@ export default async function BookDetailPage({ params }) {
         authorItems={authors.map((author) => ({ val: author.id, label: author.fullName }))} 
         viewOnly={true} 
       />
+      <p className="text-lg font-bold text-yellow-600">TODO: Riwayat Peminjaman dan Pelanggaran Peminjaman</p>
     </>
   )
 }

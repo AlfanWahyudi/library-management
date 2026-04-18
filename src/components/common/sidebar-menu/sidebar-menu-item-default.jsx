@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// TODO: item not activated; cases: http://localhost:3000/dashboard/book-loans/49/return
 export default function SidebarMenuItemDefault({ isMenuActive = false, item }) {
   const pathname = usePathname() // contoh hasilnya: /dashboard/books/create
 
