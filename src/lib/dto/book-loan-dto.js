@@ -1,6 +1,7 @@
 import 'server-only'
 import { createMemberDTO } from './member-dto'
 import { createBookDTO } from './book-dto'
+import { createArrViolationDTO } from './violation-dto'
 
 export const createBookLoanDTO = ({
   id, 
@@ -11,6 +12,7 @@ export const createBookLoanDTO = ({
   finishedDate = null, 
   createdAt = null, 
   updatedAt = null,
+  violations = [],
 }) => {
 
   return {
@@ -20,6 +22,7 @@ export const createBookLoanDTO = ({
     startDate, 
     endDate, 
     finishedDate, 
+    violations: createArrViolationDTO(violations),
     createdAt, 
     updatedAt, 
   }

@@ -16,6 +16,16 @@ const findByQuery = async ({ sql, field, value }) => {
 }
 
 const BookLoanDAL = {
+  findByIdNotFinish: async (sql, id) => {
+    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+
+    return await sql`
+      SELECT * FROM ${ sql(tableName) }
+      WHERE 
+        id = ${id} AND finished_date IS NULL
+    `
+  },
+
   findByBookId: async (sql, bookId) => {
     if (typeof(bookId) !== 'number') throw new Error('bookId must be a number.')
 
@@ -55,9 +65,21 @@ const BookLoanDAL = {
     `
   },
 
-  complete: async () => {
-    //todo
-    return null
+  complete: async (sql, data) => {
+    const { id } = data
+
+    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+
+    return await sql`
+      UPDATE ${ sql(tableName) } 
+      SET 
+        finished_date = NOW(), 
+        updated_by = ${ tempUserId }, 
+        updated_at = NOW()
+      WHERE
+        id = ${id} AND finished_date IS NULL
+      RETURNING * 
+    `
   }
 
 }

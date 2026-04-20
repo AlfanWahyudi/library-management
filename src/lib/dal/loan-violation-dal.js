@@ -25,6 +25,29 @@ const LoanViolationDAL = {
 
     return await findByQuery({ sql, field: 'book_loan_id', value: bookLoanId })
   },
+
+  save: async (sql, data) => {
+    const {
+      violationId,
+      bookLoanId
+    } = data
+
+    if (typeof(violationId) !== 'number') throw new Error('violationId must be a number.')
+    if (typeof(bookLoanId) !== 'number') throw new Error('bookLoanId must be a number.')
+
+    return await sql`
+      INSERT INTO ${ sql(tableName) }
+        (book_loan_id, violation_id, created_by, created_at)
+      VALUES
+        (
+          ${ bookLoanId }, 
+          ${ violationId }, 
+          ${ tempUserId },
+          NOW()
+        )
+      RETURNING *
+    `
+  }
 }
 
 export default LoanViolationDAL

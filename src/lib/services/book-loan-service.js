@@ -13,16 +13,20 @@ import { ActionFailedError } from '../errors/action-failed-error';
 import { createBookLoanDTO } from '../dto/book-loan-dto';
 import { attachBookToOneBookLoan, attachMemberToOneBookLoan } from '../helpers/modify-data-helper';
 import { createArrBookOnLoanViewDTO } from '../dto/book-on-loan-view-dto';
+import ViolationDAL from '../dal/violation-dal';
+import LoanViolationDAL from '../dal/loan-violation-dal';
 
 const isFound = async ({ memberId, bookId }) => {
   //TODO
   return false;
 }
 
-const mapData = async (bookLoan) => {
+const mapData = async (bookLoan, violations = []) => {
   const bookAttached = await attachBookToOneBookLoan(bookLoan)
   const memberAttached = await attachMemberToOneBookLoan(bookAttached)
-  return createBookLoanDTO(memberAttached)
+
+  const data = {... memberAttached, violations}
+  return createBookLoanDTO(data)
 }
 
 const BookLoanService = {
@@ -102,6 +106,41 @@ const BookLoanService = {
       return loans
     })
   },
+
+  complete: async ({ id, violationIds = [] }) => {
+
+    return await sql.begin(async (sql) => {
+      const viols = []
+
+      const [bookLoan] = await BookLoanDAL.findByIdNotFinish(sql, id)
+      if (!bookLoan) {
+        throw new BadRequestError('bookLoanId', 'bookLoanId is not valid')
+      }
+
+      for (let violId of violationIds) {
+        const [viol] = await ViolationDAL.findById(sql, violId)
+        if (!viol) {
+          throw new BadRequestError('violationId', `violationId is not found, id: ${violId}`)
+        }
+
+        const [savedLoanViol] = await LoanViolationDAL.save(sql, { violationId: violId, bookLoanId: id })
+        if (savedLoanViol === null) {
+          throw new ActionFailedError(`failed to save loan violation data`)
+        }
+
+        viols.push(viol)
+      }
+
+      const data = {id}
+      const [savedData] = await BookLoanDAL.complete(sql, data)
+      if (savedData === null) {
+        throw new ActionFailedError(`failed to complete the loaned book, bookLoanId: ${id}`)
+      }
+
+      return await mapData(savedData, viols)
+    })
+  },
+  
 }
 
 export default BookLoanService 
