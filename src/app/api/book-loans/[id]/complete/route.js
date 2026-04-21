@@ -1,5 +1,5 @@
 import { createSuccessRes } from "@/lib/dto/res-dto"
-import { bookLoanCompleteServerSchema } from "@/lib/schemas/book-loan/book-loan-complete-schema"
+import { bookLoanCompleteServerSchema } from "@/lib/schemas/book-loan/book-loan-complete-server-schema"
 import BookLoanService from "@/lib/services/book-loan-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
 import { NextResponse } from "next/server"

@@ -21,6 +21,20 @@ const ViolationDAL = {
     `
   },
 
+  getAll: async (sql, data) => {
+    const { orderBy, orderDir } = data
+
+    if (typeof(orderDir) !== 'string') throw new Error('orderDir must be a string')
+    if (typeof(orderBy) !== 'string') throw new Error('orderBy must be a string')
+
+    return await sql`
+      SELECT * FROM ${ sql(tableName) }
+      WHERE
+        ${ dataNotDeleted() }
+      ORDER BY ${ sql(orderBy) } ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}; 
+    `
+  },
+
   getAllPaginated: async (
     sql,
     data = { 

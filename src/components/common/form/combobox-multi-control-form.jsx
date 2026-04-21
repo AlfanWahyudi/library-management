@@ -87,6 +87,7 @@ export default function ComboboxMultiControlForm({
               {label} {isRequired && <span className="text-destructive">*</span>} 
             </FormLabel>
             <FormControl className="mb-1.5">
+              {/* TODO: perbaiki UI ketika kondisi field disabled */}
               <ComboboxMultiple 
                 name={name}
                 items={items}

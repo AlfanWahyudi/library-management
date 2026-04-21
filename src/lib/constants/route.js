@@ -42,9 +42,9 @@ export const ROUTE = {
     method: 'get',
   }),
 
-  BOOK_LOANS_RETURN: createRouteModel({
-    url: BASE_URL_BOOK_LOANS + '/{id}/return',
-    title: 'Pengembalian Peminjaman Buku',
+  BOOK_LOANS_COMPLETE: createRouteModel({
+    url: BASE_URL_BOOK_LOANS + '/{id}/complete',
+    title: 'Penyelesaian Pinjaman Buku',
     method: 'get',
   }),
 

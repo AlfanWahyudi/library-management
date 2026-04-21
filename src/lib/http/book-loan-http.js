@@ -33,7 +33,27 @@ const saveBookLoan = async ({ data }) => {
 }
 
 
+const completingBookLoan = async ({ id, data }) => {
+  const res = await fetch(`/api/book-loans/${id}/complete`, {
+    method: 'PUT',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data)  
+  })      
+
+  if (!res.ok) {
+    throw new Error('Gagal melakukan penyelesaian pinjaman buku, mohon untuk dicoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+
+  return resJson.data
+}
+
+
 export {
   getPaginatedListBookOnLoan,
-  saveBookLoan
+  saveBookLoan,
+  completingBookLoan,
 }

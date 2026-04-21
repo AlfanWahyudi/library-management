@@ -16,13 +16,23 @@ const findByQuery = async ({ sql, field, value }) => {
 }
 
 const BookLoanDAL = {
-  findByIdNotFinish: async (sql, id) => {
+  findStillLoanById: async (sql, id) => {
     if (typeof(id) !== 'number') throw new Error('id must be a number.')
 
     return await sql`
       SELECT * FROM ${ sql(tableName) }
       WHERE 
         id = ${id} AND finished_date IS NULL
+    `
+  },
+
+  findCompleteLoanById: async (sql, id) => {
+    if (typeof(id) !== 'number') throw new Error('id must be a number.')
+
+    return await sql`
+      SELECT * FROM ${ sql(tableName) }
+      WHERE 
+        id = ${id} AND finished_date IS NOT NULL
     `
   },
 

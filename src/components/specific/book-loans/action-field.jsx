@@ -2,7 +2,7 @@
 
 
 import { Button } from "@/components/ui/button"
-import { BookCheck } from "lucide-react";
+import { BookDown } from "lucide-react";
 import Link from "next/link";
 
 
@@ -16,8 +16,8 @@ export default function ActionFieldBookLoan({ bookLoan }) {
         className='size-7'
         asChild={true}
       >
-        <Link href={`./book-loans/${bookLoan.id}/return`} >
-          <BookCheck />
+        <Link href={`./book-loans/${bookLoan.id}/complete`} >
+          <BookDown />
         </Link>
       </Button>
    </div> 

@@ -30,6 +30,38 @@ const mapData = async (bookLoan, violations = []) => {
 }
 
 const BookLoanService = {
+  findStillLoanById: async (id) => {
+    const bookLoanId = parseInt(id)
+
+    const [data] = await BookLoanDAL.findStillLoanById(sql, bookLoanId)
+    if (!data) {
+      throw new NotFoundError('bookLoanId', 'bookLoanId is not found or the loan has been completed ')
+    }
+    
+    return await mapData(data, [])
+  },
+
+  findCompleteLoanById: async (id) => {
+    const bookLoanId = parseInt(id)
+
+    const [data] = await BookLoanDAL.findCompleteLoanById(sql, bookLoanId)
+    if (!data) {
+      throw new NotFoundError('bookLoanId', 'bookLoanId is not found or the loan has not been completed ')
+    }
+
+    const viols = []
+    const loanViols = await LoanViolationDAL.findByBookLoanId(sql, bookLoanId)
+    for (let loanViol of loanViols) {
+      const viol = await ViolationDAL.findById(sql, loanViol.id)
+      if (!viol) {
+        throw new NotFoundError('violationId', 'violation id is not found')
+      }
+      viols.push(viol)
+    }
+    
+    return await mapData(data, viols)
+  },
+
   checkBookIsLoaned: async (bookId) => {
     const data = await BookOnLoanViewDAL.findByBookId(sql, bookId)
     return data.length > 0
@@ -112,7 +144,7 @@ const BookLoanService = {
     return await sql.begin(async (sql) => {
       const viols = []
 
-      const [bookLoan] = await BookLoanDAL.findByIdNotFinish(sql, id)
+      const [bookLoan] = await BookLoanDAL.findStillLoanById(sql, id)
       if (!bookLoan) {
         throw new BadRequestError('bookLoanId', 'bookLoanId is not valid')
       }

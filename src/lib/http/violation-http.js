@@ -71,9 +71,25 @@ const canDeleteViolation = async ({ id }) => {
   return result
 }
 
+
+const getAllViolation = async ({ orderDir = '', orderBy = '' }) => {
+  const query = new URLSearchParams({orderDir, orderBy }).toString();
+  const res = await fetch(`/api/violations/list?${query}`)      
+
+  if (!res.ok) {
+    throw new Error('Gagal mengambil daftar pelanggaran. Mohon untuk mencoba lagi nanti.')
+  }
+
+  const resJson = await res.json()
+  const result = resJson.data
+
+  return result
+}
+
 export {
   getPaginatedListViolation,
   saveViolation,
   deleteViolation,
-  canDeleteViolation
+  canDeleteViolation,
+  getAllViolation,
 }

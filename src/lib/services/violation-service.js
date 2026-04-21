@@ -3,7 +3,7 @@ import 'server-only'
 import sql from '../config/db'
 import { NotFoundError } from '../errors/not-found-error'
 import ViolationDAL from '../dal/violation-dal'
-import { createViolationDTO } from '../dto/violation-dto'
+import { createArrViolationDTO, createViolationDTO } from '../dto/violation-dto'
 import LoanViolationDAL from '../dal/loan-violation-dal'
 import { ActionFailedError } from '../errors/action-failed-error'
 import { BadRequestError } from '../errors/bad-request-error'
@@ -22,6 +22,12 @@ const ViolationService = {
     }
 
     return createViolationDTO(violation)
+  },
+
+
+  getAll: async ({ orderBy, orderDir }) => {
+    const items = await ViolationDAL.getAll(sql, {orderBy, orderDir})
+    return createArrViolationDTO(items)
   },
 
   getAllPaginated: async ({
