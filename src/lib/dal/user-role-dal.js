@@ -1,0 +1,31 @@
+import sql from "@/lib/config/db"
+import { dataNotDeleted } from "../utils/server/sql"
+
+const UserRoleDAL = {
+  //TODO: Test this function
+  getById: async ({ userId }) => {
+    return await sql`
+      select 
+        u.id as user_id,
+        u.username,
+        u.email,
+        u.full_name,
+        u.gender,
+        u.address,
+        u.created_at as user_created_at,
+        u.updated_at as user_updated_at,
+        r.code as role_code,
+        r.name as role_name,
+        ur.created_at as user_role_created_at,
+        ur.updated_at as user_role_updated_at
+      from users u 
+      join user_roles ur on u.id = ur.user_id 
+      join roles r on ur.role_code = r.code
+      where 
+        u.id = ${userId} AND
+        ${ dataNotDeleted('u') }
+    `
+  }
+}
+
+export default UserRoleDAL
