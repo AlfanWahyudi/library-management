@@ -107,7 +107,7 @@ Body : `none`
 ```JSON
 {
   "success": true,
-  "message": "Violation successfully updated, id: <violation_id>",
+  "message": "Violation successfully retrieved, id: <violation_id>",
   "data": {
     "id": 1,
     "title": "Terlambat mengembalikan buku lebih dari 7 hari",

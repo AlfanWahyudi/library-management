@@ -20,7 +20,14 @@ Code - 401 :
 {
   "success": false,
   "error": "Unauthorized",
-  "details": []
+  "issues": [
+    {
+      "prop": null,
+      "messages": [
+        "User is not authenticated"
+      ]
+    }
+  ]
 }
 ```
 
@@ -30,7 +37,14 @@ Code - 403 :
 {
   "success": false,
   "error": "Forbidden",
-  "details": []
+  "issues": [
+    {
+      "prop": null,
+      "messages": [
+        "You don't have any permission"
+      ]
+    }
+  ]
 }
 ```
 
@@ -39,8 +53,15 @@ Code - 500 :
 ```JSON
 {
   "success": false,
-  "error": "Something went wrong, please try again later.",
-  "details": []
+  "error": "Internal Server Error",
+  "issues": [
+    {
+      "prop": null,
+      "messages": [
+        "Something wen't wrong, please try again later"
+      ]
+    }
+  ]
 }
 ```
 
@@ -142,13 +163,20 @@ Body : `none`
 
 ---
 
-**Response - Failed** `500` :
+**Response - Failed** `404` :
 
 ```JSON
 {
   "success": false,
-  "error": "author id is not found.",
-  "details": []
+  "error": "Not Found",
+  "issues": [
+    {
+      "prop": "id",
+      "messages": [
+        "author id is not found"
+      ]
+    }
+  ]
 }
 ```
 
@@ -236,13 +264,20 @@ Body :
 
 ---
 
-**Response - Failed** `500` :  
+**Response - Failed** `404` :
 
 ```JSON
 {
   "success": false,
-  "error": "author is not found.",
-  "details": []
+  "error": "Not Found",
+  "issues": [
+    {
+      "prop": "id",
+      "messages": [
+        "author id is not found"
+      ]
+    }
+  ]
 }
 ```
 
@@ -267,13 +302,20 @@ Body : `none`
 
 ---
 
-**Response - Failed** `500` :
+**Response - Failed** `404` :
 
 ```JSON
 {
   "success": false,
-  "error": "author id is not found.",
-  "details": []
+  "error": "Not Found",
+  "issues": [
+    {
+      "prop": "id",
+      "messages": [
+        "author id is not found"
+      ]
+    }
+  ]
 }
 ```
 
@@ -315,14 +357,19 @@ Body : `none`
 
 ---
 
-**Response - Failed** `500` :
+**Response - Failed** `404` :
 
 ```JSON
 {
   "success": false,
-  "error": "author id is not found.",
-  "details": [
-
+  "error": "Not Found",
+  "issues": [
+    {
+      "prop": "id",
+      "messages": [
+        "author id is not found"
+      ]
+    }
   ]
 }
 ```
