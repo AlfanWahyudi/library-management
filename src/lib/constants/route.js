@@ -6,10 +6,8 @@ const BASE_URL_AUTHORS =  BASE_URL_DASHBOARD + '/authors'
 const BASE_URL_BOOK_LOANS =  BASE_URL_DASHBOARD + '/book-loans'
 const BASE_URL_BOOK_LOAN_HISTORIES =  BASE_URL_DASHBOARD + '/book-loan-histories'
 const BASE_URL_BOOKS =  BASE_URL_DASHBOARD + '/books'
-const BASE_URL_LOAN_VIOLATIONS =  BASE_URL_DASHBOARD + '/loan-violations'
 const BASE_URL_MEMBERS =  BASE_URL_DASHBOARD + '/members'
 const BASE_URL_USER_PROFILES =  BASE_URL_DASHBOARD + '/user-profiles'
-const BASE_URL_VIOLATIONS =  BASE_URL_DASHBOARD + '/violations'
 
 export const ROUTE = {
   LOGIN: createRouteModel({
@@ -80,12 +78,6 @@ export const ROUTE = {
     method: 'get',
   }),
 
-  LOAN_VIOLATIONS: createRouteModel({
-    url: BASE_URL_LOAN_VIOLATIONS,
-    title: 'Pelanggaran Peminjaman Buku',
-    method: 'get',
-  }),
-
   MEMBERS: createRouteModel({
     url: BASE_URL_MEMBERS,
     title: 'Anggota',
@@ -112,12 +104,6 @@ export const ROUTE = {
   USER_PROFILES: createRouteModel({
     url: BASE_URL_USER_PROFILES,
     title: 'Profile',
-    method: 'get',
-  }),
-
-  VIOLATIONS: createRouteModel({
-    url: BASE_URL_VIOLATIONS,
-    title: 'Pelanggaran',
     method: 'get',
   }),
 }

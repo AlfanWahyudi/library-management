@@ -25,10 +25,6 @@ const menus = [
 				...ROUTE.MEMBERS,
 				icon: Users,
 			},
-			{
-				...ROUTE.VIOLATIONS,
-				icon: Scale
-			},
 		]
 	},
 	{
@@ -54,10 +50,6 @@ const menus = [
 			{
 				...ROUTE.BOOK_LOAN_HISTORIES,
 				icon: History
-			},
-			{
-				...ROUTE.LOAN_VIOLATIONS,
-				icon: Gavel,
 			},
 		]
 	}

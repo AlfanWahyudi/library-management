@@ -145,7 +145,6 @@ Body : `none`
       "endDate": "",
       "returnedDate": "",
       "isReturned": "",
-      "violations": [],
       "createdAt": "2025-06-01 08:05:20.000",
       "updatedAt": "2025-06-01 08:05:20.000" 
     }
@@ -255,7 +254,6 @@ Body : `none`
     "endDate": "",
     "returnedDate": "",
     "isReturned": "",
-    "violations": [],
     "createdAt": "2025-06-01 08:05:20.000",
     "updatedAt": "2025-06-01 08:05:20.000"  
   }
@@ -314,7 +312,6 @@ Body :
     "endDate": "",
     "returnedDate": "",
     "isReturned": "",
-    "violations": [],
     "createdAt": "2025-06-01 08:05:20.000",
     "updatedAt": "2025-06-01 08:05:20.000"  
   }
@@ -355,7 +352,6 @@ Body :
 ```JSON
 {
   "returnedDate": "", // string timestamp not null, empty, cannot less than startDate
-  "violations": [], // array can be empty
 }
 ```
 
@@ -442,7 +438,6 @@ Body :
     "endDate": "",
     "returnedDate": "",
     "isReturned": "",
-    "violations": [],
     "createdAt": "2025-06-01 08:05:20.000",
     "updatedAt": "2025-06-01 08:05:20.000"  
   }
@@ -501,7 +496,6 @@ Body :
     "endDate": "",
     "returnedDate": "",
     "isReturned": "",
-    "violations": [],
     "createdAt": "2025-06-01 08:05:20.000",
     "updatedAt": "2025-06-01 08:05:20.000"  
   }

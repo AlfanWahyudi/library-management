@@ -66,18 +66,11 @@ export default function BookLoanCompleteAlertDialogForm({
     }
   }
   
-  const mapData = ({ violations }) => {
-    return {
-      violationIds: violations.map((violation) => parseInt(violation.val))
-    }
-  }
-
   const onSubmit = async () => {
     const data = form.getValues()
-    const dataMapped = mapData(data)
 
     await runCompletingBookLoan({ 
-      fetchFn: async() => await completingBookLoan({ id: bookLoan.id, data: dataMapped })
+      fetchFn: async() => await completingBookLoan({ id: bookLoan.id, data })
     })
   }
 

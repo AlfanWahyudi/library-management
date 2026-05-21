@@ -18,7 +18,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GENDER } from "@/lib/constants/gender";
 import BookLoanCompleteAlertDialogForm from "./alert-dialog-form";
-import { getAllViolation } from "@/lib/http/violation-http";
 import { ComboboxItem } from "@/components/ui/combobox";
 
 //TODO: Rapihkan tampilan -> layout, color, font size, dll. (responsive)
@@ -26,9 +25,7 @@ import { ComboboxItem } from "@/components/ui/combobox";
 export default function BookLoanCompleteForm({ bookLoan }) {
   const {startDate, endDate, book, member} = bookLoan
 
-  const [violations, setViolations] = useState([])
   const [isPending, startTransition] = useTransition()
-  const [violationsError, setViolationsError] = useState(null)
 
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
@@ -36,37 +33,10 @@ export default function BookLoanCompleteForm({ bookLoan }) {
     mode: 'onChange',
     criteriaMode: 'all',
     defaultValues: {
-      violations: [],
     },
   })
 
   const router = useRouter()
-
-  useEffect(() => {
-    const fetchingViolations = () => {
-      startTransition(async () => {
-        setViolationsError(null)
-        try {
-          const violations = await getAllViolation({})
-          startTransition(() => {
-            const mapped = violations.map((violation) => {
-              const {id, title, ...remain} = violation
-              return { val: id, label: title, ...remain }
-            })
-            setViolations(mapped)
-          })
-          
-        } catch (error) {
-          setViolationsError(error.message)
-        }
-      })
-    }
-
-    if (violations.length === 0) {
-      fetchingViolations()
-    }
-
-  }, [])
 
   const onSuccSubmit = () => {
     router.push(ROUTE.BOOK_LOANS.url)
@@ -98,11 +68,6 @@ export default function BookLoanCompleteForm({ bookLoan }) {
       <section className="grow max-w-4xl flex flex-col mt-2">
         <TitlePage>Penyelesaian Pinjaman Buku</TitlePage>
         <section className="flex flex-col gap-5 mb-5">
-          {violationsError && (
-            <AlertMain title={`Error menampilkan daftar pelanggarang`} variant="error">
-              <p>{violationsError}</p>
-            </AlertMain>  
-          )}
           <Card className="shadow-xs">
             <CardHeader>
               <CardTitle>Anggota</CardTitle>
@@ -173,16 +138,6 @@ export default function BookLoanCompleteForm({ bookLoan }) {
             <InfoItem title="Tanggal Wajib Kembali">
               {format(new Date(endDate), DATE_PATTERN.INDO_PRIMARY)}
             </InfoItem>
-            <ComboboxMultiControlForm 
-              control={form.control}
-              name="violations"
-              label="Pelanggaran"
-              items={violations}
-              emptyLabel="Pelanggaran tidak ditemukan"s
-              placeholder="Pilih Pelanggaran"
-              customItem={comboViolItem}
-              disabled={violationsError !== null}
-            />
           </section>
         </section>
         <section className="flex justify-end">

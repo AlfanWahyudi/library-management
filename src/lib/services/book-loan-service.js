@@ -1,31 +1,27 @@
 import 'server-only'
 import MemberDAL from '../dal/member-dal';
 import sql from '../config/db';
-import AuthorDAL from '../dal/author-dal';
 import BookDAL from '../dal/book-dal';
 import { NotFoundError } from '../errors/not-found-error';
 import BookOnLoanViewDAL from '../dal/dbview/book-on-loan-view-dal';
 import { BadRequestError } from '../errors/bad-request-error';
 import { BOOK_LOAN } from '../constants/book-loan';
 import BookLoanDAL from '../dal/book-loan-dal';
-import { add, endOfDay, format } from 'date-fns';
 import { ActionFailedError } from '../errors/action-failed-error';
 import { createBookLoanDTO } from '../dto/book-loan-dto';
 import { attachBookToOneBookLoan, attachMemberToOneBookLoan } from '../helpers/modify-data-helper';
 import { createArrBookOnLoanViewDTO } from '../dto/book-on-loan-view-dto';
-import ViolationDAL from '../dal/violation-dal';
-import LoanViolationDAL from '../dal/loan-violation-dal';
 
 const isFound = async ({ memberId, bookId }) => {
   //TODO
   return false;
 }
 
-const mapData = async (bookLoan, violations = []) => {
+const mapData = async (bookLoan) => {
   const bookAttached = await attachBookToOneBookLoan(bookLoan)
   const memberAttached = await attachMemberToOneBookLoan(bookAttached)
 
-  const data = {... memberAttached, violations}
+  const data = {... memberAttached}
   return createBookLoanDTO(data)
 }
 
@@ -48,18 +44,8 @@ const BookLoanService = {
     if (!data) {
       throw new NotFoundError('bookLoanId', 'bookLoanId is not found or the loan has not been completed ')
     }
-
-    const viols = []
-    const loanViols = await LoanViolationDAL.findByBookLoanId(sql, bookLoanId)
-    for (let loanViol of loanViols) {
-      const viol = await ViolationDAL.findById(sql, loanViol.id)
-      if (!viol) {
-        throw new NotFoundError('violationId', 'violation id is not found')
-      }
-      viols.push(viol)
-    }
     
-    return await mapData(data, viols)
+    return await mapData(data)
   },
 
   checkBookIsLoaned: async (bookId) => {
@@ -139,39 +125,20 @@ const BookLoanService = {
     })
   },
 
-  complete: async ({ id, violationIds = [] }) => {
+  complete: async ({ id }) => await sql.begin(async (sql) => {
+    const [bookLoan] = await BookLoanDAL.findStillLoanById(sql, id)
+    if (!bookLoan) {
+      throw new BadRequestError('bookLoanId', 'bookLoanId is not valid')
+    }
 
-    return await sql.begin(async (sql) => {
-      const viols = []
+    const data = {id}
+    const [savedData] = await BookLoanDAL.complete(sql, data)
+    if (savedData === null) {
+      throw new ActionFailedError(`failed to complete the loaned book, bookLoanId: ${id}`)
+    }
 
-      const [bookLoan] = await BookLoanDAL.findStillLoanById(sql, id)
-      if (!bookLoan) {
-        throw new BadRequestError('bookLoanId', 'bookLoanId is not valid')
-      }
-
-      for (let violId of violationIds) {
-        const [viol] = await ViolationDAL.findById(sql, violId)
-        if (!viol) {
-          throw new BadRequestError('violationId', `violationId is not found, id: ${violId}`)
-        }
-
-        const [savedLoanViol] = await LoanViolationDAL.save(sql, { violationId: violId, bookLoanId: id })
-        if (savedLoanViol === null) {
-          throw new ActionFailedError(`failed to save loan violation data`)
-        }
-
-        viols.push(viol)
-      }
-
-      const data = {id}
-      const [savedData] = await BookLoanDAL.complete(sql, data)
-      if (savedData === null) {
-        throw new ActionFailedError(`failed to complete the loaned book, bookLoanId: ${id}`)
-      }
-
-      return await mapData(savedData, viols)
-    })
-  },
+    return await mapData(savedData)
+  }),
   
 }
 
