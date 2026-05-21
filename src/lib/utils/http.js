@@ -40,6 +40,7 @@ const generateErrorHttpRes = (err) => {
   
   let status = err['statusCode'] || 500
 
+  // TODO: perbaiki pesan validation jika data Array, soale ga jelas (ga ada flagging) menampilkan value yang salahnya di index mana
   if (err instanceof ZodError) {
     status = 400
 
