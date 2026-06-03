@@ -15,21 +15,23 @@ import { ROUTE } from "@/lib/constants/route";
 import InfoItem from "@/components/common/info-item";
 import TitlePage from "@/components/common/title-page";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { GENDER } from "@/lib/constants/gender";
 import BookLoanCompleteAlertDialogForm from "./alert-dialog-form";
 import { ComboboxItem } from "@/components/ui/combobox";
+import { Separator } from "@/components/ui/separator";
+import CardDetailBookLoan from "./card-detail-book-loan";
+import CardCompleteBookLoan from "./card-complete-book-loan";
 
-//TODO: Rapihkan tampilan -> layout, color, font size, dll. (responsive)
-//TODO: Rapihkan code
 export default function BookLoanCompleteForm({ bookLoan }) {
-  const {startDate, endDate, book, member} = bookLoan
+  const {book, member} = bookLoan
 
   const [isPending, startTransition] = useTransition()
 
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
-    // all validation errors for single field will display at once
+    // all validation errors for single field will display at onceAsti Musman
+
     mode: 'onChange',
     criteriaMode: 'all',
     defaultValues: {
@@ -62,90 +64,16 @@ export default function BookLoanCompleteForm({ bookLoan }) {
   return (
     <MainContentForm
       useFormProp={form} 
-      className="flex justify-center"
+      className="flex flex-col justify-center"
       noValidate
     >
-      <section className="grow max-w-4xl flex flex-col mt-2">
-        <TitlePage>Penyelesaian Pinjaman Buku</TitlePage>
-        <section className="flex flex-col gap-5 mb-5">
-          <Card className="shadow-xs">
-            <CardHeader>
-              <CardTitle>Anggota</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <InfoItem title="Nama Lengkap">
-                <p>{member.fullName}</p>
-              </InfoItem>
-              <InfoItem title="Email">
-                <p>{member.email}</p>
-              </InfoItem>
-              <InfoItem title="Tanggal Lahir">
-                <p>{format(new Date(member.birthDate), DATE_PATTERN.INDO_PRIMARY)}</p>
-              </InfoItem>
-              <InfoItem title="Jenis Kelamin">
-                <p>{GENDER[member.gender]}</p>
-              </InfoItem>
-              <InfoItem title="No Telepon">
-                <p>{member.phone}</p>
-              </InfoItem>
-              <InfoItem title="Alamat">
-                <p>{member.address}</p>
-              </InfoItem>
-            </CardContent>
-          </Card>
-          <Card className="shadow-xs">
-            <CardHeader>
-              <CardTitle>Buku</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <InfoItem title="Judul">
-                <p>{book.title}</p>
-              </InfoItem>
-              <InfoItem title="Sub Judul">
-                <p>{book.subTitle || '-'}</p>
-              </InfoItem>
-              <InfoItem title="ISBN">
-                <p>{book.isbn}</p>
-              </InfoItem>
-              <InfoItem title="Pengarang">
-                <p className="inline-flex gap-2">
-                  {book.authors.map((author, idx) => (
-                    <Badge key={idx} variant="secondary">{author.fullName}</Badge>
-                  ))}
-                </p>
-              </InfoItem>
-              <InfoItem title="Penerbit">
-                <p>{book.publisher || '-'}</p>
-              </InfoItem>
-              <InfoItem title="Tanggal Penerbitan">
-                <p>{format(new Date(book.publicationDate), DATE_PATTERN.INDO_PRIMARY)}</p>
-              </InfoItem>
-              <InfoItem title="Edisi">
-                <p>{book.edition || '-'}</p>
-              </InfoItem>
-              <InfoItem title="Bahasa">
-                <p>{book.language || '-'}</p>
-              </InfoItem>
-              <InfoItem title="Halaman">
-                <p>{book.page || '-'}</p>
-              </InfoItem>
-            </CardContent>
-          </Card>
-          <section className="flex flex-col gap-3">
-            <InfoItem title="Tanggal Pinjam">
-              {format(new Date(startDate), DATE_PATTERN.INDO_PRIMARY)}
-            </InfoItem>
-            <InfoItem title="Tanggal Wajib Kembali">
-              {format(new Date(endDate), DATE_PATTERN.INDO_PRIMARY)}
-            </InfoItem>
-          </section>
+      <TitlePage>Penyelesaian Pinjaman Buku</TitlePage>
+      <section className="grow flex flex-col gap-8 md:flex-row">
+        <section className="grow">
+          <CardDetailBookLoan book={book} member={member} />
         </section>
-        <section className="flex justify-end">
-          <BookLoanCompleteAlertDialogForm
-            bookLoan={bookLoan} 
-            form={form}
-            onSuccSubmit={onSuccSubmit}
-          />
+        <section className="grow md:max-w-1/4">
+          <CardCompleteBookLoan form={form} bookLoan={bookLoan} onSuccSubmit={onSuccSubmit} />
         </section>
       </section>
     </MainContentForm>
