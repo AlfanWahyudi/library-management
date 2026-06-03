@@ -11,6 +11,9 @@ import { ActionFailedError } from '../errors/action-failed-error';
 import { createBookLoanDTO } from '../dto/book-loan-dto';
 import { attachBookToOneBookLoan, attachMemberToOneBookLoan } from '../helpers/modify-data-helper';
 import { createArrBookOnLoanViewDTO } from '../dto/book-on-loan-view-dto';
+import BookLoanHistViewDAL from '../dal/dbview/book-loan-hist-view-dal';
+import { createArrBookLoanHistViewDTO } from '../dto/book-loan-hist-dto';
+import { generateBookLoanHistExcel } from '../excel/book-loan-hist-excel';
 
 const isFound = async ({ memberId, bookId }) => {
   //TODO
@@ -139,7 +142,37 @@ const BookLoanService = {
 
     return await mapData(savedData)
   }),
-  
+
+  getAllHistPaginated: async ({
+    page, 
+    limit, 
+    orderBy,
+    orderDir,
+    search,
+    searchFields = [],
+  }) => {
+    const data = {
+      page, 
+      limit, 
+      orderBy,
+      orderDir,
+      search,
+      searchFields,
+    }
+
+    const items = await BookLoanHistViewDAL.getAllPaginated(sql, data)
+    return {
+      ...items,
+      data: createArrBookLoanHistViewDTO(items.data),
+    }
+  },
+
+  exportHistToExcel: async () => {
+    const data = await BookLoanHistViewDAL.findAllForExcel(sql)
+    const fileBuffer = await generateBookLoanHistExcel({ bookLoanHist: data }) 
+
+    return fileBuffer
+  }
 }
 
 export default BookLoanService 

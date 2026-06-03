@@ -1,3 +1,5 @@
+import { getFilenameFromRes } from "../utils/http";
+
 const getPaginatedListBookOnLoan = async ({ page, limit, search, searchFields, orderBy, orderDir }) => {
   const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir}).toString();
   const res = await fetch(`/api/book-loans?${query}`)
@@ -51,9 +53,49 @@ const completingBookLoan = async ({ id, data }) => {
   return resJson.data
 }
 
+const getPaginatedHistBookLoan = async ({ page, limit, search, searchFields, orderBy, orderDir }) => {
+  const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir}).toString();
+  const res = await fetch(`/api/book-loans/histories?${query}`)
+  
+  if (!res.ok) {
+    throw new Error(err)
+  }
+
+  const resJson = await res.json()
+
+  return {
+    data: resJson.data,
+    meta: resJson.meta
+  }
+}
+
+const downExcelAllHistBookLoan = async () => {
+  const res = await fetch('/api/book-loans/histories/files?extension=xlsx')      
+
+  if (!res.ok) {
+    throw new Error('Gagal download data riwayat peminjaman buku, mohon dicoba lagi nanti.')
+  }
+
+  let filename = "book-loan-histories-file";
+
+  const filenameRes = getFilenameFromRes(res)
+  if (filenameRes) {
+    filename = filenameRes
+  }
+
+  const blobData = await res.blob()
+
+  return {
+    filename,
+    blobData
+  }
+}
+
 
 export {
   getPaginatedListBookOnLoan,
+  getPaginatedHistBookLoan,
   saveBookLoan,
   completingBookLoan,
+  downExcelAllHistBookLoan,
 }
