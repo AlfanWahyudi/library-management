@@ -20,7 +20,7 @@ import { GENDER } from "@/lib/constants/gender";
 import BookLoanCompleteAlertDialogForm from "./alert-dialog-form";
 import { ComboboxItem } from "@/components/ui/combobox";
 import { Separator } from "@/components/ui/separator";
-import CardDetailBookLoan from "./card-detail-book-loan";
+import CardDetailBookLoan from "../card-detail-book-loan";
 import CardCompleteBookLoan from "./card-complete-book-loan";
 
 export default function BookLoanCompleteForm({ bookLoan }) {

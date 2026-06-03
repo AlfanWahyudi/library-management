@@ -11,9 +11,6 @@ import { Separator } from "@/components/ui/separator";
 export default function CardDetailBookLoan({ book, member }) {
 	return (
 		<Card>
-			<CardHeader>
-				<CardTitle>Detail Pinjaman</CardTitle>
-			</CardHeader>
 			<CardContent>
 				<article>
 					<h2 className="font-medium text-sm mb-3">Anggota</h2>
