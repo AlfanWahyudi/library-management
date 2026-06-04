@@ -5,6 +5,7 @@ import InfoItem from "@/components/common/info-item";
 import { DATE_PATTERN } from "@/lib/constants/date-pattern"
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
 
 export default function CardBookInfo({ book }) {
   return(
@@ -49,6 +50,12 @@ export default function CardBookInfo({ book }) {
         </InfoItem>
         <InfoItem title="Halaman">
           <p>{book.page || "-"}</p>
+        </InfoItem>
+        <InfoItem title="Tanggal Dibuat">
+          <p>{format(new Date(book.createdAt), DATETIME_PATTERN.INDO_PRIMARY)}</p>
+        </InfoItem>
+        <InfoItem title="Tanggal Diperbarui">
+          <p>{format(new Date(book.updatedAt), DATETIME_PATTERN.INDO_PRIMARY)}</p>
         </InfoItem>
       </CardContent>
     </Card>
