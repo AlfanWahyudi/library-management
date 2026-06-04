@@ -10,6 +10,7 @@ import { attachAuthorsToBooks, attachAuthorsToOneBook, attachCountryToOneAuthor 
 import BookAuthorDAL from '../dal/book-author-dal'
 import AuthorDAL from '../dal/author-dal'
 import BookLoanDAL from '../dal/book-loan-dal'
+import BookOnLoanViewDAL from '../dal/dbview/book-on-loan-view-dal'
 
 const isFound = async ({ id }) => {
   const [book] = await BookDAL.findById(sql, id)
@@ -188,7 +189,7 @@ const BookService = {
   },
 
   isIncludeOnBookLoan: async ({ bookId }) => {
-    const items = await BookLoanDAL.findByBookId(sql, parseInt(bookId))
+    const items = await BookOnLoanViewDAL.findByBookId(sql, parseInt(bookId))
     return items.length > 0
   },
 
