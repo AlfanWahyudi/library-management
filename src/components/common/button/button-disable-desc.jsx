@@ -11,12 +11,12 @@ export default function ButtonDisableDesc({
   ...props
 }) {
   const secClasses = `flex flex-col gap-1 ${contentClasses}`
-  const pClasses = `text-sm font-semibold ${labelClasses}`
+  const pClasses = `text-sm font-medium ${labelClasses}`
 
   return (
     <section className={secClasses}>
-      <p className={pClasses}>{desc}</p>
       <Button variant={variant} disabled={true} {...props}>{children}</Button>
+      <p className={pClasses}>{desc}</p>
     </section>
   )
 }
