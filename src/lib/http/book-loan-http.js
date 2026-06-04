@@ -53,8 +53,8 @@ const completingBookLoan = async ({ id, data }) => {
   return resJson.data
 }
 
-const getPaginatedHistBookLoan = async ({ page, limit, search, searchFields, orderBy, orderDir }) => {
-  const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir}).toString();
+const getPaginatedHistBookLoan = async ({ page, limit, search, searchFields, orderBy, orderDir, bookId = null, memberId = null }) => {
+  const query = new URLSearchParams({page, limit, search, searchFields, orderBy, orderDir, bookId, memberId}).toString();
   const res = await fetch(`/api/book-loans/histories?${query}`)
   
   if (!res.ok) {

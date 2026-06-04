@@ -15,7 +15,8 @@ export default function useServerSideDataTable({
   searchFields = '', 
   orderBy = 'updated_at', 
   orderDir = 'desc',
-  defaultColFilters = [], 
+  defaultColFilters = [],
+  otherQueryParam = {}, 
 }) {
   const {
     error,
@@ -101,6 +102,7 @@ export default function useServerSideDataTable({
         search: searchFilter,
         orderBy: sorting[0].id,
         orderDir: sorting[0].desc ? 'desc' : 'asc', 
+        ...otherQueryParam
       }
 
       colFilters.forEach((colFilter) => {

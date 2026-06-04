@@ -19,12 +19,21 @@ const BookLoanHistViewDAL = {
       orderDir: '',
       search: '',
       searchFields: [],
+      bookId: null,
     }
   ) => {
+    const { bookId } = data
+
+    const filterQueries = []
+
+    if (bookId && typeof(bookId) === 'number') {
+      filterQueries.push(sql`${sql('book_id')} = ${bookId}`)
+    }
 
     const paginatedData = {
       ...data,
       tableName,
+      filterQueries,
     }
 
     return await getPaginatedList(sql, paginatedData)

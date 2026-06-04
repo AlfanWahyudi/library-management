@@ -9,7 +9,7 @@ export async function GET(req) {
   try {
     const searchParams = req.nextUrl.searchParams
 
-    const query = {
+    const defQuery = {
       page: parseInt(searchParams.get('page')) || 0,
       limit: parseInt(searchParams.get('limit')) || 10,
       search: searchParams.get('search') || '',
@@ -17,9 +17,14 @@ export async function GET(req) {
       orderBy: searchParams.get('orderBy') || 'finished_date',
       orderDir: searchParams.get('orderDir') || 'desc',
     }
+    const defParsed = dataTableParamSchema.parse(defQuery)
 
-    const parsed = dataTableParamSchema.parse(query)
-    const paginatedList = await BookLoanService.getAllHistPaginated(parsed)
+    const othQuery = {
+      bookId: parseInt(searchParams.get('bookId')) || null,
+      memberId: parseInt(searchParams.get('memberId')) || null
+    }
+
+    const paginatedList = await BookLoanService.getAllHistPaginated({...defParsed, ...othQuery})
 
     return NextResponse.json(
       createSuccessRes({
