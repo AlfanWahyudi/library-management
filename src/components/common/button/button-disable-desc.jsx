@@ -11,7 +11,7 @@ export default function ButtonDisableDesc({
   ...props
 }) {
   const secClasses = `flex flex-col gap-1 ${contentClasses}`
-  const pClasses = `text-sm font-medium ${labelClasses}`
+  const pClasses = `text-xs font-base ${labelClasses}`
 
   return (
     <section className={secClasses}>
