@@ -1,8 +1,8 @@
 import ContentHead from "@/components/specific/content-head"
-import MemberBreadcrumb from "@/components/specific/members/breadcrumb"
 import MemberDetailBreadcrumb from "@/components/specific/members/detail/breadcrumb"
-import MemberForm from "@/components/specific/members/form"
 import MemberService from "@/lib/services/member-service"
+import CardMemberInfo from "@/components/specific/members/detail/card-info"
+import CardMemberLoanHist from "@/components/specific/members/detail/card-loan-hist"
 
 export default async function MemberDetailPage({ params }) {
   const { id } = await params
@@ -13,7 +13,10 @@ export default async function MemberDetailPage({ params }) {
       <h1 className="sr-only">Halaman Detail Anggota Perpustakaan</h1>
       <MemberDetailBreadcrumb />
       <ContentHead pageTitle='Detail Anggota'></ContentHead>
-      <MemberForm member={member} viewOnly={true} />
+      <section className="flex flex-col gap-6">
+        <CardMemberInfo member={member} />
+        <CardMemberLoanHist memberId={member.id} />
+      </section>
     </>
   )
 }

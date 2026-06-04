@@ -20,14 +20,19 @@ const BookLoanHistViewDAL = {
       search: '',
       searchFields: [],
       bookId: null,
+      memberId: null,
     }
   ) => {
-    const { bookId } = data
+    const { bookId, memberId } = data
 
     const filterQueries = []
 
     if (bookId && typeof(bookId) === 'number') {
       filterQueries.push(sql`${sql('book_id')} = ${bookId}`)
+    }
+
+    if (memberId && typeof(memberId) === 'number') {
+      filterQueries.push(sql`${sql('member_id')} = ${memberId}`)
     }
 
     const paginatedData = {

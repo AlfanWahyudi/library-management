@@ -151,6 +151,7 @@ const BookLoanService = {
     search,
     searchFields = [],
     bookId = null,
+    memberId = null,
   }) => {
     const data = {
       page, 
@@ -160,6 +161,7 @@ const BookLoanService = {
       search,
       searchFields,
       bookId: bookId && parseInt(bookId),
+      memberId: memberId && parseInt(memberId),
     }
 
     const items = await BookLoanHistViewDAL.getAllPaginated(sql, data)
