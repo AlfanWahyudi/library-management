@@ -60,7 +60,7 @@ const columnsDefAuthor = [
     id: 'updated_at',
     header: ({ column }) => (
       <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Diperbaharui' />
+        <ColSortingHeader column={column} headerName='Tanggal Diperbarui' />
       </ColHeader>
     ),
     cell: props => props.getValue(),

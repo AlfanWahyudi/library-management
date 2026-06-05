@@ -23,7 +23,7 @@ const createWorkbook = ({ authors }) => {
     { header: 'Aktif Sejak', key: 'activeSince', width: 15 },
     { header: 'Tentang', key: 'about', width: 40},
     { header: 'Tanggal Dibuat', key: 'createdAt', width: 15},
-    { header: 'Tanggal Diperbaharui', key: 'updatedAt', width: 25},
+    { header: 'Tanggal Diperbarui', key: 'updatedAt', width: 25},
   ]
 
   worksheet.addRows(authors)
