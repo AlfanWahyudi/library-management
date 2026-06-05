@@ -29,7 +29,7 @@ const UserService = {
       throw new NotFoundError('id', 'user id is not found')
     }
 
-    return user
+    return createUserDTO(user)
   },
 
   checkEmailExist: async ({ id, email }) => {

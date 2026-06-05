@@ -18,6 +18,11 @@ import AuthorAlertDialogForm from "./alert-dialog/alert-dialog-form";
 import AuthorAlertDialogDelete from "./alert-dialog/alert-dialog-delete";
 import ButtonDisableDesc from "@/components/common/button/button-disable-desc";
 import { canDeleteAuthor } from "@/lib/http/author-http";
+import { format } from "date-fns";
+import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
+import InfoItem from "@/components/common/info-item";
+import { Separator } from "@/components/ui/separator";
+import InfoTimestamp from "@/components/common/info-timestamp";
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
 export default function AuthorForm({
@@ -155,6 +160,14 @@ export default function AuthorForm({
               <p>{errorCanDelete}</p>
             </AlertMain>
           )}
+          {
+            formType === 'view' && (
+              <>
+                <InfoTimestamp createdAt={author.createdAt} updatedAt={author.updatedAt} />
+                <Separator />
+              </>
+            )
+          }
           <InputControlForm 
             control={form.control}
             name="fullName"

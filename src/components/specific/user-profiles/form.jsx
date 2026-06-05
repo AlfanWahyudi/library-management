@@ -11,15 +11,14 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import validateUserProfile from "./validate"
 import UserProfileAlertDialogForm from "./alert-dialog/alert-dialog-form"
+import { format } from "date-fns"
 
 const genderOpt = [
   { val: 'm', label: 'Laki-Laki' }, 
   { val: 'f', label: 'Perempuan' }
 ]
 
-//TODO: e2e testing
-//TODO: styling this form
-export default function UserProfileForm({ username, fullName, email, gender, address }) {
+export default function UserProfileForm({ user }) {
   const router = useRouter()
 
   const [formState, setFormState] = useState({
@@ -35,11 +34,11 @@ export default function UserProfileForm({ username, fullName, email, gender, add
     // all validation errors for single field will display at once
     criteriaMode: 'all',
     values: {
-      username: username,
-      fullName: fullName,
-      email: email,
-      gender: gender,
-      address: address
+      username: user.username,
+      fullName: user.fullName,
+      email: user.email,
+      gender: user.gender,
+      address: user.address
     },
   })
 
@@ -63,7 +62,6 @@ export default function UserProfileForm({ username, fullName, email, gender, add
   return (
     <MainContentForm
       useFormProp={form}
-      className="pt-4"
       noValidate
     >
       <section className="flex flex-col gap-5 mb-8">
@@ -133,7 +131,6 @@ export default function UserProfileForm({ username, fullName, email, gender, add
             </Button>
           )
         }
-        {/* TODO: Add confirmation to before submitting   */}
         {formState.update && (
           <>
             <UserProfileAlertDialogForm 

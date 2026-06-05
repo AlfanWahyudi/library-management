@@ -4,6 +4,8 @@ import UserProfileForm from "@/components/specific/user-profiles/form";
 import SessionDAL from "@/lib/dal/session-dal";
 import UserService from "@/lib/services/user-service";
 import ChangeUsernameSheet from "../../../components/specific/user-profiles/change-username/sheet";
+import { Separator } from "@/components/ui/separator";
+import InfoTimestamp from "@/components/common/info-timestamp";
 
 export default async function userProfilePage() {
   const session = await SessionDAL.verify()
@@ -21,14 +23,11 @@ export default async function userProfilePage() {
       <ContentHead pageTitle='Profile'>
         <ChangeUsernameSheet username={user.username} />
       </ContentHead>
-
-      <UserProfileForm 
-        username={user.username} 
-        fullName={user.fullName}
-        gender={user.gender}
-        address={user.address}
-        email={user.email}
-      />
+      <section className="flex flex-col gap-3 pt-2">
+        <InfoTimestamp createdAt={user.createdAt} updatedAt={user.updatedAt} />
+        <Separator className="mb-3" />
+        <UserProfileForm user={user} />
+      </section>
     </section>
   )
 }
