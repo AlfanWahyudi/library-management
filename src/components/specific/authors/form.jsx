@@ -20,7 +20,6 @@ import ButtonDisableDesc from "@/components/common/button/button-disable-desc";
 import { canDeleteAuthor } from "@/lib/http/author-http";
 
 //TODO: Fix ketika load data seluruh negara berat, jadi bisa dibikin loading info dulu, atau bagaimanapun biar tidak stack dulu ketika form nya kebuka
-//TODO: Styling untuk input yang digunakan pada Detail View
 export default function AuthorForm({
   openForm,
   cbSuccess = () => {},

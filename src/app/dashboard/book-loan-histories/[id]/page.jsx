@@ -11,8 +11,6 @@ export default async function BookLoanHistDetailPage({ params }) {
   const {book, member, finishedDate, startDate, endDate} = bookLoan
 
   //TODO: if bookLoan is not valid, display error message
-  
-  //TODO: rapihkan codingan
   return(
     <>
       <h1 className="sr-only">Halaman Detail Pemin baalndlakfjalksdjf</h1>

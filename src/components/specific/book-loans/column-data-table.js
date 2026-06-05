@@ -11,7 +11,6 @@ import { format } from "date-fns";
 
 const columnHelper = createColumnHelper()
 
-// TODO: ganti format tanggal nya, pake format indo
 const columnsDefBookLoan = [
   columnHelper.accessor(row => row.memberFullName, {
     id: 'member_full_name',
