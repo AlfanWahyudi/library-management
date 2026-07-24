@@ -209,7 +209,18 @@ const BookDAL = {
       WHERE ${ dataNotDeleted('b') }
       ORDER BY ${ sql('b.' + orderBy) } ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`};
     `
-  }
+  },
+
+  total: async (sql) => {
+    return await sql`
+      SELECT
+        COUNT(id) as total
+      FROM ${ sql(tableName) }
+      WHERE
+        deleted_at IS NULL AND
+        deleted_by IS NULL;
+    `
+  },
 }
 
 export default BookDAL

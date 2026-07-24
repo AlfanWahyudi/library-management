@@ -1,4 +1,5 @@
 import 'server-only'
+
 import MemberDAL from '../dal/member-dal';
 import sql from '../config/db';
 import BookDAL from '../dal/book-dal';
@@ -14,6 +15,7 @@ import { createArrBookOnLoanViewDTO } from '../dto/book-on-loan-view-dto';
 import BookLoanHistViewDAL from '../dal/dbview/book-loan-hist-view-dal';
 import { createArrBookLoanHistViewDTO } from '../dto/book-loan-hist-dto';
 import { generateBookLoanHistExcel } from '../excel/book-loan-hist-excel';
+import { eachDayOfInterval, format, setMonth, startOfMonth, endOfMonth } from 'date-fns';
 
 const isFound = async ({ memberId, bookId }) => {
   //TODO
@@ -176,6 +178,68 @@ const BookLoanService = {
     const fileBuffer = await generateBookLoanHistExcel({ bookLoanHist: data }) 
 
     return fileBuffer
+  },
+
+  calcTotal: async () => {
+    const data = await BookLoanDAL.total(sql)
+    return parseInt(data[0]['total'])
+  },
+
+  chartTotalCompleteYear: async (year) => {
+    //TODO year tidak boleh null or empty
+
+    const months = Array.from({ length: 12 }, (_, idx) =>
+      format(setMonth(new Date(year, 0, 1), idx), 'yyyy-MM')
+    );
+
+    const data = await BookLoanDAL.totalCompleteYear(sql, year)
+
+    return months.map((month, idx) => {
+      const monthInt = idx+1
+      const foundTotalInMonth = data.find(elem => parseInt(elem.month) === monthInt)
+
+      return {
+        month,
+        total : foundTotalInMonth ? parseInt(foundTotalInMonth.total) : 0
+      }
+    })
+  },
+
+  //TODO: clean code
+  chartTotalCompleteMonth: async (year, month) => {
+    //TODO month tidak boleh null or empty
+    //TODO year tidak boleh null or empty
+
+    const months = Array.from({ length: 12 }, (_, month) => {
+      const date = new Date(year, month);
+
+      return {
+        month: month + 1,
+        dates: eachDayOfInterval({
+          start: startOfMonth(date),
+          end: endOfMonth(date),
+        }),
+      };
+    });
+
+    const data = await BookLoanDAL.totalCompleteMonth(sql, year, month)
+
+    return months[month-1]
+      .dates
+      .map((date, idx) => {
+        const dayInt = idx+1
+        const foundTotalInDay = data.find(elem => parseInt(elem.day) === dayInt)
+
+        return {
+          date: format(date, 'yyy-MM-dd'),
+          total : foundTotalInDay ? parseInt(foundTotalInDay.total) : 0
+        }
+      })
+  },
+
+  chartTotalCompleteAll: async () => {
+    const data = await BookLoanDAL.totalCompleteYearAll(sql)
+    return data.map((elem) => ({ ...elem, total: parseInt(elem.total) }))
   }
 }
 

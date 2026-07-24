@@ -147,6 +147,12 @@ const MemberService = {
 
     return result
   },
+
+  calcTotal: async () => {
+    const data = await MemberDAL.total(sql)
+    return parseInt(data[0]['total'])
+  },
+
 }
 
 export default MemberService

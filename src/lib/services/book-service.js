@@ -271,7 +271,12 @@ const BookService = {
         totalAvail: avail.length, 
       }
     }
-  }
+  },
+
+  calcTotal: async () => {
+    const data = await BookDAL.total(sql)
+    return parseInt(data[0]['total'])
+  },
 }
 
 export default BookService

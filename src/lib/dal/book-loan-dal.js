@@ -91,7 +91,57 @@ const BookLoanDAL = {
         id = ${id} AND finished_date IS NULL
       RETURNING * 
     `
-  }
+  },
+
+  total: async (sql) => {
+    return await sql`
+      SELECT 
+        COUNT(id) as total 
+      FROM ${ sql(tableName) }
+      WHERE finished_date IS NOT NULL;
+    `
+  },
+
+  totalCompleteYearAll: async (sql) => {
+    return await sql`
+      SELECT
+        EXTRACT(YEAR FROM start_date) AS year,
+        COUNT(id) AS total
+      FROM ${ sql(tableName) } 
+      WHERE finished_date IS NOT NULL
+      GROUP BY EXTRACT(YEAR FROM start_date)
+      ORDER BY year;
+    `
+  },
+  
+  totalCompleteYear: async (sql, year) => {
+    return await sql`
+      SELECT
+        EXTRACT(MONTH FROM start_date) AS month,
+        COUNT(id) AS total
+      FROM ${ sql(tableName) } 
+      WHERE 
+        finished_date IS NOT NULL AND 
+        EXTRACT(YEAR FROM start_date) = ${ year }
+      GROUP BY EXTRACT(MONTH FROM start_date)
+      ORDER BY month;
+    `
+  },
+
+  totalCompleteMonth: async (sql, year, month) => {
+    return await sql`
+      SELECT
+          EXTRACT(DAY FROM start_date) AS day,
+          COUNT(id) AS total
+      FROM ${ sql(tableName) }
+      WHERE 
+        finished_date IS NOT NULL AND 
+        EXTRACT(YEAR FROM start_date) = ${ year } AND 
+        EXTRACT(MONTH FROM start_date) = ${ month }
+      GROUP BY EXTRACT(DAY FROM start_date)
+      ORDER BY day;
+    `
+  },
 
 }
 

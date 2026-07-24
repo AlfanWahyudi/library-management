@@ -167,6 +167,14 @@ const MemberDAL = {
         m.${sql(orderBy)} ${orderDir.toUpperCase() === 'ASC' ? sql`ASC` : sql`DESC`}
     `
   },
+
+  total: async (sql) => {
+    return await sql`
+      SELECT
+        COUNT(id) as total
+      FROM ${ sql(tableName) };
+    `
+  },
 }
 
 export default MemberDAL
