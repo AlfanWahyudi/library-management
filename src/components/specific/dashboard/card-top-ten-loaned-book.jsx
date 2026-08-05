@@ -8,18 +8,18 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import { ChartBarCustom } from "./chart-bar-custom"
-// TODO
-export default function CardTopLoanedBook({
-  chartConfig, 
-  chartData, 
-  chartXKey,
-  chartYKey,
-  chartBarKey,
+import ChartBarTopTen from "../../common/charts/chart-bar-top-ten"
+import { bookTopTenLoanedChart } from "@/lib/charts/book-chart"
+
+// TODO: card header
+export default function CardTopTenLoanedBook({
+  bookTopTenLoaned,
   className,
   size = "default" 
 }) {
   const classes = ` ${className}`
+
+  const chartData = bookTopTenLoanedChart(bookTopTenLoaned)
 
   return (
     <Card className={classes} size={size}>
@@ -32,12 +32,8 @@ export default function CardTopLoanedBook({
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartBarCustom 
-          config={chartConfig} 
-          data={chartData}
-          xkey={chartXKey}
-          ykey={chartYKey}
-          barKey={chartBarKey}
+        <ChartBarTopTen 
+          chartData={chartData}
         />
       </CardContent>
     </Card>

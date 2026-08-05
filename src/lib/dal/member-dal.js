@@ -175,6 +175,37 @@ const MemberDAL = {
       FROM ${ sql(tableName) };
     `
   },
+
+  topTenLoan: async (sql) => {
+    return await sql`
+      SELECT
+        m.id,
+        m.full_name,
+        m.email,
+        m.phone,
+        m.address,
+        m.birth_date,
+        m.gender,
+        m.created_by,
+        m.created_at,
+        m.updated_by,
+        m.updated_at,
+        MAX(bl.finished_date) as loan_finished_date,
+        COUNT(m.id)::INT as total_loan
+      FROM
+        ${ sql(tableName) } m
+      JOIN ${ sql(tableBookLoan) } bl ON
+        m.id = bl.member_id
+      WHERE
+        bl.finished_date IS NOT NULL
+      GROUP BY
+        m.id
+      ORDER BY 
+        total_loan DESC, loan_finished_date DESC
+      LIMIT 10;
+    `
+  },
+
 }
 
 export default MemberDAL

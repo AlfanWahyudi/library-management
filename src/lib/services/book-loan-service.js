@@ -237,7 +237,7 @@ const BookLoanService = {
       })
   },
 
-  chartTotalCompleteAll: async () => {
+  getTotalCompleteYearAll: async () => {
     const data = await BookLoanDAL.totalCompleteYearAll(sql)
     return data.map((elem) => ({ ...elem, total: parseInt(elem.total) }))
   }

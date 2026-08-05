@@ -8,16 +8,18 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import ChartLoanDash from "./chart-loan-dash"
+import ChartAreaPrimary from "../../common/charts/chart-area-primary"
+import { bookLoanTotalChart } from "@/lib/charts/book-loan-chart"
 
-// TODO
+// TODO: perbaiki bagian card header
 export default function CardLoanYearAllDash({ 
-  chartConfig, 
-  chartData, 
+  bookLoanTotalCompAll,
   className, 
   size = "default" 
 }) {
   const classes = ` ${className}`
+
+  const blTotalChartData = bookLoanTotalChart(bookLoanTotalCompAll)
 
   return (
     <Card className={classes} size={size}>
@@ -30,7 +32,7 @@ export default function CardLoanYearAllDash({
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartLoanDash config={chartConfig} data={chartData} />
+        <ChartAreaPrimary chartData={blTotalChartData} />
       </CardContent>
     </Card>
   )

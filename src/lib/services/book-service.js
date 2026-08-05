@@ -277,6 +277,11 @@ const BookService = {
     const data = await BookDAL.total(sql)
     return parseInt(data[0]['total'])
   },
+
+  getTopTenLoaned: async () => {
+    const topTenLoaned = await BookDAL.topTenLoaned(sql)
+    return topTenLoaned.map((item) => ({ book: item.title, val: item.totalLoanedBook }))
+  }
 }
 
 export default BookService

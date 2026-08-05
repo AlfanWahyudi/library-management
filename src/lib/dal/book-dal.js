@@ -4,7 +4,7 @@ import { getPaginatedList } from '@/lib/utils/server/datatable'
 import { tableName as tableAuthor } from './author-dal'
 import { tableName as tableBookAuthor } from './book-author-dal'
 import { tableName as tableBookLoan } from './book-loan-dal'
-import { dataNotDeleted } from '../utils/server/sql'
+import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
 
 const tableName = 'books'
 
@@ -219,6 +219,41 @@ const BookDAL = {
       WHERE
         deleted_at IS NULL AND
         deleted_by IS NULL;
+    `
+  },
+
+  topTenLoaned: async (sql) => {
+    return await sql`
+      SELECT
+        b.id,
+        b.isbn,
+        b.title,
+        b.sub_title,
+        b.publisher,
+        b.publication_date,
+        b.page,
+        b.language,
+        b.edition,
+        b.created_by,
+        b.created_at,
+        b.updated_by,
+        b.updated_at,
+        b.deleted_by,
+        b.deleted_at,
+        MAX(bl.finished_date) as loan_finished_date,
+        COUNT(b.id)::INT as total_loaned_book
+      FROM
+        ${ sql(tableName) } b
+      JOIN ${ sql(tableBookLoan) } bl ON
+        b.id = bl.book_id
+      WHERE
+        ${ dataNotDeleted('b') } AND
+        bl.finished_date IS NOT NULL
+      GROUP BY
+        b.id, bl.book_id
+      ORDER BY 
+        total_loaned_book DESC, loan_finished_date DESC
+      LIMIT 10;
     `
   },
 }

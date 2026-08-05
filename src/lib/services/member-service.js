@@ -153,6 +153,10 @@ const MemberService = {
     return parseInt(data[0]['total'])
   },
 
+  getTopTenLoan: async () => {
+    const topTenLB = await MemberDAL.topTenLoan(sql)
+    return topTenLB.map((item) => ({ mem: item.fullName, val: item.totalLoan })) 
+  }
 }
 
 export default MemberService

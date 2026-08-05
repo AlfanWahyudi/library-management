@@ -8,19 +8,18 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import ChartLoanDash from "./chart-loan-dash"
-import { ChartBarCustom } from "./chart-bar-custom"
-// TODO
-export default function CardTopMemberLoan({
-  chartConfig, 
-  chartData, 
-  chartXKey,
-  chartYKey,
-  chartBarKey,
+import ChartBarTopTen from "../../common/charts/chart-bar-top-ten"
+import { memberTopTenLoanChart } from "@/lib/charts/member-chart"
+
+// TODO: card header
+export default function CardTopTenMemberLoan({
+  memberTopTenLoan,
   className, 
   size = "default" 
 }) {
   const classes = ` ${className}`
+
+  const chartData = memberTopTenLoanChart(memberTopTenLoan)
 
   return (
     <Card className={classes} size={size}>
@@ -33,12 +32,8 @@ export default function CardTopMemberLoan({
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartBarCustom 
-          config={chartConfig} 
-          data={chartData}
-          xkey={chartXKey}
-          ykey={chartYKey}
-          barKey={chartBarKey}
+        <ChartBarTopTen 
+          chartData={chartData}
         />
       </CardContent>
     </Card>
