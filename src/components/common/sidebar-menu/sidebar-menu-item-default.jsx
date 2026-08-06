@@ -8,15 +8,16 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// TODO: item not activated; cases: http://localhost:3000/dashboard/book-loans/49/return
+const firstSlashCount = 1
+const pathCount = 2
+const totalMainPathExcludeDashboard = firstSlashCount + pathCount
+
 export default function SidebarMenuItemDefault({ isMenuActive = false, item }) {
   const pathname = usePathname() // contoh hasilnya: /dashboard/books/create
 
-  const totalMainPathExcludeDashboard = 3
-
   const currPathCount = pathname.split('/').length
   const activateItem = currPathCount > totalMainPathExcludeDashboard
-    ? item.url === pathname.split('/').slice(0, -1).join('/')
+    ? item.url === pathname.split('/').slice(0, totalMainPathExcludeDashboard).join('/')
     : pathname === item.url
 
   return (
