@@ -21,10 +21,7 @@ export default async function DashboardPage({}) {
     <section>
       <h1 className="sr-only">Dashboard Page</h1>
       <DashboardBreadcrumb />
-      <ContentHead 
-        pageTitle='Dashboard'
-        rightContentItem={rightContentItem}
-        />
+      <ContentHead pageTitle='Dashboard' />
       <section className="flex flex-col gap-5">
         <div className="flex flex-col gap-5 lg:flex-row">
           <CardTotalDash 

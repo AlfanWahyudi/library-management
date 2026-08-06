@@ -40,7 +40,7 @@ export default function chartAreaPrimary({
   const linearGradData = yAxisKeys.map((key) => ({ id: `fill_${key}`, stopColor: `var(--color-${key})` }))
   const areaData = yAxisKeys.map((key) => ({ dataKey: key, fill: `url(#fill_${key})`, stroke: `var(--color-${key})` }))
 
-  const classes = `aspect-auto min-h-[250px] w-full ${className}`
+  const classes = `aspect-auto h-[250px] w-full ${className}`
 
   const animate = (
     <defs>
