@@ -77,10 +77,10 @@ export default function BookLoanCompleteAlertDialogForm({
   return (
     <AlertDialogMain
       title='Penyelesaian pinjaman buku'
-      triggerLabel='Simpan'
+      triggerLabel='Selesai'
       triggerDisabled={disableSubmitBtn}
       onTriggerClick={onTrigger}
-      actionLabel="Simpan"
+      actionLabel="Selesai"
       cbAfterActionClicked={onSubmit}
     >
       {desc}
