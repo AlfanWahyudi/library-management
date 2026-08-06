@@ -7,8 +7,8 @@ const bookLoanTotalChart = (data = []) => {
         label: "Tahun",
       },
       total: {
-        label: "Total Peminjaman",
-        color: "var(--chart-1)", //TODO: change the color
+        label: "Total peminjaman",
+        color: "var(--chart-1)",
       },
     },
     data

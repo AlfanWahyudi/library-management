@@ -11,7 +11,6 @@ import {
 import ChartBarTopTen from "../../common/charts/chart-bar-top-ten"
 import { bookTopTenLoanedChart } from "@/lib/charts/book-chart"
 
-// TODO: card header
 export default function CardTopTenLoanedBook({
   bookTopTenLoaned,
   className,
@@ -23,15 +22,12 @@ export default function CardTopTenLoanedBook({
 
   return (
     <Card className={classes} size={size}>
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
-        <div className="grid flex-1 gap-1">
-          <CardTitle>Title</CardTitle>
-          <CardDescription>
-            ......
-          </CardDescription>
+      <CardHeader>
+        <div>
+          <CardTitle>Sepuluh buku yang paling banyak dipinjam</CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent>
         <ChartBarTopTen 
           chartData={chartData}
         />

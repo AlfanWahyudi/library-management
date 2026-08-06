@@ -5,11 +5,11 @@ const bookTopTenLoanedChart = (data = []) => {
   return {
     config: {
       val: {
-        label: "Total yang dipinjam",
-        color: "var(--chart-1)", //TODO: change color
+        label: "Total dipinjam",
+        color: "var(--chart-1)",
       },
       label: {
-        color: "var(--background)", //TODO: change color
+        color: "var(--background)",
       },
     },
     data

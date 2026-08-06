@@ -186,7 +186,7 @@ const BookLoanService = {
   },
 
   chartTotalCompleteYear: async (year) => {
-    //TODO year tidak boleh null or empty
+    if (year === null || year === undefined) throw Error('year must not be empty')
 
     const months = Array.from({ length: 12 }, (_, idx) =>
       format(setMonth(new Date(year, 0, 1), idx), 'yyyy-MM')
@@ -207,8 +207,8 @@ const BookLoanService = {
 
   //TODO: clean code
   chartTotalCompleteMonth: async (year, month) => {
-    //TODO month tidak boleh null or empty
-    //TODO year tidak boleh null or empty
+    if (month === null || month === undefined) throw Error('month must be not empty')
+    if (year === null || year === undefined) throw Error('year must be not empty')
 
     const months = Array.from({ length: 12 }, (_, month) => {
       const date = new Date(year, month);

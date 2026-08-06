@@ -14,7 +14,6 @@ const CustomLabel = (props) => {
   return <Label {...props} fill={fill} />;
 };
 
-//TODO 
 export default function ChartBarTopTen({   
   chartData, 
   className = ' ',
@@ -34,7 +33,7 @@ export default function ChartBarTopTen({
   const dataKeys = Object.keys(firstData)
   const [yAxisKey, xAxisKey, noKey] = dataKeys
 
-  const classes = `aspect-auto h-[23rem] w-full ${className}` //TODO: ganti default styling nya
+  const classes = `aspect-auto h-[23rem] w-full ${className}`
 
   return (
     <ChartContainer config={config} className={classes}>
@@ -43,8 +42,8 @@ export default function ChartBarTopTen({
         data={dataMapped}
         layout="vertical"
         margin={{
-          left: 20,
-          right: 20,
+          left: 30,
+          right: 30,
         }}
       >
         <CartesianGrid horizontal={false} />

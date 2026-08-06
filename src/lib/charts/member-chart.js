@@ -4,11 +4,11 @@ const memberTopTenLoanChart = (data = []) => {
   return {
     config: {
       val: {
-        label: "Total Pinjaman",
-        color: "var(--chart-1)" //TODO: change color
+        label: "Total pinjam",
+        color: "var(--chart-1)",
       },
       label: {
-        color: "var(--background)", //TODO: change color
+        color: "var(--background)",
       },
     },
     data
