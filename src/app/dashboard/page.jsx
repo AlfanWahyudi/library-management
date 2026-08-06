@@ -36,24 +36,29 @@ export default async function DashboardPage({}) {
         pageTitle='Dashboard'
         rightContentItem={rightContentItem}
         />
-      {/* // TODO: make it responsive */}
-      <section className="grid gap-5">
-        <CardTotalDash 
-          totalBookLoan={totalBookLoan}
-          totalMember={totalMember}
-          totalBook={totalBook}
-          className=""
-        />
-        <CardLoanYearAllDash 
-          bookLoanTotalCompAll={bookLoanTotalCompAll}
-          className="" 
-        />
-        <CardTopTenMemberLoan
-          memberTopTenLoan={memberTopTenLoan}
-        />
-        <CardTopTenLoanedBook 
-          bookTopTenLoaned={bookTopTenLoaned}
-        />
+      <section className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 lg:flex-row">
+          <CardTotalDash 
+            totalBookLoan={totalBookLoan}
+            totalMember={totalMember}
+            totalBook={totalBook}
+            className="flex-1 lg:max-w-[17rem]"
+          />
+          <CardLoanYearAllDash 
+            bookLoanTotalCompAll={bookLoanTotalCompAll}
+            className="flex-1" 
+          />
+        </div>
+        <div className="flex flex-col gap-5 lg:flex-row">
+          <CardTopTenMemberLoan
+            memberTopTenLoan={memberTopTenLoan}
+            className="flex-1"
+          />
+          <CardTopTenLoanedBook 
+            bookTopTenLoaned={bookTopTenLoaned}
+            className="flex-1"
+          />
+        </div>
       </section>
     </>
   )

@@ -12,7 +12,7 @@ export default function CardTotalDash({  totalBook, totalBookLoan, totalMember, 
 
   return (
     <Card className={classes} size={size}>
-      <CardContent className="flex gap-6 flex-wrap">
+      <CardContent className="flex gap-y-4 gap-x-6  flex-wrap">
         { data.map((item, idx) => (<ItemTotalDash key={idx} {...item} />)) }
       </CardContent>
     </Card>

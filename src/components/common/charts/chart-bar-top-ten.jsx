@@ -1,12 +1,18 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, Label, LabelList, XAxis, YAxis } from "recharts"
 
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+
+
+const CustomLabel = (props) => {
+  const fill = colors[(props.index ?? 0) % colors.length];
+  return <Label {...props} fill={fill} />;
+};
 
 //TODO 
 export default function ChartBarTopTen({   
@@ -28,7 +34,7 @@ export default function ChartBarTopTen({
   const dataKeys = Object.keys(firstData)
   const [yAxisKey, xAxisKey, noKey] = dataKeys
 
-  const classes = `aspect-auto h-[25rem] w-full ${className}` //TODO: ganti default styling nya
+  const classes = `aspect-auto h-[23rem] w-full ${className}` //TODO: ganti default styling nya
 
   return (
     <ChartContainer config={config} className={classes}>
@@ -37,7 +43,7 @@ export default function ChartBarTopTen({
         data={dataMapped}
         layout="vertical"
         margin={{
-          left: 30,
+          left: 20,
           right: 20,
         }}
       >
