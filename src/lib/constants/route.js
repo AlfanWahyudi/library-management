@@ -114,3 +114,9 @@ export const ROUTE = {
     method: 'get',
   }),
 }
+
+
+export const ROUTE_AUTHORIZE = {
+  publics: [ROUTE.LOGIN.url],
+  protected: [ROUTE.DASHBOARD.url]
+}

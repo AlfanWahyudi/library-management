@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import SessionDAL from "./lib/dal/session-dal";
-import { ROUTE } from "./lib/constants/route";
-
-// TODO: ganti simpan variable nya jangan di middleware, bikin global dan tidak disimpan di DB
-const protectedRoutes = [ROUTE.DASHBOARD.url]
-const publicRoutes = [ROUTE.LOGIN.url]
-
+import { ROUTE, ROUTE_AUTHORIZE } from "./lib/constants/route";
 
 /*
 
@@ -26,6 +21,7 @@ jika berhasil masuk ke halaman dashboard dgn memberikan ucapan selamat "berhasil
 */
 
 export default async function middleware(req) {
+  const { publics: publicRoutes, protected: protectedRoutes } = ROUTE_AUTHORIZE
   
   const path = req.nextUrl.pathname
   const isProtectedRoute = protectedRoutes.includes(path)

@@ -1,6 +1,7 @@
 import { decrypt } from "@/lib/utils/server/session"
 import { cookies } from "next/headers"
 import { cache } from "react"
+import { COOKIE } from "../constants/cookie"
 
 const SessionDAL = {
   verify: cache(async () => {
@@ -8,7 +9,12 @@ const SessionDAL = {
       isAuth: false
     }
 
-    const cookie = (await cookies()).get('session')?.value
+    const cookie = (await cookies()).get(COOKIE.SESSION.name)?.value
+    if (!cookie) {
+      console.log("session in cookie is not found")
+      return result
+    }
+
     const session = await decrypt(cookie)
     if (session?.userId) {
       result.isAuth = true
