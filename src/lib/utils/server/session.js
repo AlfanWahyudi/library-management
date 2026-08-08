@@ -4,7 +4,7 @@ import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { COOKIE } from '@/lib/constants/cookie'
 
-const { name:cookieName, secretKey, alg, sevenDaysInMilliseconds } = COOKIE.SESSION
+const { name:cookieName, secretKey, alg, sevenDaysInMilliseconds, expTime } = COOKIE.SESSION
 const encodedKey = new TextEncoder().encode(secretKey)
 
 /*
@@ -14,7 +14,7 @@ export async function encrypt(payload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime(expTime)
     .sign(encodedKey)
 }
 
