@@ -95,7 +95,6 @@ export default function BookLoanForm() {
     const selectedBooks = form.getValues('books')
     const memberState = form.getFieldState('member')
     if (memberState.isDirty && selectedBooks.length > 0) {
-      console.log('form akan di trigger nih')
       form.trigger('books')
     }
   }, [form.formState])

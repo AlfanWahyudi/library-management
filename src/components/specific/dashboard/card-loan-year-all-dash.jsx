@@ -19,7 +19,6 @@ export default function CardLoanYearAllDash({
   const classes = ` ${className}`
 
   const blTotalChartData = bookLoanTotalChart(bookLoanTotalCompAll)
-  console.log(blTotalChartData)
 
   return (
     <Card className={classes} size={size}>
