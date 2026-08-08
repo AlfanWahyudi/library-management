@@ -2,11 +2,10 @@ import 'server-only'
 
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
+import { COOKIE } from '@/lib/constants/cookie'
 
-const secretKey = process.env.SESSION_SECRET
+const { name:cookieName, secretKey, alg, sevenDaysInMilliseconds } = COOKIE.SESSION
 const encodedKey = new TextEncoder().encode(secretKey)
-const alg = 'HS256'
-const sevenDaysInMilliseconds = 7 * 24 * 60 * 60 * 1000
 
 /*
   cara encrypt nya dengan symmetric secret
@@ -39,7 +38,7 @@ export async function createSession({ userId, fullName, roles }) {
   const session = await encrypt({ userId, fullName, roles, expiresAt })
   const cookieStore = await cookies()
  
-  cookieStore.set('session', session, {
+  cookieStore.set(cookieName, session, {
     httpOnly: true,
     secure: false, // change to true for prod env
     expires: expiresAt,
@@ -49,7 +48,7 @@ export async function createSession({ userId, fullName, roles }) {
 }
 
 export async function updateSession() {
-  const session = (await cookies()).get('session')?.value
+  const session = (await cookies()).get(cookieName)?.value
   const payload = await decrypt(session)
  
   if (!session || !payload) {
@@ -58,7 +57,7 @@ export async function updateSession() {
  
   const expires = new Date(Date.now() + sevenDaysInMilliseconds)(
     await cookies()
-  ).set('session', session, {
+  ).set(cookieName, session, {
     httpOnly: true,
     secure: true, // change to true for prod env
     expires: expires,
@@ -68,5 +67,5 @@ export async function updateSession() {
 
 export async function deleteSession() {
   const cookieStore = await cookies()
-  cookieStore.delete('session')
+  cookieStore.delete(COOKIE.SESSION.name)
 }

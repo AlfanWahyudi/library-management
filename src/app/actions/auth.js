@@ -8,8 +8,10 @@ import { cookies } from 'next/headers'
 import UserDAL from '@/lib/dal/user-dal'
 import UserService from '@/lib/services/user-service'
 import sql from '@/lib/config/db'
-import { NotFoundError } from '@/lib/errors/not-found-error'
+import { ROUTE } from '@/lib/constants/route'
+import { COOKIE } from '@/lib/constants/cookie'
 
+const defaultErrMsg = 'Username/Password salah.'
 
 export async function login(prevState, formData) {
   const error = {
@@ -35,14 +37,14 @@ export async function login(prevState, formData) {
   }
 
   const [user] = await UserDAL.getByUsername(sql, fd.username)
-
   if (!user) {
-    throw new NotFoundError('username', 'username is not found')
+    error.form = defaultErrMsg
+    return error
   }
 
-  const isMatch = await UserService.checkCredential({ user: user, password: fd.password })
+  const isMatch = await UserService.checkCredential({ user: user, enteredPwd: fd.password })
   if (!isMatch) {
-    error.form = 'Username/Password salah.'
+    error.form = defaultErrMsg
     return error
   }
 
@@ -54,11 +56,11 @@ export async function login(prevState, formData) {
     roles,
   })
 
-  redirect('/dashboard')
+  redirect(ROUTE.DASHBOARD.url)
 }
 
 export async function logout() {
-  (await cookies()).delete('session')
+  (await cookies()).delete(COOKIE.SESSION.name)
   
-  redirect('/login')
+  redirect(ROUTE.LOGIN.url)
 }

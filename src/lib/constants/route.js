@@ -11,7 +11,7 @@ const BASE_URL_USER_PROFILES =  BASE_URL_DASHBOARD + '/user-profiles'
 
 export const ROUTE = {
   LOGIN: createRouteModel({
-    url: '/login',
+    url: '/',
     title: 'Login',
     method: 'get',
   }),

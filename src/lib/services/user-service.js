@@ -12,11 +12,11 @@ import { ForbiddenError } from '../errors/forbidden-error'
 import { ActionFailedError } from '../errors/action-failed-error'
 
 const UserService = {
-  checkCredential: async ({ user, password }) => {
+  checkCredential: async ({ user, enteredPwd }) => {
     let isMatch = false
 
     if (user) {
-      isMatch = await bcrypt.compare(password, user.password)
+      isMatch = await bcrypt.compare(enteredPwd, user.password)
     }
 
     return isMatch

@@ -1,8 +1,29 @@
 import { NextResponse } from "next/server";
 import SessionDAL from "./lib/dal/session-dal";
+import { ROUTE } from "./lib/constants/route";
 
-const protectedRoutes = ['/dashboard']
-const publicRoutes = ['/login', 'signup', '/']
+// TODO: ganti simpan variable nya jangan di middleware, bikin global dan tidak disimpan di DB
+const protectedRoutes = [ROUTE.DASHBOARD.url]
+const publicRoutes = [ROUTE.LOGIN.url]
+
+
+/*
+
+-- daftar pengecekan di middleware 
+
+---
+cek apakah user berhasil authenticate,
+jika tidak redirect ke halaman login dgn memberikan alert "user belum login (sesuaikan kalimatnya)",
+jika berhasil masuk ke halaman dashboard dgn memberikan ucapan selamat "berhasil login (sesuaikan kalimatnya)"
+---
+
+=================================================
+-- daftar routes that excluded tanpa melewati middleware
+// TODO: tentukan route apa untuk di exclude
+"api, _next/static, _next/image, .json, .png, dll"
+
+
+*/
 
 export default async function middleware(req) {
   
@@ -12,23 +33,25 @@ export default async function middleware(req) {
 
   const session = await SessionDAL.verify()
 
+  // jika user belum/gagal autentikasi
   if (isProtectedRoute && !session.isAuth) {
-    return NextResponse.redirect(new URL('/login', req.nextUrl))
+    return NextResponse.redirect(new URL(ROUTE.LOGIN.url, req.nextUrl))
   }
 
+  // jika user sudah/berhasil autentikasi
   if (
     isPublicRoute &&
     session.isAuth &&
-    !req.nextUrl.pathname.startsWith('/dashboard')
+    !req.nextUrl.pathname.startsWith(ROUTE.DASHBOARD.url)
   ) {
-    return NextResponse.redirect(new URL('/dashboard', req.nextUrl))
+    return NextResponse.redirect(new URL(ROUTE.DASHBOARD.url, req.nextUrl))
   }
  
   return NextResponse.next()
 }
 
-// TODO: perbaiki lagi macher nya, karena file .json tetep kena masuk middleware juga
 // Routes Middleware should not run on
 export const config = {
+  // TODO: perbaiki lagi macher nya, karena file .json tetep kena masuk middleware juga
   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
 }
