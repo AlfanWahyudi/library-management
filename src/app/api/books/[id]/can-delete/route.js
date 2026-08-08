@@ -1,10 +1,13 @@
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import BookService from "@/lib/services/book-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 export async function GET(req, { params }) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const { id } = await params
 
     const bookCanDelete = await BookService.canDataDeleted({ id: parseInt(id) })

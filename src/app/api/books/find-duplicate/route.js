@@ -2,12 +2,15 @@ import SessionDAL from "@/lib/dal/session-dal"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import BookService from "@/lib/services/book-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 const fields = ['isbn']
 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const searchParams = req.nextUrl.searchParams
 
     const query = {
@@ -23,11 +26,6 @@ export async function GET(req) {
     const found = fields.find((field) => field === query.field)
     if (!found) {
       throw new Error(`fields must be only ${fields.toString()}`)
-    }
-
-    const session = await SessionDAL.verify()
-    if (!session.isAuth) {
-      throw new Error('User is not authenticated.')
     }
 
     const isExist = await BookService.isDataExist(query)

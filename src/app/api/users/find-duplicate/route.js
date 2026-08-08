@@ -2,11 +2,14 @@ import SessionDAL from "@/lib/dal/session-dal"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import UserService from "@/lib/services/user-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const searchParams = req.nextUrl.searchParams
 
     const query = {
@@ -18,11 +21,6 @@ export async function GET(req) {
       throw new Error(`Both params (email or username) cannot be empty or null. Choose wether to find duplicate data.`)
     } else if (query.email && query.username) {
       throw new Error(`Cannot find by two params. Choose only one (email or username) to find the duplicate data.`)
-    }
-
-    const session = await SessionDAL.verify()
-    if (!session.isAuth) {
-      throw new Error('User is not authenticated.')
     }
 
     let message = ''

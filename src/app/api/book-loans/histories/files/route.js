@@ -2,9 +2,12 @@ import { fileExtSchema } from "@/lib/schemas/file/file-ext-schema"
 import { NextResponse } from "next/server"
 import { generateErrorHttpRes } from "@/lib/utils/http"
 import BookLoanService from "@/lib/services/book-loan-service"
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const url = req.nextUrl
     const params = url.searchParams
 

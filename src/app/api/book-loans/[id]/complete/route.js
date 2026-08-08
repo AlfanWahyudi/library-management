@@ -1,10 +1,13 @@
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import BookLoanService from "@/lib/services/book-loan-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 export async function PUT(req, { params }) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const { id } = await params
 
     const bookLoan = await BookLoanService.complete({ id: parseInt(id) })

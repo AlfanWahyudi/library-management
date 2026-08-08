@@ -3,11 +3,14 @@ import { authorServerSchema } from "@/lib/schemas/author/author-server-schema";
 import { dataTableParamSchema } from "@/lib/schemas/datatable-param-schema";
 import AuthorService from "@/lib/services/author-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 // get paginated list 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const searchParams = req.nextUrl.searchParams
 
     const query = {
@@ -41,6 +44,8 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const body = await req.json()
     const parsed = authorServerSchema.parse(body)
 

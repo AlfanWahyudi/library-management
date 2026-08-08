@@ -3,10 +3,13 @@ import { createSuccessRes } from "@/lib/dto/res-dto";
 import BookLoanService from "@/lib/services/book-loan-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
 import { NextResponse } from "next/server";
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 
 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const searchParams = req.nextUrl.searchParams
 
     const defQuery = {

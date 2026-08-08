@@ -2,10 +2,13 @@ import { createSuccessRes } from "@/lib/dto/res-dto"
 import { bookServerSchema } from "@/lib/schemas/book/book-server-schema"
 import BookService from "@/lib/services/book-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 export async function PUT(req, { params }) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const { id } = await params
 
     const book = await BookService.restore({ id: parseInt(id) })

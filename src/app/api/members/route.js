@@ -4,10 +4,13 @@ import { memberDataTableParamSchema } from "@/lib/schemas/member/member-datatabl
 import { memberServerSchema } from "@/lib/schemas/member/member-server-schema";
 import MemberService from "@/lib/services/member-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const searchParams = req.nextUrl.searchParams
 
     const query = {
@@ -49,6 +52,8 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const body = await req.json()
     const parsed = memberServerSchema.parse(body)
 

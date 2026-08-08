@@ -1,12 +1,14 @@
-import { createErrorRes, createSuccessRes } from "@/lib/dto/res-dto"
+import { createSuccessRes } from "@/lib/dto/res-dto"
 import { listSchema } from "@/lib/schemas/list-schema"
 import CountryService from "@/lib/services/country-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
-import { ZodError } from "zod"
 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const params = req.nextUrl.searchParams
     const orderBy = params.get('orderBy') || 'name'
     const orderDir = params.get('orderDir') || 'asc'

@@ -1,10 +1,13 @@
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import AuthorService from "@/lib/services/author-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const { id } = await params
 
     const books = await AuthorService.getBooks({ id: parseInt(id) })

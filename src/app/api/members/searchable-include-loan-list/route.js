@@ -2,10 +2,13 @@ import { createSuccessRes } from "@/lib/dto/res-dto";
 import { searchableListSchema } from "@/lib/schemas/searchable-list-schema";
 import MemberService from "@/lib/services/member-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const searchParams = req.nextUrl.searchParams
 
     const query = {

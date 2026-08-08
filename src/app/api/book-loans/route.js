@@ -4,10 +4,13 @@ import { bookLoanServerSchema } from "@/lib/schemas/book-loan/book-loan-server-s
 import BookLoanService from "@/lib/services/book-loan-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
 import { NextResponse } from "next/server";
+import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 
 
 export async function GET(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const searchParams = req.nextUrl.searchParams
 
     const query = {
@@ -41,6 +44,8 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    await checkUserAlreadyLoggedIn()
+
     const body = await req.json()
     const parsed = bookLoanServerSchema.parse(body)
 
