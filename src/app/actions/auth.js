@@ -48,12 +48,16 @@ export async function login(prevState, formData) {
     return error
   }
 
-  const roles = await UserDAL.getRoles(sql, user.id)
+  const roles = await UserService.getRoles(user.id)
+  const userRole = await UserService.getRoleAsObj(user.id)
 
   await createSession({
     userId: user.id,
     fullName: user.fullName,
-    roles,
+    roles: roles,
+    isSuperAdmin: userRole.isSuperAdmin,
+    isPustakawan: userRole.isPustakawan,
+    isViewer: userRole.isViewer,
   })
 
   redirect(ROUTE.DASHBOARD.url)

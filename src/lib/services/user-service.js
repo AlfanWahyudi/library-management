@@ -10,6 +10,17 @@ import { BadRequestError } from '../errors/bad-request-error'
 import { UnauthorizeError } from '../errors/unauthorized-error'
 import { ForbiddenError } from '../errors/forbidden-error'
 import { ActionFailedError } from '../errors/action-failed-error'
+import { USER_ROLE } from '../constants/user'
+import { createArrRole } from '../models/role-model'
+
+const isFound = async ({ id }) => {
+  const [user] = await UserDAL.getById(sql, parseInt(id))
+  return user !== undefined
+}
+
+const verifyRoleIsExist = (roles = [], roleId) => {
+  return roles.find((item) => item.id == roleId) ? true : false
+}
 
 const UserService = {
   checkCredential: async ({ user, enteredPwd }) => {
@@ -30,6 +41,25 @@ const UserService = {
     }
 
     return createUserDTO(user)
+  },
+
+  getRoles: async (id) => {
+    const found = await isFound({id})
+    if (!found) {
+      throw new NotFoundError('id', 'user id is not found.')
+    }
+
+    const roles = await UserDAL.getRoles(sql, parseInt(id))
+    return createArrRole(roles)
+  },
+
+  getRoleAsObj: async (id) => {
+    const roles = await UserService.getRoles(id)
+    return {
+      isSuperAdmin: verifyRoleIsExist(roles, USER_ROLE.SUPER_ADMIN),
+      isPustakawan: verifyRoleIsExist(roles, USER_ROLE.PUSTAKAWAN),
+      isViewer: verifyRoleIsExist(roles, USER_ROLE.VIEWER)
+    }
   },
 
   checkEmailExist: async ({ id, email }) => {
