@@ -11,13 +11,13 @@ const tableName = 'users'
 const tempUserId = '1' // later change this
 
 const UserDAL = {
-  getById: async (sql, roleId) => {
+  getById: async (sql, userId) => {
     return await sql`
       select 
         * 
       from users
       WHERE
-        id = ${roleId} AND
+        id = ${userId} AND
         ${ dataNotDeleted() }
     `
   },
