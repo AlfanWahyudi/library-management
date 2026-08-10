@@ -23,6 +23,8 @@ export async function GET(req) {
       throw new Error(`Cannot find by two params. Choose only one (email or username) to find the duplicate data.`)
     }
 
+    const session = await SessionDAL.verify()
+
     let message = ''
     let data = null
     if (query.email) {
