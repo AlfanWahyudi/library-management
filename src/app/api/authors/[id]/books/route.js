@@ -1,3 +1,4 @@
+import BookRouteAuth from "@/lib/auth/route/book-route-auth";
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import AuthorService from "@/lib/services/author-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
@@ -7,6 +8,8 @@ import { NextResponse } from "next/server";
 export async function GET(req, { params }) {
   // TODO: tambahkan validasi untuk mengecek data buku, dari file BookRouteAuth
   try {
+    await BookRouteAuth.verifyCanViewList()
+
     const { id } = await params
 
     const books = await AuthorService.getBooks({ id: parseInt(id) })
