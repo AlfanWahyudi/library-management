@@ -12,7 +12,7 @@ export default async function MemberPage() {
   const auth = await Auth.validateSession()
   const session = auth.getSession()
 
-  const memberPerm = await MemberPerm.validation(sesion)
+  const memberPerm = await MemberPerm.validation(session)
     .validateExportExcelListAll()
     .validateCreate()
     .validateViewListPage()
