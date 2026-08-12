@@ -5,8 +5,11 @@ const AuthorRouteAuth = {
   async verifyCanViewList() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.canViewList()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateViewList()
+          .exec()
+
+        return authorPerm.canViewList
       }
     })
 
@@ -16,8 +19,11 @@ const AuthorRouteAuth = {
   async verifyCanCreate() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.canCreate()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateCreate()
+          .exec()
+
+        return authorPerm.canCreate
       }
     })
 
@@ -27,8 +33,11 @@ const AuthorRouteAuth = {
   async verifyCanUpdate() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.canUpdate()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateUpdate()
+          .exec()
+
+        return authorPerm.canUpdate
       }
     })
 
@@ -38,8 +47,11 @@ const AuthorRouteAuth = {
   async verifyCanDelete() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.canDelete()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateDelete()
+          .exec()
+          
+        return authorPerm.canDelete
       }
     })
 
@@ -49,8 +61,11 @@ const AuthorRouteAuth = {
   async verifyCanView() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.canView()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateView()
+          .exec()
+
+        return authorPerm.canView
       }
     })
 
@@ -60,8 +75,11 @@ const AuthorRouteAuth = {
   async verifyCanExportExcelListAll() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.canExportExcelListAll()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateExportExcelListAll()
+          .exec()
+
+        return authorPerm.canExportExcelListAll
       }
     })
 
@@ -71,8 +89,11 @@ const AuthorRouteAuth = {
   async verifyCanViewListPage() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.canViewListPage()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateViewListPage()
+          .exec()
+
+        return authorPerm.canViewListPage
       }
     })
 
@@ -82,8 +103,11 @@ const AuthorRouteAuth = {
   async verifyCanRestore() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.canRestore()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateRestore()
+          .exec()
+
+        return authorPerm.canRestore
       }
     })
 
@@ -93,8 +117,11 @@ const AuthorRouteAuth = {
   async verifyDataCanDeleted() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const authorPerm = new AuthorPerm(session)
-        return await authorPerm.verifyDataCanDeleted()
+        const authorPerm = await AuthorPerm.validation(session)
+          .validateDataCanDeleted()
+          .exec()
+
+        return authorPerm.verifyDataCanDeleted
       }
     })
 
