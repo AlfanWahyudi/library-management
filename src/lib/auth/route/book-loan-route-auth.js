@@ -5,8 +5,11 @@ const BookLoanRouteAuth = {
   async verifyCanCreate() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const blPerm = new BookLoanPerm(session)
-        return await blPerm.canCreate()
+        const blPerm = await BookLoanPerm.validation(session)
+          .validateCreate()
+          .exec()
+
+        return blPerm.canCreate
       }
     })
 
@@ -16,19 +19,11 @@ const BookLoanRouteAuth = {
   async verifyCanView() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const blPerm = new BookLoanPerm(session)
-        return await blPerm.canView()
-      }
-    })
+        const blPerm = await BookLoanPerm.validation(session)
+          .validateView()
+          .exec()
 
-    return userVerified.isValid
-  },
-
-  async verifyCanViewHistory() {
-    const userVerified = await routeHandlerAuth.verifyUser({
-      cbCheckPermission: async (session) => {
-        const blPerm = new BookLoanPerm(session)
-        return await blPerm.canViewHistory()
+        return blPerm.canView
       }
     })
 
@@ -38,8 +33,11 @@ const BookLoanRouteAuth = {
   async verifyCanViewList() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const blPerm = new BookLoanPerm(session)
-        return await blPerm.canViewList()
+        const blPerm = await BookLoanPerm.validation(session)
+          .validateViewList()
+          .exec()
+
+        return blPerm.canViewList
       }
     })
 
@@ -49,8 +47,11 @@ const BookLoanRouteAuth = {
   async verifyCanExportExcelListAll() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const blPerm = new BookLoanPerm(session)
-        return await blPerm.canExportExcelListAll()
+        const blPerm = await BookLoanPerm.validation(session)
+          .validateExportExcelListAll()
+          .exec()
+
+        return blPerm.canExportExcelListAll
       }
     })
 
@@ -60,8 +61,11 @@ const BookLoanRouteAuth = {
   async verifyCanCompleteLoan() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const blPerm = new BookLoanPerm(session)
-        return await blPerm.canCompleteLoan()
+        const blPerm = await BookLoanPerm.validation(session)
+          .validateCompleteLoan()
+          .exec()
+
+        return blPerm.canCompleteLoan
       }
     })
 
@@ -71,8 +75,11 @@ const BookLoanRouteAuth = {
   async verifyCanViewListPage() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const blPerm = new BookLoanPerm(session)
-        return await blPerm.canViewListPage()
+        const blPerm = await BookLoanPerm.validation(session)
+          .validateViewListPage()
+          .exec()
+
+        return blPerm.canViewListPage
       }
     })
 
@@ -82,8 +89,11 @@ const BookLoanRouteAuth = {
   async verifyCanViewListPageHistory() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const blPerm = new BookLoanPerm(session)
-        return await blPerm.canViewListPageHistory()
+        const blPerm = await BookLoanPerm.validation(session)
+          .validateViewListPageHistory()
+          .exec()
+
+        return blPerm.canViewListPageHistory
       }
     })
 

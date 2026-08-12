@@ -5,8 +5,11 @@ const MemberRouteAuth = {
   async verifyCanCreate() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const memPerm = new MemberPerm(session)
-        return await memPerm.canCreate()
+        const memPerm = await MemberPerm.validation(session)
+          .validateCreate()
+          .exec()
+
+        return memPerm.canCreate
       }
     })
 
@@ -16,8 +19,11 @@ const MemberRouteAuth = {
   async verifyCanUpdate() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const memPerm = new MemberPerm(session)
-        return await memPerm.canUpdate()
+        const memPerm = await MemberPerm.validation(session)
+          .validateUpdate()
+          .exec()
+
+        return memPerm.canUpdate
       }
     })
 
@@ -27,8 +33,11 @@ const MemberRouteAuth = {
   async verifyCanView() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const memPerm = new MemberPerm(session)
-        return await memPerm.canView()
+        const memPerm = await MemberPerm.validation(session)
+          .validateView()
+          .exec()
+
+        return memPerm.canView
       }
     })
 
@@ -38,8 +47,11 @@ const MemberRouteAuth = {
   async verifyCanViewList() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const memPerm = new MemberPerm(session)
-        return await memPerm.canViewList()
+        const memPerm = await MemberPerm.validation(session)
+          .validateViewList()
+          .exec()
+
+        return memPerm.canViewList
       }
     })
 
@@ -49,8 +61,11 @@ const MemberRouteAuth = {
   async verifyCanExportExcelListAll() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const memPerm = new MemberPerm(session)
-        return await memPerm.canExportExcelListAll()
+        const memPerm = await MemberPerm.validation(session)
+          .validateExportExcelListAll()
+          .exec()
+
+        return memPerm.canExportExcelListAll
       }
     })
 
@@ -60,8 +75,11 @@ const MemberRouteAuth = {
   async verifyCanViewListPage() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const memPerm = new MemberPerm(session)
-        return await memPerm.canViewListPage()
+        const memPerm = await MemberPerm.validation(session)
+          .validateViewListPage()
+          .exec()
+
+        return memPerm.canViewListPage
       }
     })
 
@@ -71,8 +89,11 @@ const MemberRouteAuth = {
   async verifyCanFindDup() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const memPerm = new MemberPerm(session)
-        return await memPerm.canFindDup()
+        const memPerm = await MemberPerm.validation(session)
+          .validateFindDup()
+          .exec()
+
+        return memPerm.canFindDup
       }
     })
 
@@ -82,8 +103,11 @@ const MemberRouteAuth = {
   async verifyCanViewListSearchableInclLoan() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const memPerm = new MemberPerm(session)
-        return await memPerm.canViewListSearchableInclLoan()
+        const memPerm = await MemberPerm.validation(session)
+          .validateViewListSearchableInclLoan()
+          .exec()
+
+        return memPerm.canViewListSearchableInclLoan
       }
     })
 

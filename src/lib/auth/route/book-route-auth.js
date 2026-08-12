@@ -5,8 +5,11 @@ const BookRouteAuth = {
   async verifyCanCreate() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canCreate()
+        const bookPerm = await BookPerm.validation(session)
+          .validateCreate()
+          .exec()
+
+        return bookPerm.canCreate
       }
     })
 
@@ -16,8 +19,11 @@ const BookRouteAuth = {
   async verifyCanUpdate() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canUpdate()
+        const bookPerm = await BookPerm.validation(session)
+          .validateUpdate()
+          .exec()
+          
+        return bookPerm.canUpdate
       }
     })
 
@@ -27,8 +33,11 @@ const BookRouteAuth = {
   async verifyCanDelete() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canDelete()
+        const bookPerm = await BookPerm.validation(session)
+          .validateDelete()
+          .exec()
+          
+        return bookPerm.canDelete
       }
     })
 
@@ -38,8 +47,11 @@ const BookRouteAuth = {
   async verifyCanView() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canView()
+        const bookPerm = await BookPerm.validation(session)
+          .validateView()
+          .exec()
+          
+        return bookPerm.canView
       }
     })
 
@@ -49,8 +61,11 @@ const BookRouteAuth = {
   async verifyCanViewList() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canViewList()
+        const bookPerm = await BookPerm.validation(session)
+          .validateViewList()
+          .exec()
+          
+        return bookPerm.canViewList
       }
     })
 
@@ -60,8 +75,11 @@ const BookRouteAuth = {
   async verifyCanViewListPage() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canViewListPage()
+        const bookPerm = await BookPerm.validation(session)
+          .validateViewListPage()
+          .exec()
+          
+        return bookPerm.canViewListPage
       }
     })
 
@@ -71,8 +89,11 @@ const BookRouteAuth = {
   async verifyCanFindDup() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canFindDup()
+        const bookPerm = await BookPerm.validation(session)
+          .validateFindDup()
+          .exec()
+          
+        return bookPerm.canFindDup
       }
     })
 
@@ -82,8 +103,11 @@ const BookRouteAuth = {
   async verifyCanViewListInclLoan() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canViewListInclLoan()
+        const bookPerm = await BookPerm.validation(session)
+          .validateViewListInclLoan()
+          .exec()
+          
+        return bookPerm.canViewListInclLoan
       }
     })
 
@@ -93,8 +117,11 @@ const BookRouteAuth = {
   async verifyCanRestore() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.canRestore()
+        const bookPerm = await BookPerm.validation(session)
+          .validateRestore()
+          .exec()
+          
+        return bookPerm.canRestore
       }
     })
 
@@ -104,8 +131,11 @@ const BookRouteAuth = {
   async verifyDataCanDeleted() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const bookPerm = new BookPerm(session)
-        return await bookPerm.verifyDataCanDeleted()
+        const bookPerm = await BookPerm.validation(session)
+          .validateDataCanDeleted()
+          .exec()
+          
+        return bookPerm.verifyDataCanDeleted
       }
     })
 

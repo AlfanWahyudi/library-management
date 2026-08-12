@@ -3,26 +3,68 @@ import Authorize from "../authorize"
 
 class UserPerm {
   #session
+  #viewOwnUserPromise
+  #updateOwnUsernamePromise
+  #updateOwnUserPromise
+  #findDupPromise
 
   constructor(session) {
     this.#session = session
   }
 
-  async canViewOwnUser() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_OWN_USER, this.#session)
+  static validation(session) {
+    return new UserPerm(session)
   }
 
-  async canUpdateOwnUsername() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.UPD_OWN_USERNAME, this.#session)
-
+  validateViewOwnUser() {
+    this.#viewOwnUserPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_OWN_USER, this.#session)
+    return this
   }
 
-  async canUpdateOwnUser() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.UPD_OWN_USER, this.#session)
+  validateUpdateOwnUsername() {
+    this.#updateOwnUsernamePromise = Authorize.verifyPermissionBySession(USER_PERMISSION.UPD_OWN_USERNAME, this.#session)
+    return this
   }
 
-  async canFindDup() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.FIND_DUP_USER, this.#session)
+  validateUpdateOwnUser() {
+    this.#updateOwnUserPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.UPD_OWN_USER, this.#session)
+    return this
+  }
+
+  validateFindDup() {
+    this.#findDupPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.FIND_DUP_USER, this.#session)
+    return this
+  }
+
+  async exec() {
+    const result = {}
+
+    const [
+      canViewOwnUser,
+      canUpdateOwnUsername,
+      canUpdateOwnUser,
+      canFindDup,
+    ] = await Promise.all([
+      this.#viewOwnUserPromise,
+      this.#updateOwnUsernamePromise,
+      this.#updateOwnUserPromise,
+      this.#findDupPromise,
+    ])
+
+    if (canViewOwnUser !== undefined) {
+      result.canViewOwnUser = canViewOwnUser
+    }
+    if (canUpdateOwnUsername !== undefined) {
+      result.canUpdateOwnUsername = canUpdateOwnUsername
+    }
+    if (canUpdateOwnUser !== undefined) {
+      result.canUpdateOwnUser = canUpdateOwnUser
+    }
+    if (canFindDup !== undefined) {
+      result.canFindDup = canFindDup
+    }
+
+    return result
   }
 
 }

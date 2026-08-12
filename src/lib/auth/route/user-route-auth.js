@@ -5,8 +5,11 @@ const UserRouteAuth = {
   async verifyCanUpdateOwnUsername() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const usrPerm = new UserPerm(session)
-        return await usrPerm.canUpdateOwnUsername()
+        const usrPerm = await UserPerm.validation(session)
+          .validateUpdateOwnUsername()
+          .exec()
+
+        return usrPerm.canUpdateOwnUsername
       }
     })
 
@@ -16,8 +19,11 @@ const UserRouteAuth = {
   async verifyCanUpdateOwnUser() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const usrPerm = new UserPerm(session)
-        return await usrPerm.canUpdateOwnUser()
+        const usrPerm = await UserPerm.validation(session)
+          .validateUpdateOwnUser()
+          .exec()
+
+        return usrPerm.canUpdateOwnUser
       }
     })
 
@@ -27,8 +33,11 @@ const UserRouteAuth = {
   async verifyCanFindDup() {
     const userVerified = await routeHandlerAuth.verifyUser({
       cbCheckPermission: async (session) => {
-        const usrPerm = new UserPerm(session)
-        return await usrPerm.canFindDup()
+        const usrPerm = await UserPerm.validation(session)
+          .validateFindDup()
+          .exec()
+
+        return usrPerm.canFindDup
       }
     })
 

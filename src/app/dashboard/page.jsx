@@ -12,22 +12,6 @@ import BookLoanService from "@/lib/services/book-loan-service"
 import BookService from "@/lib/services/book-service"
 import MemberService from "@/lib/services/member-service"
 
-const validatePerm = async (session) => {
-  const bookPerm = new BookPerm(session)
-  const blPerm = new BookLoanPerm(session)
-  const memberPerm = new MemberPerm(session)
-
-  return {
-    canViewTotalBook: await bookPerm.canViewTotalBook(),
-    canViewTotalBl: await blPerm.canViewTotal(),
-    canViewTotalMem: await memberPerm.canViewTotal(),
-    canViewLoanYearAll: await blPerm.canViewTotalYearAll(),
-    canViewTopTenMemLoan: await memberPerm.canViewTopTenLoanBook(),
-    canViewTopTenLoanedBook: await bookPerm.canViewTopTenLoanedBook() ,
-  }
-
-}
-
 const fetchDataWithPerm = async ({
   canViewTotalBook,
   canViewTotalBl,
@@ -81,7 +65,20 @@ export default async function DashboardPage({}) {
   const auth = await Auth.validateSession()
   const session = auth.getSession()
 
-  const permission = await validatePerm(session)
+  const bookPerm = await BookPerm.validation(session)
+    .validateViewTotalBook()
+    .validateViewTopTenLoanedBook()
+    .exec()
+
+  const blPerm = await BookLoanPerm.validation(session)
+    .validateViewTotal()
+    .validateViewTotalYearAll()
+    .exec()
+  
+  const memberPerm = await MemberPerm.validation(session)
+    .validateViewTotal()
+    .validateViewTopTenLoanBook()
+    .exec()
 
   const {
     totalBook,
@@ -90,9 +87,16 @@ export default async function DashboardPage({}) {
     bookLoanTotalCompAll,
     memberTopTenLoan,
     bookTopTenLoaned,
-  } = await fetchDataWithPerm(permission)
+  } = await fetchDataWithPerm({
+    canViewLoanYearAll: blPerm.canViewTotalYearAll,
+    canViewTopTenLoanedBook: bookPerm.canViewTopTenLoanedBook,
+    canViewTopTenMemLoan: memberPerm.canViewTopTenLoanBook,
+    canViewTotalBl: blPerm.canViewTotal,
+    canViewTotalBook: bookPerm.canViewTotalBook,
+    canViewTotalMem: memberPerm.canViewTotal,
+  })
 
-  const setMaxWidthCardTotalDash = permission.canViewLoanYearAll ? 'lg:max-w-[17rem]' : ''
+  const setMaxWidthCardTotalDash = blPerm.canViewTotalYearAll ? 'lg:max-w-[17rem]' : ''
 
   return (
     <section>
@@ -102,15 +106,15 @@ export default async function DashboardPage({}) {
       <section className="flex flex-col gap-5">
         <div className="flex flex-col gap-5 lg:flex-row">
           <CardTotalDash 
-            canViewTotalBook={permission.canViewTotalBook}
-            canViewTotalMember={permission.canViewTotalMem}
-            canViewTotalBookLoan={permission.canViewTotalBl}
+            canViewTotalBook={bookPerm.canViewTotalBook}
+            canViewTotalMember={memberPerm.canViewTotal}
+            canViewTotalBookLoan={blPerm.canViewTotal}
             totalBookLoan={totalBookLoan}
             totalMember={totalMember}
             totalBook={totalBook}
             className={`flex-1 ${setMaxWidthCardTotalDash}`}
           />
-          {permission.canViewLoanYearAll && (
+          {blPerm.canViewTotalYearAll && (
             <CardLoanYearAllDash 
               bookLoanTotalCompAll={bookLoanTotalCompAll}
               className="flex-1" 
@@ -118,13 +122,13 @@ export default async function DashboardPage({}) {
           }
         </div>
         <div className="flex flex-col gap-5 lg:flex-row">
-          {permission.canViewTopTenMemLoan && (
+          {memberPerm.canViewTopTenLoanBook && (
             <CardTopTenMemberLoan
               memberTopTenLoan={memberTopTenLoan}
               className="flex-1"
             />
           )}
-          {permission.canViewTopTenLoanedBook && (
+          {bookPerm.canViewTopTenLoanedBook && (
             <CardTopTenLoanedBook 
               bookTopTenLoaned={bookTopTenLoaned}
               className="flex-1"

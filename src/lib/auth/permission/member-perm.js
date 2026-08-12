@@ -4,48 +4,134 @@ import Authorize from "../authorize"
 class MemberPerm {
   #session
 
+  #createPromise
+  #updatePromise
+  #viewPromise
+  #viewListPagePromise
+  #findDupPromise
+  #viewTopTenLoanBookPromise
+  #viewListPromise
+  #viewTotalPromise
+  #exportExcelListAllPromise
+  #viewListSearchableInclLoanPromise
+
   constructor(session) {
     this.#session = session
   }
 
-  async canCreate() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.CRE_MEMBER, this.#session)
+  static validation(session) {
+    return new MemberPerm(session)
   }
 
-  async canUpdate() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.UPD_MEMBER, this.#session)
+  validateCreate() {
+    this.#createPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.CRE_MEMBER, this.#session)
+    return this
   }
 
-  async canView() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_MEMBER, this.#session)
+  validateUpdate() {
+    this.#updatePromise = Authorize.verifyPermissionBySession(USER_PERMISSION.UPD_MEMBER, this.#session)
+    return this
+  }
+
+  validateView() {
+    this.#viewPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_MEMBER, this.#session)
+    return this
   } 
 
-  async canViewTopTenLoanBook() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOP_TEN_LOAN_BOOK_MEM, this.#session)
+  validateViewTopTenLoanBook() {
+    this.#viewTopTenLoanBookPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOP_TEN_LOAN_BOOK_MEM, this.#session)
+    return this
   } 
 
-  async canViewList() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_MEMBER, this.#session)
+  validateViewList() {
+    this.#viewListPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_MEMBER, this.#session)
+    return this
   }
 
-  async canViewTotal() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOTAL_MEMBER, this.#session)
+  validateViewTotal() {
+    this.#viewTotalPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOTAL_MEMBER, this.#session)
+    return this
   }
 
-  async canExportExcelListAll() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.EXPORT_EXCEL_LIST_ALL_MEMBER, this.#session)
+  validateExportExcelListAll() {
+    this.#exportExcelListAllPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.EXPORT_EXCEL_LIST_ALL_MEMBER, this.#session)
+    return this
   }
 
-  async canViewListPage() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_MEMBER, this.#session)
+  validateViewListPage() {
+    this.#viewListPagePromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_MEMBER, this.#session)
+    return this
   }
 
-  async canFindDup() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.FIND_DUP_MEMBER, this.#session)
+  validateFindDup() {
+    this.#findDupPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.FIND_DUP_MEMBER, this.#session)
+    return this
   }
 
-  async canViewListSearchableInclLoan() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_SEARCHABLE_INCL_LOAN_MEMBER, this.#session)
+  validateViewListSearchableInclLoan() {
+    this.#viewListSearchableInclLoanPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_SEARCHABLE_INCL_LOAN_MEMBER, this.#session)
+    return this
+  }
+
+  async exec() {
+    const result = {}
+
+    const [
+      canCreate,
+      canUpdate,
+      canView,
+      canViewListPage,
+      canFindDup,
+      canViewTopTenLoanBook,
+      canViewList,
+      canViewTotal,
+      canExportExcelListAll,
+      canViewListSearchableInclLoan,
+    ] = await Promise.all([
+      this.#createPromise,
+      this.#updatePromise,
+      this.#viewPromise,
+      this.#viewListPagePromise,
+      this.#findDupPromise,
+      this.#viewTopTenLoanBookPromise,
+      this.#viewListPromise,
+      this.#viewTotalPromise,
+      this.#exportExcelListAllPromise,
+      this.#viewListSearchableInclLoanPromise,
+    ])
+
+    if (canCreate !== undefined) {
+      result.canCreate = canCreate
+    }
+    if (canUpdate !== undefined) {
+      result.canUpdate = canUpdate
+    }
+    if (canView !== undefined) {
+      result.canView = canView
+    }
+    if (canViewListPage !== undefined) {
+      result.canViewListPage = canViewListPage
+    }
+    if (canFindDup !== undefined) {
+      result.canFindDup = canFindDup
+    }
+    if (canViewTopTenLoanBook !== undefined) {
+      result.canViewTopTenLoanBook = canViewTopTenLoanBook
+    }
+    if (canViewList !== undefined) {
+      result.canViewList = canViewList
+    }
+    if (canViewTotal !== undefined) {
+      result.canViewTotal = canViewTotal
+    }
+    if (canExportExcelListAll !== undefined) {
+      result.canExportExcelListAll = canExportExcelListAll
+    }
+    if (canViewListSearchableInclLoan !== undefined) {
+      result.canViewListSearchableInclLoan = canViewListSearchableInclLoan
+    }
+
+    return result
   }
 }
 

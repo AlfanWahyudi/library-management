@@ -3,49 +3,134 @@ import Authorize from "../authorize"
 
 class BookLoanPerm {
   #session
+  #createPromise
+  #viewPromise
+  #viewListPromise
+  #exportExcelListAllPromise
+  #viewListPagePromise
+  #viewTotalPromise
+  #viewHistoryPromise
+  #viewTotalYearAllPromise
+  #completeLoanPromise
+  #viewListPageHistoryPromise
 
   constructor(session) {
     this.#session = session
   }
 
-  async canCreate() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.CRE_BOOK_LOAN, this.#session)
+  static validation(session) {
+    return new BookLoanPerm(session)
   }
 
-  async canView() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_BOOK_LOAN, this.#session)
+  validateCreate() {
+    this.#createPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.CRE_BOOK_LOAN, this.#session)
+    return this
+  }
+
+  validateView() {
+    this.#viewPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_BOOK_LOAN, this.#session)
+    return this
   } 
 
-  async canViewTotal() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOTAL_BOOK_LOAN, this.#session)
+  validateViewTotal() {
+    this.#viewTotalPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOTAL_BOOK_LOAN, this.#session)
+    return this
   } 
 
-  async canViewHistory() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_HISTORY_BOOK_LOAN, this.#session)
+  validateViewHistory() {
+    this.#viewHistoryPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_HISTORY_BOOK_LOAN, this.#session)
+    return this
   } 
 
-  async canViewTotalYearAll() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOTAL_YEAR_ALL_BOOK_LOAN, this.#session)
+  validateViewTotalYearAll() {
+    this.#viewTotalYearAllPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOTAL_YEAR_ALL_BOOK_LOAN, this.#session)
+    return this
   }
 
-  async canViewList() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_BOOK_LOAN, this.#session)
+  validateViewList() {
+    this.#viewListPromise =Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_BOOK_LOAN, this.#session)
+    return this
   }
 
-  async canExportExcelListAll() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.EXPORT_EXCEL_LIST_ALL_HISTORY_BOOK_LOAN, this.#session)
+  validateExportExcelListAll() {
+    this.#exportExcelListAllPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.EXPORT_EXCEL_LIST_ALL_HISTORY_BOOK_LOAN, this.#session)
+    return this
   }
 
-  async canCompleteLoan() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.CMP_BOOK_LOAN, this.#session)
+  validateCompleteLoan() {
+    this.#completeLoanPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.CMP_BOOK_LOAN, this.#session)
+    return this
   }
 
-  async canViewListPage() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_BOOK_LOAN, this.#session)
+  validateViewListPage() {
+    this.#viewListPagePromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_BOOK_LOAN, this.#session)
+    return this
   }
 
-  async canViewListPageHistory() {
-    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_HISTORY_BOOK_LOAN, this.#session)
+  validateViewListPageHistory() {
+    this.#viewListPageHistoryPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_HISTORY_BOOK_LOAN, this.#session)
+    return this
+  }
+
+  async exec() {
+    const result = {}
+    
+    const [
+      canCreate,
+      canView,
+      canViewList,
+      canExportExcelListAll,
+      canViewListPage,
+      canViewTotal,
+      canViewHistory,
+      canViewTotalYearAll,
+      canCompleteLoan,
+      canViewListPageHistory
+    ] = await Promise.all([
+        this.#createPromise,
+        this.#viewPromise,
+        this.#viewListPromise,
+        this.#exportExcelListAllPromise,
+        this.#viewListPagePromise,
+        this.#viewTotalPromise,
+        this.#viewHistoryPromise,
+        this.#viewTotalYearAllPromise,
+        this.#completeLoanPromise,
+        this.#viewListPageHistoryPromise,
+    ])
+
+    if (canCreate !== undefined) {
+      result.canCreate = canCreate
+    }
+    if (canView !== undefined) {
+      result.canView = canView
+    }
+    if (canViewList !== undefined) {
+      result.canViewList = canViewList
+    }
+    if (canExportExcelListAll !== undefined) {
+      result.canExportExcelListAll = canExportExcelListAll
+    }
+    if (canViewListPage !== undefined) {
+      result.canViewListPage = canViewListPage
+    }
+    if (canViewTotal !== undefined) {
+      result.canViewTotal = canViewTotal
+    }
+    if (canViewHistory !== undefined) {
+      result.canViewHistory = canViewHistory
+    }
+    if (canViewTotalYearAll !== undefined) {
+      result.canViewTotalYearAll = canViewTotalYearAll
+    }
+    if (canCompleteLoan !== undefined) {
+      result.canCompleteLoan = canCompleteLoan
+    }
+    if (canViewListPageHistory !== undefined) {
+      result.canViewListPageHistory = canViewListPageHistory
+    }
+    
+    return result
   }
 } 
 
