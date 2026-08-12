@@ -56,6 +56,61 @@ const BookRouteAuth = {
 
     return userVerified.isValid
   },
+
+  async verifyCanViewListPage() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const bookPerm = new BookPerm(session)
+        return await bookPerm.canViewListPage()
+      }
+    })
+
+    return userVerified.isValid
+  },
+
+  async verifyCanFindDup() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const bookPerm = new BookPerm(session)
+        return await bookPerm.canFindDup()
+      }
+    })
+
+    return userVerified.isValid
+  },
+
+  async verifyCanViewListInclLoan() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const bookPerm = new BookPerm(session)
+        return await bookPerm.canViewListInclLoan()
+      }
+    })
+
+    return userVerified.isValid
+  },
+
+  async verifyCanRestore() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const bookPerm = new BookPerm(session)
+        return await bookPerm.canRestore()
+      }
+    })
+
+    return userVerified.isValid
+  },
+
+  async verifyDataCanDeleted() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const bookPerm = new BookPerm(session)
+        return await bookPerm.verifyDataCanDeleted()
+      }
+    })
+
+    return userVerified.isValid
+  },
 }
 
 export default BookRouteAuth

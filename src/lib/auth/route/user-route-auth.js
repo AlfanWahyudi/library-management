@@ -24,6 +24,17 @@ const UserRouteAuth = {
     return userVerified.isValid
   },
 
+  async verifyCanFindDup() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const usrPerm = new UserPerm(session)
+        return await usrPerm.canFindDup()
+      }
+    })
+
+    return userVerified.isValid
+  },
+
 }
 
 export default UserRouteAuth

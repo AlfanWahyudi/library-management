@@ -3,7 +3,6 @@ import { createSuccessRes } from "@/lib/dto/res-dto"
 import { authorServerSchema } from "@/lib/schemas/author/author-server-schema"
 import AuthorService from "@/lib/services/author-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 export async function PUT(req, { params }) {

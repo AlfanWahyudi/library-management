@@ -1,4 +1,4 @@
-import routeHandlerAuth from "@/lib/auth/route-handler"
+import MemberRouteAuth from "@/lib/auth/route/member-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import MemberService from "@/lib/services/member-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
@@ -7,9 +7,8 @@ import { NextResponse } from "next/server"
 const fields = ['email', 'phone']
 
 export async function GET(req) {
-  // TODO: permission intuk route handler ini tambah di DB
   try {
-    await routeHandlerAuth.verifySession()
+    await MemberRouteAuth.verifyCanFindDup()
 
     const searchParams = req.nextUrl.searchParams
 

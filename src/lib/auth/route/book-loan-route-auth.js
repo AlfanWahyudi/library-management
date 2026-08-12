@@ -67,6 +67,28 @@ const BookLoanRouteAuth = {
 
     return userVerified.isValid
   },
+
+  async verifyCanViewListPage() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const blPerm = new BookLoanPerm(session)
+        return await blPerm.canViewListPage()
+      }
+    })
+
+    return userVerified.isValid
+  },
+
+  async verifyCanViewListPageHistory() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const blPerm = new BookLoanPerm(session)
+        return await blPerm.canViewListPageHistory()
+      }
+    })
+
+    return userVerified.isValid
+  },
 }
 
 export default BookLoanRouteAuth

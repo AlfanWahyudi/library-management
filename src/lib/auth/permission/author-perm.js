@@ -31,6 +31,19 @@ class AuthorPerm {
   async canExportExcelListAll() {
     return await Authorize.verifyPermissionBySession(USER_PERMISSION.EXPORT_EXCEL_LIST_ALL_AUTHOR, this.#session)
   }
+
+  async canViewListPage() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_AUTHOR, this.#session)
+  }
+
+  async canRestore() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.RESTORE_AUTHOR, this.#session)
+  }
+
+  async verifyDataCanDeleted() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VERIFY_CAN_DEL_DATA_AUTHOR)
+  }
+
 }
 
 export default AuthorPerm

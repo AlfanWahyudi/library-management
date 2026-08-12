@@ -35,6 +35,26 @@ class BookPerm {
   async canViewTotalBook() {
     return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOTAL_BOOK, this.#session)
   }
+
+  async canViewListPage() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_BOOK)
+  }
+
+  async canFindDup() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.FIND_DUP_BOOK)
+  }
+
+  async canViewListInclLoan() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_INCL_LOAN_BOOK)
+  }
+
+  async canRestore() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.RESTORE_BOOK)
+  }
+
+  async verifyDataCanDeleted() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VERIFY_CAN_DEL_DATA_BOOK)
+  }
 }
 
 export default BookPerm

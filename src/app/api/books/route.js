@@ -4,12 +4,11 @@ import { bookServerSchema } from "@/lib/schemas/book/book-server-schema";
 import { dataTableParamSchema } from "@/lib/schemas/datatable-param-schema";
 import BookService from "@/lib/services/book-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
-    await BookRouteAuth.verifyCanViewList()
+    await BookRouteAuth.verifyCanViewListPage()
 
     const searchParams = req.nextUrl.searchParams
 

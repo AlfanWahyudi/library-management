@@ -35,6 +35,18 @@ class MemberPerm {
   async canExportExcelListAll() {
     return await Authorize.verifyPermissionBySession(USER_PERMISSION.EXPORT_EXCEL_LIST_ALL_MEMBER, this.#session)
   }
+
+  async canViewListPage() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_MEMBER, this.#session)
+  }
+
+  async canFindDup() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.FIND_DUP_MEMBER, this.#session)
+  }
+
+  async canViewListSearchableInclLoan() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_SEARCHABLE_INCL_LOAN_MEMBER, this.#session)
+  }
 }
 
 export default MemberPerm

@@ -1,16 +1,14 @@
-import routeHandlerAuth from "@/lib/auth/route-handler"
+import UserRouteAuth from "@/lib/auth/route/user-route-auth"
 import SessionDAL from "@/lib/dal/session-dal"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import UserService from "@/lib/services/user-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 
 export async function GET(req) {
-  // TODO: permission intuk route handler ini tambah di DB
   try {
-    await routeHandlerAuth.verifySession()
+    await UserRouteAuth.verifyCanFindDup()
 
     const searchParams = req.nextUrl.searchParams
 

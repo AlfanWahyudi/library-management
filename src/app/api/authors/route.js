@@ -9,7 +9,7 @@ import { NextResponse } from "next/server";
 // get paginated list 
 export async function GET(req) {
   try {
-    await AuthorRouteAuth.verifyCanViewList()
+    await AuthorRouteAuth.verifyCanViewListPage()
 
     const searchParams = req.nextUrl.searchParams
     const query = {

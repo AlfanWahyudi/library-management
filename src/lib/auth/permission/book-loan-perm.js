@@ -35,6 +35,14 @@ class BookLoanPerm {
   async canCompleteLoan() {
     return await Authorize.verifyPermissionBySession(USER_PERMISSION.CMP_BOOK_LOAN, this.#session)
   }
+
+  async canViewListPage() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_BOOK_LOAN, this.#session)
+  }
+
+  async canViewListPageHistory() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_HISTORY_BOOK_LOAN, this.#session)
+  }
 } 
 
 export default BookLoanPerm

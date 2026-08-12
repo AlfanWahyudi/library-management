@@ -21,6 +21,10 @@ class UserPerm {
     return await Authorize.verifyPermissionBySession(USER_PERMISSION.UPD_OWN_USER, this.#session)
   }
 
+  async canFindDup() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.FIND_DUP_USER, this.#session)
+  }
+
 }
 
 export default UserPerm

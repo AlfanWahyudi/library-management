@@ -5,12 +5,11 @@ import { memberDataTableParamSchema } from "@/lib/schemas/member/member-datatabl
 import { memberServerSchema } from "@/lib/schemas/member/member-server-schema";
 import MemberService from "@/lib/services/member-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
-    await MemberRouteAuth.verifyCanViewList()
+    await MemberRouteAuth.verifyCanViewListPage()
 
     const searchParams = req.nextUrl.searchParams
 

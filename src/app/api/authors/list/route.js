@@ -1,9 +1,8 @@
 import AuthorRouteAuth from "@/lib/auth/route/author-route-auth";
-import { createErrorRes, createSuccessRes } from "@/lib/dto/res-dto"
+import { createSuccessRes } from "@/lib/dto/res-dto"
 import { listSchema } from "@/lib/schemas/list-schema";
 import AuthorService from "@/lib/services/author-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {

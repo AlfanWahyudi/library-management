@@ -1,14 +1,13 @@
-import routeHandlerAuth from "@/lib/auth/route-handler"
+import BookRouteAuth from "@/lib/auth/route/book-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import BookService from "@/lib/services/book-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 export async function GET(req, { params }) {
   // TODO: permission intuk route handler ini tambah di DB
   try {
-    await routeHandlerAuth.verifySession()
+    await BookRouteAuth.verifyDataCanDeleted()
 
     const { id } = await params
 

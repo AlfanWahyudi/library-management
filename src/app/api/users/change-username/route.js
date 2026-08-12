@@ -2,7 +2,6 @@ import UserRouteAuth from "@/lib/auth/route/user-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import UserService from "@/lib/services/user-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 export async function PUT(req) {

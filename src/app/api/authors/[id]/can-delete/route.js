@@ -1,18 +1,15 @@
-import routeHandlerAuth from "@/lib/auth/route-handler"
+import AuthorRouteAuth from "@/lib/auth/route/author-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import AuthorService from "@/lib/services/author-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 
 export async function GET(req, { params }) {
   try {
-    // TODO: permission intuk route handler ini tambah di DB
-    await routeHandlerAuth.verifySession()
+    await AuthorRouteAuth.verifyDataCanDeleted()
 
     const { id } = await params
-
     const authorCanDelete = await AuthorService.canDataDeleted({ id: parseInt(id)})
 
     return NextResponse.json(

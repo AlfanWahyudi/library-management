@@ -2,11 +2,9 @@ import BookRouteAuth from "@/lib/auth/route/book-route-auth";
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import AuthorService from "@/lib/services/author-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
-  // TODO: tambahkan validasi untuk mengecek data buku, dari file BookRouteAuth
   try {
     await BookRouteAuth.verifyCanViewList()
 

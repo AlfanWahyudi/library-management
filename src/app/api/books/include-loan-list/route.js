@@ -1,15 +1,13 @@
-import routeHandlerAuth from "@/lib/auth/route-handler";
+import BookRouteAuth from "@/lib/auth/route/book-route-auth";
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import { listSchema } from "@/lib/schemas/list-schema";
 import BookService from "@/lib/services/book-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
-  // TODO: permission intuk route handler ini tambah di DB
   try {
-    await routeHandlerAuth.verifySession()
+    await BookRouteAuth.verifyCanViewListInclLoan()
 
     const params = req.nextUrl.searchParams
     const orderBy = params.get('orderBy') || 'title'

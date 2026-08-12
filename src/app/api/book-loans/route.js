@@ -9,7 +9,7 @@ import BookLoanRouteAuth from "@/lib/auth/route/book-loan-route-auth";
 
 export async function GET(req) {
   try {
-    await BookLoanRouteAuth.verifyCanViewList()
+    await BookLoanRouteAuth.verifyCanViewListPage()
 
     const searchParams = req.nextUrl.searchParams
 

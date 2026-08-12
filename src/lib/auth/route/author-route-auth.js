@@ -67,6 +67,39 @@ const AuthorRouteAuth = {
 
     return userVerified.isValid
   },
+
+  async verifyCanViewListPage() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const authorPerm = new AuthorPerm(session)
+        return await authorPerm.canViewListPage()
+      }
+    })
+
+    return userVerified.isValid
+  },
+
+  async verifyCanRestore() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const authorPerm = new AuthorPerm(session)
+        return await authorPerm.canRestore()
+      }
+    })
+
+    return userVerified.isValid
+  },
+
+  async verifyDataCanDeleted() {
+    const userVerified = await routeHandlerAuth.verifyUser({
+      cbCheckPermission: async (session) => {
+        const authorPerm = new AuthorPerm(session)
+        return await authorPerm.verifyDataCanDeleted()
+      }
+    })
+
+    return userVerified.isValid
+  },
 }
 
 export default AuthorRouteAuth
