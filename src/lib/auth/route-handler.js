@@ -5,21 +5,21 @@ import Auth from "./auth"
 const routeHandlerAuth = {
   isValid: false,
 
-  async verifySession(errUnauthorize = MESSAGE.UNAUTHORIZE_ROUTE_ERR) {
-    const auth = await Auth.validateSession(errUnauthorize)
+  async verifySession(errUnauthorizeMsg = MESSAGE.UNAUTHORIZE_ROUTE_ERR) {
+    const auth = await Auth.validateSession(errUnauthorizeMsg)
     return auth.getSession()
   },
 
   async verifyUser({
     cbCheckPermission = async (session) => false, 
-    errUnauthorize = MESSAGE.UNAUTHORIZE_ROUTE_ERR, 
-    errForbidden = MESSAGE.FORBIDDEN_ROUTE_ERR
+    errUnauthorizeMsg = MESSAGE.UNAUTHORIZE_ROUTE_ERR, 
+    errForbiddenMsg = MESSAGE.FORBIDDEN_ROUTE_ERR
   }) {
-    const session = await this.verifySession(errUnauthorize)
+    const session = await this.verifySession(errUnauthorizeMsg)
 
     const hasPermission = await cbCheckPermission(session)
     if (!hasPermission) {
-      throw new ForbiddenError(errForbidden)
+      throw new ForbiddenError(errForbiddenMsg)
     }
 
     this.isValid = true
