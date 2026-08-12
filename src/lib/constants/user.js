@@ -5,6 +5,7 @@ export const USER_ROLE = {
   VIEWER: '3'
 }
 
+// TODO: tambahin permission untuk cek data countries
 export const USER_PERMISSION = {
  CRE_MEMBER: 'create_member',
  UPD_MEMBER: 'update_member',

@@ -1,3 +1,4 @@
+import BookRouteAuth from "@/lib/auth/route/book-route-auth";
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import { bookServerSchema } from "@/lib/schemas/book/book-server-schema";
 import { dataTableParamSchema } from "@/lib/schemas/datatable-param-schema";
@@ -8,7 +9,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await BookRouteAuth.verifyCanViewList()
 
     const searchParams = req.nextUrl.searchParams
 
@@ -43,7 +44,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await BookRouteAuth.verifyCanCreate()
 
     const body = await req.json()
     const parsed = bookServerSchema.parse(body)

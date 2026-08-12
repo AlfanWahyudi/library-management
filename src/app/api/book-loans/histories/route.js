@@ -4,11 +4,12 @@ import BookLoanService from "@/lib/services/book-loan-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
 import { NextResponse } from "next/server";
 import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
+import BookLoanRouteAuth from "@/lib/auth/route/book-loan-route-auth";
 
 
 export async function GET(req) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await BookLoanRouteAuth.verifyCanViewHistory()
 
     const searchParams = req.nextUrl.searchParams
 

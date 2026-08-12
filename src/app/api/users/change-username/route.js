@@ -1,3 +1,4 @@
+import UserRouteAuth from "@/lib/auth/route/user-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import UserService from "@/lib/services/user-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
@@ -6,7 +7,7 @@ import { NextResponse } from "next/server"
 
 export async function PUT(req) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await UserRouteAuth.verifyCanUpdateOwnUsername()
 
     const body = await req.json()
 

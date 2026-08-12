@@ -1,15 +1,15 @@
-import SessionDAL from "@/lib/dal/session-dal"
+import routeHandlerAuth from "@/lib/auth/route-handler"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import MemberService from "@/lib/services/member-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 const fields = ['email', 'phone']
 
 export async function GET(req) {
+  // TODO: permission intuk route handler ini tambah di DB
   try {
-    await checkUserAlreadyLoggedIn()
+    await routeHandlerAuth.verifySession()
 
     const searchParams = req.nextUrl.searchParams
 

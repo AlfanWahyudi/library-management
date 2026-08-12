@@ -37,7 +37,11 @@ const UserDAL = {
     return await sql`
       select 
         r.id,
-        r.name
+        r.name,
+        r.created_at,
+        r.updated_at,
+        r.created_by,
+        r.updated_by
       from user_roles ur 
       join users u ON ur.user_id = u.id
       join roles r ON ur.role_id = r.id 
@@ -122,7 +126,7 @@ const UserDAL = {
         ${ dataNotDeleted() }
       RETURNING *
     `
-  }
+  },
 }
 
 export default UserDAL

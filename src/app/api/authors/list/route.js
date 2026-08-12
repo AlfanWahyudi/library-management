@@ -1,3 +1,4 @@
+import AuthorRouteAuth from "@/lib/auth/route/author-route-auth";
 import { createErrorRes, createSuccessRes } from "@/lib/dto/res-dto"
 import { listSchema } from "@/lib/schemas/list-schema";
 import AuthorService from "@/lib/services/author-service";
@@ -7,7 +8,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await AuthorRouteAuth.verifyCanViewList()
 
     const params = req.nextUrl.searchParams
     const orderBy = params.get('orderBy') || 'full_name'

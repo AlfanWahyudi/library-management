@@ -1,14 +1,14 @@
+import MemberRouteAuth from "@/lib/auth/route/member-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import { memberServerSchema } from "@/lib/schemas/member/member-server-schema"
 import MemberService from "@/lib/services/member-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 
 export async function PUT(req, { params }) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await MemberRouteAuth.verifyCanUpdate()
 
     const { id } = await params
     const body = await req.json()

@@ -1,3 +1,6 @@
+import Auth from "@/lib/auth/auth"
+import routeHandlerAuth from "@/lib/auth/route-handler"
+import { MESSAGE } from "@/lib/constants/message"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import AuthorService from "@/lib/services/author-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
@@ -5,8 +8,9 @@ import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
 import { NextResponse } from "next/server"
 
 export async function PUT(req, { params }) {
+  // TODO: permission intuk route handler ini tambah di DB
   try {
-    await checkUserAlreadyLoggedIn()
+    await routeHandlerAuth.verifySession()
 
     const { id } = await params
 

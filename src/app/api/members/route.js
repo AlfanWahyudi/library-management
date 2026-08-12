@@ -1,3 +1,4 @@
+import MemberRouteAuth from "@/lib/auth/route/member-route-auth";
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import { dataTableParamSchema } from "@/lib/schemas/datatable-param-schema";
 import { memberDataTableParamSchema } from "@/lib/schemas/member/member-datatable-param-schema";
@@ -9,7 +10,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await MemberRouteAuth.verifyCanViewList()
 
     const searchParams = req.nextUrl.searchParams
 
@@ -52,7 +53,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await MemberRouteAuth.verifyCanCreate()
 
     const body = await req.json()
     const parsed = memberServerSchema.parse(body)

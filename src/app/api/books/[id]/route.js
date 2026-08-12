@@ -1,3 +1,4 @@
+import BookRouteAuth from "@/lib/auth/route/book-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import { bookServerSchema } from "@/lib/schemas/book/book-server-schema"
 import BookService from "@/lib/services/book-service"
@@ -8,7 +9,7 @@ import { NextResponse } from "next/server"
 
 export async function GET(req, { params }) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await BookRouteAuth.verifyCanView()
 
     const { id } = await params
 
@@ -31,7 +32,7 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await BookRouteAuth.verifyCanUpdate()
 
     const { id } = await params
     const body = await req.json()
@@ -56,7 +57,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await BookRouteAuth.verifyCanDelete()
 
     const { id } = await params
 

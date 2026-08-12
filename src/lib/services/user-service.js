@@ -33,6 +33,16 @@ const UserService = {
     return isMatch
   },
 
+  getByUsername: async (username) => {
+    const [user] = await UserDAL.getByUsername(sql, username)
+    
+    if (!user) {
+      throw new NotFoundError('username', 'username is not found')
+    }
+
+    return createUserDTO(user)
+  },
+
   getById: async (id) => {
     const [user] = await UserDAL.getById(sql, id)
 

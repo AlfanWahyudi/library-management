@@ -5,9 +5,8 @@ import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
+  // TODO: tambahkan validasi untuk mengecek data buku, dari file BookRouteAuth
   try {
-    await checkUserAlreadyLoggedIn()
-
     const { id } = await params
 
     const books = await AuthorService.getBooks({ id: parseInt(id) })

@@ -1,3 +1,4 @@
+import BookLoanRouteAuth from "@/lib/auth/route/book-loan-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import BookLoanService from "@/lib/services/book-loan-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
@@ -6,7 +7,7 @@ import { NextResponse } from "next/server"
 
 export async function PUT(req, { params }) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await BookLoanRouteAuth.verifyCanCompleteLoan()
 
     const { id } = await params
 

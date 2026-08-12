@@ -1,6 +1,6 @@
 import 'server-only'
 
-const tblName = 'role_permissions'
+const tableName = 'role_permissions'
 
 const RolePermissionDAL = {
   getSpecificItems: async (sql, roleId, permissionName) => {
@@ -19,5 +19,5 @@ const RolePermissionDAL = {
 export default RolePermissionDAL
 
 export {
-  tblName
+  tableName
 }

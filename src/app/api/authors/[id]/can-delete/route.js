@@ -1,3 +1,4 @@
+import routeHandlerAuth from "@/lib/auth/route-handler"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import AuthorService from "@/lib/services/author-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
@@ -7,7 +8,8 @@ import { NextResponse } from "next/server"
 
 export async function GET(req, { params }) {
   try {
-    await checkUserAlreadyLoggedIn()
+    // TODO: permission intuk route handler ini tambah di DB
+    await routeHandlerAuth.verifySession()
 
     const { id } = await params
 

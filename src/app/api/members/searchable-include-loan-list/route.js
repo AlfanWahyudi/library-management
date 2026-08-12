@@ -1,13 +1,14 @@
+import routeHandlerAuth from "@/lib/auth/route-handler";
 import { createSuccessRes } from "@/lib/dto/res-dto";
 import { searchableListSchema } from "@/lib/schemas/searchable-list-schema";
 import MemberService from "@/lib/services/member-service";
 import { generateErrorHttpRes } from "@/lib/utils/http";
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
+  // TODO: permission intuk route handler ini tambah di DB
   try {
-    await checkUserAlreadyLoggedIn()
+    await routeHandlerAuth.verifySession()
 
     const searchParams = req.nextUrl.searchParams
 

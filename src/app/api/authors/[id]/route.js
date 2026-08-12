@@ -1,3 +1,4 @@
+import AuthorRouteAuth from "@/lib/auth/route/author-route-auth"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import { authorServerSchema } from "@/lib/schemas/author/author-server-schema"
 import AuthorService from "@/lib/services/author-service"
@@ -7,7 +8,7 @@ import { NextResponse } from "next/server"
 
 export async function PUT(req, { params }) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await AuthorRouteAuth.verifyCanUpdate()
 
     const { id } = await params
     const body = await req.json()
@@ -32,7 +33,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await AuthorRouteAuth.verifyCanDelete()
 
     const { id } = await params
 

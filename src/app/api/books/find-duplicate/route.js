@@ -1,3 +1,4 @@
+import routeHandlerAuth from "@/lib/auth/route-handler"
 import SessionDAL from "@/lib/dal/session-dal"
 import { createSuccessRes } from "@/lib/dto/res-dto"
 import BookService from "@/lib/services/book-service"
@@ -8,8 +9,9 @@ import { NextResponse } from "next/server"
 const fields = ['isbn']
 
 export async function GET(req) {
+  // TODO: permission intuk route handler ini tambah di DB
   try {
-    await checkUserAlreadyLoggedIn()
+    await routeHandlerAuth.verifySession()
 
     const searchParams = req.nextUrl.searchParams
 

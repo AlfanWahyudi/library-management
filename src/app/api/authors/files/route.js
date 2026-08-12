@@ -2,11 +2,11 @@ import { fileExtSchema } from "@/lib/schemas/file/file-ext-schema"
 import { NextResponse } from "next/server"
 import AuthorService from "@/lib/services/author-service"
 import { generateErrorHttpRes } from "@/lib/utils/http"
-import { checkUserAlreadyLoggedIn } from "@/lib/utils/server/auth"
+import AuthorRouteAuth from "@/lib/auth/route/author-route-auth"
 
 export async function GET(req) {
   try {
-    await checkUserAlreadyLoggedIn()
+    await AuthorRouteAuth.verifyCanExportExcelListAll()
 
     const url = req.nextUrl
     const params = url.searchParams
