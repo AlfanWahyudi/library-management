@@ -3,14 +3,26 @@ import BookLoanHistDetailBreadcrumb from "@/components/specific/book-loan-histor
 import CardDetailBookLoan from "@/components/specific/book-loans/card-detail-book-loan"
 import BookLoanService from "@/lib/services/book-loan-service"
 import CardComplHistBookLoan from "@/components/specific/book-loans/card-complete-book-loan"
+import Auth from "@/lib/auth/auth"
+import BookLoanPerm from "@/lib/auth/permission/book-loan-perm"
 
 export default async function BookLoanHistDetailPage({ params }) {
+  const auth = await Auth.validateSession()
+  const session = auth.getSession()
+  const blPerm = await BookLoanPerm.validation(session)
+    .validateViewHistory()
+    .exec()
+
+  // TODO: rapihkan tampilan pesan validasi nya
+  if (!blPerm.canViewHistory) {
+    return "You don't have permission to access this page."
+  }
+
   const { id } = await params
 
   const bookLoan = await BookLoanService.findCompleteLoanById(parseInt(id))
   const {book, member, finishedDate, startDate, endDate} = bookLoan
 
-  //TODO: if bookLoan is not valid, display error message
   return(
     <>
       <h1 className="sr-only">Halaman Detail Pemin baalndlakfjalksdjf</h1>

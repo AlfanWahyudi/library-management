@@ -7,9 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Auth from "@/lib/auth/auth";
+import BookLoanPerm from "@/lib/auth/permission/book-loan-perm";
 import BookLoanService from "@/lib/services/book-loan-service";
 
 export default async function BookLoanCompletePage({ params }) {
+  const auth = await Auth.validateSession()
+  const session = auth.getSession()
+
+  const blPerm = await BookLoanPerm.validation(session)
+    .validateCompleteLoan()
+    .exec()
+
+  // TODO: rapihkan tampilan pesan validasi nya
+  if (!blPerm.canCompleteLoan) {
+    return "You don't have permission to access this page."
+  }
+
   const { id } = await params
 
   const bookLoan = await BookLoanService.findStillLoanById(parseInt(id))

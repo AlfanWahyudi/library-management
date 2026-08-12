@@ -3,19 +3,29 @@ import BookLoanHistDataTable from "@/components/specific/book-loan-histories/dat
 import BookLoanHistDownloadExcelButton from "@/components/specific/book-loan-histories/download-excel-button";
 import ContentHead from "@/components/specific/content-head";
 import { Button } from "@/components/ui/button";
+import Auth from "@/lib/auth/auth";
+import BookLoanPerm from "@/lib/auth/permission/book-loan-perm";
 import DataTableContextProvider from "@/store/data-table-context";
 import Link from "next/link";
 
-export default function BookLoanHistoryPage() {
+export default async function BookLoanHistoryPage() {
+  const auth = await Auth.validateSession()
+  const session = auth.getSession()
+  const blPerm = await BookLoanPerm.validation(session)
+    .validateExportExcelListAllHistory()
+    .validateViewListPageHistory()
+    .exec()
+
+  
   return(
     <>
       <DataTableContextProvider>
         <h1 className="sr-only">Halaman Riwayat Peminjaman Buku</h1>
         <BookLoanHistoryBreadcrumb />
         <ContentHead pageTitle='Riwayat Peminjaman Buku'>
-          <BookLoanHistDownloadExcelButton />
+          {blPerm.canExportExcelListAllHistory && (<BookLoanHistDownloadExcelButton />)}
         </ContentHead>
-        <BookLoanHistDataTable />
+        {blPerm.canViewListPageHistory && (<BookLoanHistDataTable />)}
       </DataTableContextProvider>
     </>
   )

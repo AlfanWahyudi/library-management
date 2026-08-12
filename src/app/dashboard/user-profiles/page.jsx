@@ -6,13 +6,19 @@ import UserService from "@/lib/services/user-service";
 import ChangeUsernameSheet from "../../../components/specific/user-profiles/change-username/sheet";
 import { Separator } from "@/components/ui/separator";
 import InfoTimestamp from "@/components/common/info-timestamp";
+import Auth from "@/lib/auth/auth";
+import UserPerm from "@/lib/auth/permission/user-perm";
 
+// TODO: tentukan logic authorization nya, spertinya perlu diperbaiki harus ditambahkan data user nya agar tidak update akun orang lain
+// TODO: authorize data user profile nya juga
 export default async function userProfilePage() {
-  const session = await SessionDAL.verify()
+  const auth = await Auth.validateSession()
+  const session = auth.getSession()
 
-  if (!session.isAuth) {
-    //todo display error message 
-  }
+  const userPerm = await UserPerm.validation(session)
+    .validateUpdateOwnUsername()
+    .validateUpdateOwnUser()
+    .exec()
 
   const user = await UserService.getById(session.userId)
 
@@ -21,7 +27,7 @@ export default async function userProfilePage() {
       <UserProfileBreadcrumb />
       <h1 className="sr-only">User Profile Page</h1>
       <ContentHead pageTitle='Profile'>
-        <ChangeUsernameSheet username={user.username} />
+        {userPerm.canUpdateOwnUsername && (<ChangeUsernameSheet username={user.username} />)}
       </ContentHead>
       <section className="flex flex-col gap-3 pt-2">
         <InfoTimestamp createdAt={user.createdAt} updatedAt={user.updatedAt} />

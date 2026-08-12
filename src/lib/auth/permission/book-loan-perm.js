@@ -13,6 +13,7 @@ class BookLoanPerm {
   #viewTotalYearAllPromise
   #completeLoanPromise
   #viewListPageHistoryPromise
+  #exportExcelListAllHistoryPromise
 
   constructor(session) {
     this.#session = session
@@ -57,6 +58,11 @@ class BookLoanPerm {
     return this
   }
 
+  validateExportExcelListAllHistory() {
+    this.#exportExcelListAllHistoryPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.EXPORT_EXCEL_LIST_ALL_HISTORY_BOOK_LOAN, this.#session)
+    return this
+  }
+
   validateCompleteLoan() {
     this.#completeLoanPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.CMP_BOOK_LOAN, this.#session)
     return this
@@ -85,7 +91,8 @@ class BookLoanPerm {
       canViewHistory,
       canViewTotalYearAll,
       canCompleteLoan,
-      canViewListPageHistory
+      canViewListPageHistory,
+      canExportExcelListAllHistory,
     ] = await Promise.all([
         this.#createPromise,
         this.#viewPromise,
@@ -97,6 +104,7 @@ class BookLoanPerm {
         this.#viewTotalYearAllPromise,
         this.#completeLoanPromise,
         this.#viewListPageHistoryPromise,
+        this.#exportExcelListAllHistoryPromise
     ])
 
     if (canCreate !== undefined) {
@@ -128,6 +136,10 @@ class BookLoanPerm {
     }
     if (canViewListPageHistory !== undefined) {
       result.canViewListPageHistory = canViewListPageHistory
+    }
+
+    if (canExportExcelListAllHistory !== undefined) {
+      result.canExportExcelListAllHistory = canExportExcelListAllHistory
     }
     
     return result
