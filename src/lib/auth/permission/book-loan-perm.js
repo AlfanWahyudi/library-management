@@ -24,6 +24,10 @@ class BookLoanPerm {
     return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_HISTORY_BOOK_LOAN, this.#session)
   } 
 
+  async canViewTotalYearAll() {
+    return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_TOTAL_YEAR_ALL_BOOK_LOAN, this.#session)
+  }
+
   async canViewList() {
     return await Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_BOOK_LOAN, this.#session)
   }
