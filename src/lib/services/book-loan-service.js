@@ -16,6 +16,7 @@ import BookLoanHistViewDAL from '../dal/dbview/book-loan-hist-view-dal';
 import { createArrBookLoanHistViewDTO } from '../dto/book-loan-hist-dto';
 import { generateBookLoanHistExcel } from '../excel/book-loan-hist-excel';
 import { eachDayOfInterval, format, setMonth, startOfMonth, endOfMonth } from 'date-fns';
+import Auth from '../auth/auth';
 
 const isFound = async ({ memberId, bookId }) => {
   //TODO
@@ -90,6 +91,9 @@ const BookLoanService = {
     return await sql.begin(async (sql) => {
       const loans = []
 
+      const auth = await Auth.validateSession()
+      const currUserId = auth.getUserId()
+
       const [member] = await MemberDAL.findById(sql, memberId)
       if (!member) {
         throw new NotFoundError('memberId', 'memberId is not found')
@@ -117,7 +121,7 @@ const BookLoanService = {
           throw new BadRequestError('bookId', `The book is currently on loan, id: ${bookId}`)
         }
 
-        const [savedData] = await BookLoanDAL.save(sql, { bookId, memberId})
+        const [savedData] = await BookLoanDAL.save(sql, { bookId, memberId}, currUserId)
         if (savedData === null) {
           throw new ActionFailedError(`failed to save book loan data, book_id: ${bookId}`)
         }
@@ -131,13 +135,16 @@ const BookLoanService = {
   },
 
   complete: async ({ id }) => await sql.begin(async (sql) => {
+    const auth = await Auth.validateSession()
+    const currUserId = auth.getUserId()
+
     const [bookLoan] = await BookLoanDAL.findStillLoanById(sql, id)
     if (!bookLoan) {
       throw new BadRequestError('bookLoanId', 'bookLoanId is not valid')
     }
 
     const data = {id}
-    const [savedData] = await BookLoanDAL.complete(sql, data)
+    const [savedData] = await BookLoanDAL.complete(sql, data, currUserId)
     if (savedData === null) {
       throw new ActionFailedError(`failed to complete the loaned book, bookLoanId: ${id}`)
     }

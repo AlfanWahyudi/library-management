@@ -1,12 +1,8 @@
 import 'server-only'
 
 import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
-import sql from '../config/db'
 
 const tableName = 'authors'
-
-//TODO: get curr user
-const tempUserId = '1' // later change this
 
 const AuthorDAL = {
   getAll: async (
@@ -39,7 +35,7 @@ const AuthorDAL = {
     `
   },
 
-  create: async (sql, data) => {
+  create: async (sql, data, currUserId) => {
     const { fullName, countryCode, about, activeSince } = data
     
     if (activeSince !== null && parseInt(activeSince) < 0) {
@@ -55,16 +51,16 @@ const AuthorDAL = {
           ${ countryCode }, 
           ${ activeSince }, 
           ${ about }, 
-          ${ tempUserId },
+          ${ currUserId },
           NOW(), 
-          ${ tempUserId },
+          ${ currUserId },
           NOW()
         )
       RETURNING *
     `
   },
 
-  update: async (sql, data, authorId) => {
+  update: async (sql, data, authorId, currUserId) => {
     const { fullName, countryCode, about, activeSince } = data
     
     if (activeSince !== null && parseInt(activeSince) < 0) {
@@ -78,7 +74,7 @@ const AuthorDAL = {
         country_code = ${ countryCode }, 
         active_since = ${ activeSince },
         about = ${ about }, 
-        updated_by = ${ tempUserId }, 
+        updated_by = ${ currUserId }, 
         updated_at = NOW()
       WHERE
         id = ${authorId} AND
@@ -87,13 +83,13 @@ const AuthorDAL = {
     `
   },
 
-  delete: async (sql, authorId) => {
+  delete: async (sql, authorId, currUserId) => {
     if (typeof(authorId) !== 'number') throw new Error('authorId must be a number.')
 
     return await sql`
       UPDATE ${ sql(tableName) } 
       SET 
-        deleted_by = ${ tempUserId }, 
+        deleted_by = ${ currUserId }, 
         deleted_at = NOW()
       WHERE
         id = ${authorId} AND

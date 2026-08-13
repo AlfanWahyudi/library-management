@@ -3,9 +3,6 @@ import 'server-only'
 const tableName = 'book_authors'
 
 
-//TODO: get curr user
-const tempUserId = '1' // later change this
-
 const findByQuery = async ({ sql, field, value }) => {
   return await sql`
     SELECT * FROM ${ sql(tableName) }
@@ -26,7 +23,7 @@ const BookAuthorDAL = {
     return await findByQuery({ sql, field: 'author_id', value: authorId })
   },
 
-  create: async (sql, data) => {
+  create: async (sql, data, currUserId) => {
     const {
       authorId,
       bookId,
@@ -39,7 +36,7 @@ const BookAuthorDAL = {
         (
           ${ authorId }, 
           ${ bookId }, 
-          ${ tempUserId },
+          ${ currUserId },
           NOW()
         )
       RETURNING *

@@ -7,9 +7,6 @@ import { sq } from 'date-fns/locale'
 
 const tableName = 'users'
 
-//TODO: get curr user
-const tempUserId = '1' // later change this
-
 const UserDAL = {
   getById: async (sql, userId) => {
     return await sql`
@@ -53,13 +50,8 @@ const UserDAL = {
 
   updateProfile: async (
     sql, 
-    data = { 
-      username: '', 
-      email: '', 
-      fullName: '', 
-      gender: '', 
-      address: '' 
-    }
+    data,
+    currUserId
   ) => {
     const { username, email, fullName, gender, address } = data
 
@@ -72,7 +64,7 @@ const UserDAL = {
         email = ${ email },
         gender = ${ gender },
         address = ${ address },
-        updated_by = ${ tempUserId }, 
+        updated_by = ${ currUserId }, 
         updated_at = NOW()
       WHERE
         username = ${username} AND

@@ -23,6 +23,34 @@ class Auth {
   getSession() {
     return this.#session
   }
+
+  getUserId() {
+    return this.#session ? this.#session.userId : null
+  }
+
+  getFullName() {
+    return this.#session ? this.#session.fullName : null
+  }
+
+  getRoles() {
+    return this.#session ? this.#session.roles : null
+  }
+
+  getIsSuperAdmin() {
+    return this.#session ? this.#session.isSuperAdmin : null
+  }
+
+  getIsPustakawan() {
+    return this.#session ? this.#session.isPustakawan : null
+  }
+
+  getIsViewer() {
+    return this.#session ? this.#session.isViewer : null
+  }
+
+  getExpiresAt() {
+    return this.#session ? this.#session.expiresAt : null
+  }
 }
 
 

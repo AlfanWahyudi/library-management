@@ -1,7 +1,6 @@
 import 'server-only'
 
 import { getPaginatedList } from '@/lib/utils/server/datatable'
-import { createAuthorViewModel } from '@/lib/models/author-view-model'
 
 const tableName = 'authors_view'
 

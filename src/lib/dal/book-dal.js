@@ -8,9 +8,6 @@ import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
 
 const tableName = 'books'
 
-//TODO: get curr user
-const tempUserId = '1' // 
-
 const findByQuery = async ({ sql, field, value }) => {
   return await sql`
     SELECT * FROM ${ sql(tableName) }
@@ -76,7 +73,7 @@ const BookDAL = {
     return await getPaginatedList(sql, paginatedData)
   },
 
-  create: async (sql, data) => {
+  create: async (sql, data, currUserId) => {
     const {
       isbn,
       title,
@@ -101,16 +98,16 @@ const BookDAL = {
           ${ page }, 
           ${ language }, 
           ${ edition }, 
-          ${ tempUserId },
+          ${ currUserId },
           NOW(), 
-          ${ tempUserId },
+          ${ currUserId },
           NOW()
         )
       RETURNING *
     `
   },
 
-  update: async (sql, data, bookId) => {
+  update: async (sql, data, bookId, currUserId) => {
     const {
       isbn,
       title,
@@ -133,7 +130,7 @@ const BookDAL = {
         page = ${ page }, 
         language = ${ language }, 
         edition = ${ edition }, 
-        updated_by = ${ tempUserId }, 
+        updated_by = ${ currUserId }, 
         updated_at = NOW()
       WHERE
         id = ${bookId} AND
@@ -142,13 +139,13 @@ const BookDAL = {
     `
   },
 
-  delete: async (sql, bookId) => {
+  delete: async (sql, bookId, currUserId) => {
     if (typeof(bookId) !== 'number') throw new Error('bookId must be a number.')
 
     return await sql`
       UPDATE ${ sql(tableName) } 
       SET 
-        deleted_by = ${ tempUserId }, 
+        deleted_by = ${ currUserId }, 
         deleted_at = NOW()
       WHERE
         id = ${bookId} AND

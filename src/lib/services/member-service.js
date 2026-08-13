@@ -8,6 +8,7 @@ import { ActionFailedError } from '../errors/action-failed-error'
 import { generateMemberExcel } from '../excel/member-excel'
 import { GENDER } from '../constants/gender'
 import { BadRequestError } from '../errors/bad-request-error'
+import Auth from '../auth/auth'
 
 const isFound = async ({ id }) => {
   const [member] = await MemberDAL.findById(sql, id)
@@ -83,6 +84,9 @@ const MemberService = {
     birthDate,
     gender
   }) => {
+    const auth = await Auth.validateSession()
+    const currUserId = auth.getUserId()
+
     if (id !== null) {
       const memberFound = await isFound({id})
       if (!memberFound) {
@@ -104,8 +108,8 @@ const MemberService = {
       const data = { fullName, email, phone, address, birthDate, gender }
 
       const [savedData] = id === null
-        ? await MemberDAL.create(sql, data)
-        : await MemberDAL.update(sql, data, id)
+        ? await MemberDAL.create(sql, data, currUserId)
+        : await MemberDAL.update(sql, data, id, currUserId)
 
       if (savedData === null) {
         throw new ActionFailedError('failed to save member data')

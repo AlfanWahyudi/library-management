@@ -12,6 +12,7 @@ import { ForbiddenError } from '../errors/forbidden-error'
 import { ActionFailedError } from '../errors/action-failed-error'
 import { USER_ROLE } from '../constants/user'
 import { createArrRole } from '../models/role-model'
+import Auth from '../auth/auth'
 
 const isFound = async ({ id }) => {
   const [user] = await UserDAL.getById(sql, parseInt(id))
@@ -83,6 +84,9 @@ const UserService = {
   },
 
   updateProfile: async ({ username, email, fullName, gender, address }) => {
+    const auth = await Auth.validateSession()
+    const currUserId = auth.getUserId()
+
     if (username === null || username === '') throw new BadRequestError('username', 'username must not be null or empty')
 
     const session = await SessionDAL.verify()
@@ -102,7 +106,7 @@ const UserService = {
 
     const result = await sql.begin(async sql => {
       const data = { username, email, fullName, gender, address }
-      const [user] = await UserDAL.updateProfile(sql, data)
+      const [user] = await UserDAL.updateProfile(sql, data, currUserId)
 
       if (user === null) {
         throw new ActionFailedError(`Failed to update user profile data.`)

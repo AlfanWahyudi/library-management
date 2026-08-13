@@ -6,9 +6,6 @@ import { getPaginatedList } from '../utils/server/datatable'
 const tableName = 'book_loans'
 
 
-//TODO: get curr user
-const tempUserId = '1' // later change this
-
 const findByQuery = async ({ sql, field, value }) => {
   return await sql`
     SELECT * FROM ${ sql(tableName) }
@@ -45,7 +42,8 @@ const BookLoanDAL = {
 
   save: async (
     sql,
-    data
+    data,
+    currUserId
   ) => {
     const {
       bookId,
@@ -67,16 +65,16 @@ const BookLoanDAL = {
           ${ memberId }, 
           NOW(), 
           ${ endDate }, 
-          ${ tempUserId },
+          ${ currUserId },
           NOW(), 
-          ${ tempUserId },
+          ${ currUserId },
           NOW()
         )
       RETURNING *
     `
   },
 
-  complete: async (sql, data) => {
+  complete: async (sql, data, currUserId) => {
     const { id } = data
 
     if (typeof(id) !== 'number') throw new Error('id must be a number.')
@@ -85,7 +83,7 @@ const BookLoanDAL = {
       UPDATE ${ sql(tableName) } 
       SET 
         finished_date = NOW(), 
-        updated_by = ${ tempUserId }, 
+        updated_by = ${ currUserId }, 
         updated_at = NOW()
       WHERE
         id = ${id} AND finished_date IS NULL

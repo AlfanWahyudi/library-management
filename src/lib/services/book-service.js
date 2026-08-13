@@ -11,6 +11,7 @@ import BookAuthorDAL from '../dal/book-author-dal'
 import AuthorDAL from '../dal/author-dal'
 import BookLoanDAL from '../dal/book-loan-dal'
 import BookOnLoanViewDAL from '../dal/dbview/book-on-loan-view-dal'
+import Auth from '../auth/auth'
 
 const isFound = async ({ id }) => {
   const [book] = await BookDAL.findById(sql, id)
@@ -91,10 +92,13 @@ const BookService = {
     }
 
     const result = await sql.begin(async (sql) => {
+      const auth = await Auth.validateSession()
+      const currUserId = auth.getUserId()
+
       const cacheAuthor = new Map()
       const data = { isbn, title, subTitle, publisher, publicationDate, page, language, edition }
 
-      const [savedBook] = await BookDAL.create(sql, data)
+      const [savedBook] = await BookDAL.create(sql, data, currUserId)
       
       for (let idx = 0; idx < authors.length; idx++) {
         const authorId = parseInt(authors[idx])
@@ -108,7 +112,7 @@ const BookService = {
           throw new NotFoundError('author_id', 'author id is not found.')
         }
 
-        await BookAuthorDAL.create(sql, { authorId: author.id, bookId: savedBook.id })
+        await BookAuthorDAL.create(sql, { authorId: author.id, bookId: savedBook.id }, currUserId)
 
         const updatedAuthor = await attachCountryToOneAuthor(author)
         cacheAuthor.set(authorId, updatedAuthor)
@@ -146,6 +150,9 @@ const BookService = {
     }
 
     const result = await sql.begin(async sql => {
+      const auth = await Auth.validateSession()
+      const currUserId = auth.getUserId()
+
       const cacheAuthor = new Map()
 
       // validate authorIds
@@ -175,11 +182,11 @@ const BookService = {
       
       const authorIdsCreate = authors.filter((authorId) => !authorDbIds.includes(authorId))
       authorIdsCreate.forEach(async (authorId) => {
-        await BookAuthorDAL.create(sql, { authorId, bookId: id })
+        await BookAuthorDAL.create(sql, { authorId, bookId: id }, currUserId)
       })
       
       const data = { isbn, title, subTitle, publisher, publicationDate, page, language, edition }
-      const [updatedBook] = await BookDAL.update(sql, data, id)
+      const [updatedBook] = await BookDAL.update(sql, data, id, currUserId)
 
       const saveBookUpdated = {...updatedBook, authors: [...cacheAuthor.values()]}
       return createBookDTO(saveBookUpdated)
@@ -221,7 +228,10 @@ const BookService = {
     }
 
     const result = await sql.begin(async (sql) => {
-      const [data] = await BookDAL.delete(sql, id)
+      const auth = await Auth.validateSession()
+      const currUserId = auth.getUserId()
+
+      const [data] = await BookDAL.delete(sql, id, currUserId)
 
       if (!data) {
         throw new ActionFailedError('failed to delete book data')

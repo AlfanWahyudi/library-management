@@ -6,9 +6,6 @@ import { tableName as tableBookLoan } from './book-loan-dal'
 
 const tableName = 'members'
 
-//TODO: get curr user
-const tempUserId = '1' // 
-
 const findByQuery = async ({ sql, field, value }) => {
   return await sql`
     SELECT * FROM ${ sql(tableName) }
@@ -71,7 +68,7 @@ const MemberDAL = {
     `
   },
 
-  create: async (sql, data) => {
+  create: async (sql, data, currUserId) => {
     const {
       fullName,
       email,
@@ -92,16 +89,16 @@ const MemberDAL = {
           ${ address }, 
           ${ birthDate }, 
           ${ gender }, 
-          ${ tempUserId },
+          ${ currUserId },
           NOW(), 
-          ${ tempUserId },
+          ${ currUserId },
           NOW()
         )
       RETURNING *
     `
   },
 
-  update: async (sql, data, memberId) => {
+  update: async (sql, data, memberId, currUserId) => {
     const {
       fullName,
       email,
@@ -120,7 +117,7 @@ const MemberDAL = {
         address = ${ address }, 
         birth_date = ${ birthDate }, 
         gender = ${ gender }, 
-        updated_by = ${ tempUserId }, 
+        updated_by = ${ currUserId }, 
         updated_at = NOW()
       WHERE
         id = ${memberId} 

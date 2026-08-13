@@ -13,8 +13,7 @@ import BookAuthorDAL from '../dal/book-author-dal'
 import { BadRequestError } from '../errors/bad-request-error'
 import { createAuthorViewDTO } from '../dto/author-view-dto'
 import { attachCountryToOneAuthor } from '../helpers/modify-data-helper'
-
-const resourceCode = 'AUT'
+import Auth from '../auth/auth'
 
 const isFound = async ({ id }) => {
   const [author] = await AuthorDAL.findById(sql, parseInt(id))
@@ -113,9 +112,12 @@ const AuthorService = {
 
       const data = {fullName, countryCode, about, activeSince}
 
+      const auth = await Auth.validateSession()
+      const currUserId = auth.getUserId()
+
       const [savedData] = id === null
-        ? await AuthorDAL.create(sql, data)
-        : await AuthorDAL.update(sql, data, id)
+        ? await AuthorDAL.create(sql, data, currUserId)
+        : await AuthorDAL.update(sql, data, id, currUserId)
 
       if (!savedData) {
         throw new ActionFailedError('failed to save author data')
@@ -163,7 +165,10 @@ const AuthorService = {
     }
 
     const result = await sql.begin(async (sql) => {
-      const [data] = await AuthorDAL.delete(sql, id)
+      const auth = await Auth.validateSession()
+      const currUserId = auth.getUserId()
+
+      const [data] = await AuthorDAL.delete(sql, id, currUserId)
       if (!data) {
         throw new ActionFailedError('failed to delete author data')
       }
