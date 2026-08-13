@@ -5,7 +5,6 @@ import { generateErrorHttpRes } from "@/lib/utils/http"
 import { NextResponse } from "next/server"
 
 export async function GET(req, { params }) {
-  // TODO: permission intuk route handler ini tambah di DB
   try {
     await BookRouteAuth.verifyDataCanDeleted()
 
