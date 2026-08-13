@@ -1,3 +1,4 @@
+import ForbiddenErrAlert from "@/components/common/error/forbidden-err-alert";
 import ContentHead from "@/components/specific/content-head";
 import MemberCreateBreadcrumb from "@/components/specific/members/create/breadcrumb";
 import MemberForm from "@/components/specific/members/form";
@@ -13,9 +14,8 @@ export default async function MemberCreatePage() {
     .validateCreate()
     .exec()
 
-  // TODO: rapihkan tampilan pesan validasi nya
   if (!memberPerm.canCreate) {
-    return "You don't have permission to access this page."
+    return <ForbiddenErrAlert />
   }
 
   return (

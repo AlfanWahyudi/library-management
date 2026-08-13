@@ -2,19 +2,17 @@ import DashHeader from "@/components/specific/header";
 import DashMainContent from "@/components/specific/main-content";
 import DashSidebar from "@/components/specific/sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import SessionDAL from "@/lib/dal/session-dal";
+import Auth from "@/lib/auth/auth";
 import UserService from "@/lib/services/user-service";
 import BreadCrumbContextProvider from "@/store/breadcrumb-context";
 
 export default async function DashboardLayout({ children }) {
-  const session = await SessionDAL.verify()
+  const auth = await Auth.validateSession()
+  const userId = auth.getUserId()
+  const roles = auth.getRoles()
 
-  if (!session.isAuth) {
-    //TODO: handle display error message
-  }
-  
-  const user = await UserService.getById(session.userId)
-  const role = session.roles.map((role) => role.name).join(', ')
+  const user = await UserService.getById(userId)
+  const role = roles.map((role) => role.name).join(', ')
   return (
     <BreadCrumbContextProvider>
       <SidebarProvider>

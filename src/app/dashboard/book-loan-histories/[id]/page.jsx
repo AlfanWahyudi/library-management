@@ -5,6 +5,7 @@ import BookLoanService from "@/lib/services/book-loan-service"
 import CardComplHistBookLoan from "@/components/specific/book-loans/card-complete-book-loan"
 import Auth from "@/lib/auth/auth"
 import BookLoanPerm from "@/lib/auth/permission/book-loan-perm"
+import ForbiddenErrAlert from "@/components/common/error/forbidden-err-alert"
 
 export default async function BookLoanHistDetailPage({ params }) {
   const auth = await Auth.validateSession()
@@ -13,9 +14,8 @@ export default async function BookLoanHistDetailPage({ params }) {
     .validateViewHistory()
     .exec()
 
-  // TODO: rapihkan tampilan pesan validasi nya
   if (!blPerm.canViewHistory) {
-    return "You don't have permission to access this page."
+    return <ForbiddenErrAlert />
   }
 
   const { id } = await params

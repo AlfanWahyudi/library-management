@@ -1,3 +1,4 @@
+import ForbiddenErrAlert from "@/components/common/error/forbidden-err-alert"
 import BookForm from "@/components/specific/books/form"
 import BookUpdateBreadcrumb from "@/components/specific/books/update/breadcrumb"
 import ContentHead from "@/components/specific/content-head"
@@ -14,9 +15,8 @@ export default async function BookUpdatePage({ params }) {
     .validateUpdate()
     .exec()
 
-  // TODO: rapihkan tampilan pesan validasi nya
   if (!bookPerm.canUpdate) {
-    return "You don't have permission to access this page."
+    return <ForbiddenErrAlert />
   }
 
   const { id } = await params

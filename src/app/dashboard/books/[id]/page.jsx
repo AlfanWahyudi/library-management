@@ -6,6 +6,7 @@ import CardBookInfo from "@/components/specific/books/detail/card-info";
 import CardBookLoanHist from "@/components/specific/books/detail/card-loan-hist";
 import Auth from "@/lib/auth/auth";
 import BookPerm from "@/lib/auth/permission/book-perm";
+import ForbiddenErrAlert from "@/components/common/error/forbidden-err-alert";
 
 export default async function BookDetailPage({ params }) {
   const auth = await Auth.validateSession()
@@ -16,9 +17,8 @@ export default async function BookDetailPage({ params }) {
     .validateViewListInclLoan()
     .exec()
 
-    // TODO: rapihkan tampilan pesan validasi nya
   if (!bookPerm.canView) {
-    return "You don't have permission to access this page."
+    return <ForbiddenErrAlert />
   }
 
   const { id } = await params

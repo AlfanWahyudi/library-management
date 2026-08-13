@@ -5,6 +5,7 @@ import CardMemberInfo from "@/components/specific/members/detail/card-info"
 import CardMemberLoanHist from "@/components/specific/members/detail/card-loan-hist"
 import Auth from "@/lib/auth/auth"
 import MemberPerm from "@/lib/auth/permission/member-perm"
+import ForbiddenErrAlert from "@/components/common/error/forbidden-err-alert"
 
 export default async function MemberDetailPage({ params }) {
   const auth = await Auth.validateSession()
@@ -14,9 +15,8 @@ export default async function MemberDetailPage({ params }) {
     .validateView()
     .exec()
 
-  // TODO: rapihkan tampilan pesan validasi nya
   if (!memberPerm.canView) {
-    return "You don't have permission to access this page."
+    return <ForbiddenErrAlert />
   }
 
   const { id } = await params

@@ -1,3 +1,4 @@
+import ForbiddenErrAlert from "@/components/common/error/forbidden-err-alert";
 import BookCreateBreadcrumb from "@/components/specific/books/create/breadcrumb";
 import BookForm from "@/components/specific/books/form";
 import ContentHead from "@/components/specific/content-head";
@@ -13,9 +14,8 @@ export default async function BookCreatePage() {
     .validateCreate()
     .exec()
 
-  // TODO: rapihkan tampilan pesan validasi nya
   if (!bookPerm.canCreate) {
-    return "You don't have permission to access this page."
+    return <ForbiddenErrAlert />
   }
 
   const authors = await AuthorService.getAll({})

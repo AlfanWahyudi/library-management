@@ -1,5 +1,5 @@
+import ForbiddenErrAlert from "@/components/common/error/forbidden-err-alert"
 import ContentHead from "@/components/specific/content-head"
-import MemberBreadcrumb from "@/components/specific/members/breadcrumb"
 import MemberForm from "@/components/specific/members/form"
 import MemberUpdateBreadcrumb from "@/components/specific/members/update/breadcrumb"
 import Auth from "@/lib/auth/auth"
@@ -14,9 +14,8 @@ export default async function MemberUpdatePage({ params }) {
     .validateUpdate()
     .exec()
 
-  // TODO: rapihkan tampilan pesan validasi nya
   if (!memberPerm.canUpdate) {
-    return "You don't have permission to access this page."
+    return <ForbiddenErrAlert />
   }
   const { id } = await params
   const member = await MemberService.findById({ id: parseInt(id) })
