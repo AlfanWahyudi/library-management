@@ -1,9 +1,6 @@
 import 'server-only'
 
-import sql from '@/lib/config/db'
-import { dataDeleted, dataNotDeleted } from '../utils/server/sql'
-import { createUser } from '../models/user-model'
-import { sq } from 'date-fns/locale'
+import { dataNotDeleted } from '../utils/server/sql'
 
 const tableName = 'users'
 
@@ -112,7 +109,9 @@ const UserDAL = {
     return await sql`
       UPDATE ${ sql(tableName) }
       SET
-        username = ${newUsername}
+        username = ${newUsername},
+        updated_by = ${ userId },
+        updated_at = NOW()
       WHERE
         id = ${userId} AND
         ${ dataNotDeleted() }
