@@ -13,7 +13,7 @@ export default function CardComplHistBookLoan({ startDate, endDate, finishedDate
         <InfoItem title="Tanggal Pinjam">
           {format(new Date(startDate), DATE_PATTERN.INDO_PRIMARY)}
         </InfoItem>
-        <InfoItem title="Tanggal Wajib Kembali">
+        <InfoItem title="Tanggal Terakhir Wajib Kembali">
           {format(new Date(endDate), DATE_PATTERN.INDO_PRIMARY)}
         </InfoItem>
         <InfoItem title="Tanggal Pengembalian">
