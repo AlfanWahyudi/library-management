@@ -4,7 +4,7 @@ import DataTable from "@/components/common/data-table/data-table-main"
 import FilterWrapperDataTable from "@/components/common/data-table/filter-wrapper-data-table"
 import WrapperDataTable from "@/components/common/data-table/wrapper-data-table"
 import { 
-  columnsDefBook, 
+  colsDefBook, 
   searchingItemsBook, 
   getSearchItemsIdBook,
   defaultColFiltersBook
@@ -12,7 +12,14 @@ import {
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table"
 import { getPaginatedListBook } from "@/lib/http/book-http"
 
-export default function BookDataTable() {
+const getColsDef = ({ showUpdateBtn }) => {
+  return colsDefBook
+    .setDefaultCols()
+    .addActionCol({ showUpdateBtn })
+    .get()
+}
+
+export default function BookDataTable({ canOpenUpdate = true }) {
   const {
     error,
     isPending,
@@ -20,7 +27,7 @@ export default function BookDataTable() {
   } = useServerSideDataTable({
     fetchingData: getPaginatedListBook,
     searchFields: getSearchItemsIdBook(),
-    columnsDef: columnsDefBook,
+    columnsDef: getColsDef({ showUpdateBtn: canOpenUpdate }),
     defaultColFilters: defaultColFiltersBook,
   })
 

@@ -1,7 +1,6 @@
 import ContentHead from "@/components/specific/content-head";
 import UserProfileBreadcrumb from "@/components/specific/user-profiles/breadcrumb";
 import UserProfileForm from "@/components/specific/user-profiles/form";
-import SessionDAL from "@/lib/dal/session-dal";
 import UserService from "@/lib/services/user-service";
 import ChangeUsernameSheet from "../../../components/specific/user-profiles/change-username/sheet";
 import { Separator } from "@/components/ui/separator";

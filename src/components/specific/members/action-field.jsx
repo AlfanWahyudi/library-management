@@ -5,7 +5,7 @@ import { Eye, SquarePen, Trash } from "lucide-react";
 import Link from "next/link";
 
 
-export default function ActionFieldMember({ member }) {
+export default function ActionFieldMember({ member, showUpdateBtn = true }) {
   return (
    <div>
       <Button 
@@ -19,17 +19,19 @@ export default function ActionFieldMember({ member }) {
           <Eye />
         </Link>
       </Button>
-      <Button 
-        type="button" 
-        variant='ghost' 
-        size='icon' 
-        className='size-7'
-        asChild={true}
-      >
-        <Link href={`./members/${member.id}/update`}>
-          <SquarePen />
-        </Link>
-      </Button>
+      {showUpdateBtn && (
+        <Button 
+          type="button" 
+          variant='ghost' 
+          size='icon' 
+          className='size-7'
+          asChild={true}
+        >
+          <Link href={`./members/${member.id}/update`}>
+            <SquarePen />
+          </Link>
+        </Button>
+      )}
    </div> 
   )
 }

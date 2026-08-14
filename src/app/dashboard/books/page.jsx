@@ -14,6 +14,7 @@ export default async function BookPage({}) {
   const bookPerm = await BookPerm.validation(session)
     .validateCreate()
     .validateViewListPage()
+    .validateUpdate()
     .exec()
 
   return (
@@ -27,7 +28,7 @@ export default async function BookPage({}) {
           </Button>
         )}
       </ContentHead>
-      {bookPerm.canViewListPage && (<BookDataTable />)}
+      {bookPerm.canViewListPage && (<BookDataTable canOpenUpdate={bookPerm.canUpdate}  />)}
     </DataTableContextProvider>
   )
 }

@@ -14,6 +14,7 @@ export default async function BookLoanPage() {
   const blPerm = await BookLoanPerm.validation(session)
     .validateCreate()
     .validateViewListPage()
+    .validateCompleteLoan()
     .exec()
 
   return(
@@ -28,7 +29,7 @@ export default async function BookLoanPage() {
             </Button>
           )}
         </ContentHead>
-        {blPerm.canViewListPage && (<BookLoanDataTable />)}
+        {blPerm.canViewListPage && (<BookLoanDataTable canOpenComplete={blPerm.canCompleteLoan} />)}
       </DataTableContextProvider>
     </>
   )

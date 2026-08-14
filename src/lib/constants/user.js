@@ -52,4 +52,5 @@ export const USER_PERMISSION = {
   VERIFY_CAN_DEL_DATA_AUTHOR: 'verify_can_del_data_author',
   VERIFY_CAN_DEL_DATA_BOOK: 'verify_can_del_data_book',
   VIEW_LIST_COUNTRY: 'view_list_country',
+  VIEW_LIST_PAGE_INCL_LOAN_HIST_MEMBER: 'view_list_page_incl_loan_hist_member'
 }

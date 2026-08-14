@@ -11,93 +11,113 @@ import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
 
 const columnHelper = createColumnHelper()
 
-const columnsDefBook = [
-  columnHelper.accessor('title', {
-    id: 'title',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Judul' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor('isbn', {
-    id: 'isbn',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='ISBN' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => `${row.edition || '-'}`, {
-    id: 'edition',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Edisi' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(
-    (row) => {
-      let result = '-'
+const colsDefBook = {
+  items: [],
 
-      if (row.publicationDate) {
-        result = format(new Date(row.publicationDate), DATE_PATTERN.INDO_PRIMARY)
-      }
+  setDefaultCols() {
+    this.items = [
+      columnHelper.accessor('title', {
+        id: 'title',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Judul' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor('isbn', {
+        id: 'isbn',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='ISBN' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => `${row.edition || '-'}`, {
+        id: 'edition',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Edisi' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(
+        (row) => {
+          let result = '-'
 
-      return result
-    }, 
-    {
-      id: 'publication_date',
-      header: ({ column }) => (
-        <ColHeader>
-          <ColSortingHeader column={column} headerName='Tanggal Publikasi' />
-        </ColHeader>
+          if (row.publicationDate) {
+            result = format(new Date(row.publicationDate), DATE_PATTERN.INDO_PRIMARY)
+          }
+
+          return result
+        }, 
+        {
+          id: 'publication_date',
+          header: ({ column }) => (
+            <ColHeader>
+              <ColSortingHeader column={column} headerName='Tanggal Publikasi' />
+            </ColHeader>
+          ),
+          cell: props => props.getValue(),
+        }
       ),
-      cell: props => props.getValue(),
-    }
-  ),
-  columnHelper.accessor(row => `${row.page || '-'}`, {
-    id: 'page',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Halaman' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => `${row.language || '-'}`, {
-    id: 'language',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Bahasa' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => `${row.updatedAt ? format(new Date(row.updatedAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
-    id: 'updated_at',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Diperbarui' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.display({
-    id: 'actions',
-    header: () => (
-      <ColHeader className='text-center'>Aksi</ColHeader>
-    ),
-    enableSorting: false,
-    cell: ({ row }) => {
-      const book = row.original
-      return <ActionFieldBook book={book} />
-    },
-  })
-]
+      columnHelper.accessor(row => `${row.page || '-'}`, {
+        id: 'page',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Halaman' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => `${row.language || '-'}`, {
+        id: 'language',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Bahasa' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => `${row.updatedAt ? format(new Date(row.updatedAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
+        id: 'updated_at',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Diperbarui' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+
+    ]
+
+    return this
+  },
+
+  addActionCol({ showUpdateBtn = true }) {
+    this.items.push(
+      columnHelper.display({
+        id: 'actions',
+        header: () => (
+          <ColHeader className='text-center'>Aksi</ColHeader>
+        ),
+        enableSorting: false,
+        cell: ({ row }) => {
+          const book = row.original
+          return <ActionFieldBook book={book} showUpdateBtn={showUpdateBtn} />
+        },
+      })
+    )
+
+    return this
+  },
+
+  get() {
+    return this.items
+  }
+}
 
 const searchingItemsBook = [
   {
@@ -115,7 +135,7 @@ const getSearchItemsIdBook = (separator = ',') => searchingItemsBook.map(item =>
 const defaultColFiltersBook = []
 
 export {
-  columnsDefBook,
+  colsDefBook,
   searchingItemsBook,
   getSearchItemsIdBook,
   defaultColFiltersBook

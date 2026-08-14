@@ -11,82 +11,102 @@ import { format } from "date-fns";
 
 const columnHelper = createColumnHelper()
 
-const columnsDefBookLoan = [
-  columnHelper.accessor(row => row.memberFullName, {
-    id: 'member_full_name',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Anggota' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => row.memberEmail, {
-    id: 'member_email',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Email Anggota' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor('bookTitle', {
-    id: 'book_title',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Judul Buku' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => row.bookIsbn, {
-    id: 'book_isbn',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='ISBN' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => format(new Date(row.startDate), DATE_PATTERN.INDO_PRIMARY), {
-    id: 'start_date',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Mulai' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => format(new Date(row.endDate), DATE_PATTERN.INDO_PRIMARY), {
-    id: 'end_date',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Selesai' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => `${row.createdAt ? format(new Date(row.createdAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
-    id: 'created_at',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Dibuat' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.display({
-    id: 'actions',
-    header: () => (
-      <ColHeader className='text-center'>Aksi</ColHeader>
-    ),
-    enableSorting: false,
-    cell: ({ row }) => {
-      const bookLoan = row.original
-      return <ActionFieldBookLoan bookLoan={bookLoan} />
-    },
-  })
-]
+
+const colDefBookLoan = {
+  items: [],
+
+  setDefaultCols() {
+    this.items = [
+      columnHelper.accessor(row => row.memberFullName, {
+        id: 'member_full_name',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Anggota' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => row.memberEmail, {
+        id: 'member_email',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Email Anggota' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor('bookTitle', {
+        id: 'book_title',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Judul Buku' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => row.bookIsbn, {
+        id: 'book_isbn',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='ISBN' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => format(new Date(row.startDate), DATE_PATTERN.INDO_PRIMARY), {
+        id: 'start_date',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Mulai' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => format(new Date(row.endDate), DATE_PATTERN.INDO_PRIMARY), {
+        id: 'end_date',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Selesai' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => `${row.createdAt ? format(new Date(row.createdAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
+        id: 'created_at',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Dibuat' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+    ]
+
+    return this
+  },
+
+  addActionCol({ showCompleteBtn = true }) {
+    this.items.push(
+      columnHelper.display({
+        id: 'actions',
+        header: () => (
+          <ColHeader className='text-center'>Aksi</ColHeader>
+        ),
+        enableSorting: false,
+        cell: ({ row }) => {
+          const bookLoan = row.original
+          return <ActionFieldBookLoan bookLoan={bookLoan} showCompleteBtn={showCompleteBtn} />
+        },
+      })
+    )
+
+    return this
+  },
+
+  get() {
+    return this.items
+  },
+}
 
 const searchingItemsBookLoan = [
   {
@@ -108,7 +128,7 @@ const getSearchItemsIdBookLoan = (separator = ',') => searchingItemsBookLoan.map
 const defaultColFiltersBookLoan = []
 
 export {
-  columnsDefBookLoan,
+  colDefBookLoan,
   searchingItemsBookLoan,
   getSearchItemsIdBookLoan,
   defaultColFiltersBookLoan

@@ -11,73 +11,92 @@ import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
 
 const columnHelper = createColumnHelper()
 
-const columnsDefMember = [
-  columnHelper.accessor('fullName', {
-    id: 'full_name',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Nama Lengkap' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => row.email, {
-    id: 'email',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Email' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => `${row.phone || '-'}`, {
-    id: 'phone',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Nomor Telepon' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => `${GENDER[row.gender] || '-'}`, {
-    id: 'gender',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Jenis Kelamin' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => `${row.createdAt ? format(new Date(row.createdAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
-    id: 'created_at',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Dibuat' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => `${row.updatedAt ? format(new Date(row.updatedAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
-    id: 'updated_at',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Diperbarui' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.display({
-    id: 'actions',
-    header: () => (
-      <ColHeader className='text-center'>Aksi</ColHeader>
-    ),
-    enableSorting: false,
-    cell: ({ row }) => {
-      const member = row.original
-      return <ActionFieldMember member={member} />
-    },
-  })
-]
+const colsDefMember = {
+  items: [],
+
+  setDefaultCols() {
+    this.items = [
+      columnHelper.accessor('fullName', {
+        id: 'full_name',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Nama Lengkap' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => row.email, {
+        id: 'email',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Email' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => `${row.phone || '-'}`, {
+        id: 'phone',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Nomor Telepon' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => `${GENDER[row.gender] || '-'}`, {
+        id: 'gender',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Jenis Kelamin' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => `${row.createdAt ? format(new Date(row.createdAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
+        id: 'created_at',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Dibuat' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => `${row.updatedAt ? format(new Date(row.updatedAt), DATETIME_PATTERN.INDO_PRIMARY) : '-'}`, {
+        id: 'updated_at',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Diperbarui' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+    ]
+
+    return this
+  },
+
+  addActionCol({ showUpdateBtn = true }) {
+    this.items.push(
+      columnHelper.display({
+        id: 'actions',
+        header: () => (
+          <ColHeader className='text-center'>Aksi</ColHeader>
+        ),
+        enableSorting: false,
+        cell: ({ row }) => {
+          const member = row.original
+          return <ActionFieldMember member={member} showUpdateBtn={showUpdateBtn} />
+        },
+      })  
+    )
+    
+    return this
+  },
+
+  get() {
+    return this.items
+  },
+}
 
 const searchingItemsMember = [
   {
@@ -96,7 +115,7 @@ const defaultColFiltersMember = [
 ]
 
 export {
-  columnsDefMember,
+  colsDefMember,
   searchingItemsMember,
   getSearchItemsIdMember,
   defaultColFiltersMember

@@ -4,12 +4,16 @@ import DataTable from "@/components/common/data-table/data-table-main"
 import FilterWrapperDataTable from "@/components/common/data-table/filter-wrapper-data-table"
 import WrapperDataTable from "@/components/common/data-table/wrapper-data-table"
 import { 
-  columnsDefBookLoanHistSpe,
+  colsDefBookLoanHistSpe,
   getSearchItemsId,
   searchingItems
 } from "./column-data-table"
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table"
 import { getPaginatedHistBookLoan } from "@/lib/http/book-loan-http"
+
+const getColsDef = () => {
+  return colsDefBookLoanHistSpe.setDefaultCols().get()
+}
 
 export default function BookLoanHistSpeDataTable({ bookId }) {
   const {
@@ -19,7 +23,7 @@ export default function BookLoanHistSpeDataTable({ bookId }) {
   } = useServerSideDataTable({
     fetchingData: getPaginatedHistBookLoan,
     searchFields: getSearchItemsId(),
-    columnsDef: columnsDefBookLoanHistSpe,
+    columnsDef: getColsDef(),
     otherQueryParam: { bookId: bookId },
     orderBy: 'finished_date',
     orderDir: 'desc'

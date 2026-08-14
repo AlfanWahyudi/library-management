@@ -15,6 +15,7 @@ export default async function MemberPage() {
   const memberPerm = await MemberPerm.validation(session)
     .validateExportExcelListAll()
     .validateCreate()
+    .validateUpdate()
     .validateViewListPage()
     .exec()
 
@@ -30,7 +31,7 @@ export default async function MemberPage() {
           </Button>
         )}
       </ContentHead>
-      {memberPerm.canViewListPage && (<MemberDataTable />)}
+      {memberPerm.canViewListPage && (<MemberDataTable canOpenUpdate={memberPerm.canUpdate} />)}
     </DataTableContextProvider>
   )
 }

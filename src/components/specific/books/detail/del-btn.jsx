@@ -6,14 +6,14 @@ import { useRouter } from "next/navigation";
 import BookAlertDialogDelete from "../alert-dialog/alert-dialog-delete";
 
 
-export default function BookDetailDeletBtn({ bookId, canDelete = false }) {
+export default function BookDetailDelBtn({ bookId, canDataDeleted = false }) {
   const router = useRouter()
 
   const onSuccDelete = () => {
     router.push(ROUTE.BOOKS.url)
   }
 
-  return canDelete
+  return canDataDeleted
     ? (
       <BookAlertDialogDelete 
         bookId={bookId}

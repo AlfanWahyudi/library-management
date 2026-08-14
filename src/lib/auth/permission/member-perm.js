@@ -14,6 +14,7 @@ class MemberPerm {
   #viewTotalPromise
   #exportExcelListAllPromise
   #viewListSearchableInclLoanPromise
+  #viewListPageInclLoanHistPromise
 
   constructor(session) {
     this.#session = session
@@ -73,6 +74,11 @@ class MemberPerm {
     return this
   }
 
+  validateViewListPageInclLoanHist() {
+    this.#viewListPageInclLoanHistPromise = Authorize.verifyPermissionBySession(USER_PERMISSION.VIEW_LIST_PAGE_INCL_LOAN_HIST_MEMBER, this.#session)
+    return this
+  }
+
   async exec() {
     const result = {}
 
@@ -87,6 +93,7 @@ class MemberPerm {
       canViewTotal,
       canExportExcelListAll,
       canViewListSearchableInclLoan,
+      canViewListPageInclLoanHist,
     ] = await Promise.all([
       this.#createPromise,
       this.#updatePromise,
@@ -98,6 +105,7 @@ class MemberPerm {
       this.#viewTotalPromise,
       this.#exportExcelListAllPromise,
       this.#viewListSearchableInclLoanPromise,
+      this.#viewListPageInclLoanHistPromise,
     ])
 
     if (canCreate !== undefined) {
@@ -129,6 +137,10 @@ class MemberPerm {
     }
     if (canViewListSearchableInclLoan !== undefined) {
       result.canViewListSearchableInclLoan = canViewListSearchableInclLoan
+    }
+
+    if (canViewListPageInclLoanHist !== undefined) {
+      result.canViewListPageInclLoanHist = canViewListPageInclLoanHist
     }
 
     return result

@@ -5,7 +5,13 @@ import FilterWrapperDataTable from "@/components/common/data-table/filter-wrappe
 import WrapperDataTable from "@/components/common/data-table/wrapper-data-table"
 import useServerSideDataTable from "@/hooks/data-table/use-server-side-data-table"
 import { getPaginatedHistBookLoan } from "@/lib/http/book-loan-http"
-import { columnsDefBookLoanHist, getSearchItemsIdBookLoanHist, searchingItemsBookLoanHist } from "./column-data-table"
+import { colsBookLoanHist, getSearchItemsIdBookLoanHist, searchingItemsBookLoanHist } from "./column-data-table"
+
+const getColsDef = () => {
+  return colsBookLoanHist.setDefaultCols()
+    .addActionCol()
+    .get()
+}
 
 export default function BookLoanHistDataTable() {
   const {
@@ -17,7 +23,7 @@ export default function BookLoanHistDataTable() {
     orderDir: 'desc',
     fetchingData: getPaginatedHistBookLoan,
     searchFields: getSearchItemsIdBookLoanHist(),
-    columnsDef: columnsDefBookLoanHist,
+    columnsDef: getColsDef(),
   })
 
   return (

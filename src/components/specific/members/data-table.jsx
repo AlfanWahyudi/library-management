@@ -4,7 +4,7 @@ import DataTable from "@/components/common/data-table/data-table-main"
 import FilterWrapperDataTable from "@/components/common/data-table/filter-wrapper-data-table"
 import WrapperDataTable from "@/components/common/data-table/wrapper-data-table"
 import { 
-  columnsDefMember, 
+  colsDefMember, 
   searchingItemsMember, 
   getSearchItemsIdMember,
   defaultColFiltersMember
@@ -15,7 +15,14 @@ import MemberGenderFilter from "./gender-filter"
 import { useEffect, useState } from "react"
 import useServerSideFilterDataTable from "@/hooks/data-table/use-server-side-filter-data-table"
 
-export default function MemberDataTable() {
+
+const getColsDef = ({ showUpdateBtn }) => {
+  return colsDefMember.setDefaultCols()
+    .addActionCol({ showUpdateBtn })
+    .get()
+}
+
+export default function MemberDataTable({ canOpenUpdate = true }) {
   const {
     error,
     isPending,
@@ -23,7 +30,7 @@ export default function MemberDataTable() {
   } = useServerSideDataTable({
     fetchingData: getPaginatedListMember,
     searchFields: getSearchItemsIdMember(),
-    columnsDef: columnsDefMember,
+    columnsDef: getColsDef({ showUpdateBtn: canOpenUpdate }),
     defaultColFilters: defaultColFiltersMember,
   })
 

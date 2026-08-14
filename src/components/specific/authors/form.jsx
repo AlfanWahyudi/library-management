@@ -30,6 +30,7 @@ export default function AuthorForm({
   cbSuccess = () => {},
   author = null,
   viewOnly = false,
+  showDelBtn = true,
   children,
 }) {
   const formType = 
@@ -51,6 +52,8 @@ export default function AuthorForm({
 
   const inputRequired = viewOnly ? false : true
   const inputDisabled = formType === 'view'
+
+  const delBtnNotHidden =  formType === 'view' && showDelBtn
 
   const form = useForm({
     // by setting validateCriteriaMode to 'all',
@@ -93,7 +96,7 @@ export default function AuthorForm({
     if (openForm) {
       fetchingData()
 
-      if (formType === 'view') {
+      if (delBtnNotHidden) {
         handleCheckDataCanDeleted()
       }
 
@@ -116,8 +119,7 @@ export default function AuthorForm({
     )
     : undefined
 
-
-  const deleteBtn = (formType === 'view' && !errorCanDelete) 
+  const deleteBtn = (delBtnNotHidden && !errorCanDelete) 
     ? canDelete
       ? (
           <AuthorAlertDialogDelete 

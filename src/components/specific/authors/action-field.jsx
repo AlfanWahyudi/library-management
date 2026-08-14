@@ -12,7 +12,7 @@ import useFetch from "@/hooks/use-fetch";
 import AuthorBookTable from "./author-book-table";
 import { getBooksByAuthorId } from "@/lib/http/author-http";
 
-export default function ActionFieldAuthor({ author }) {
+export default function ActionFieldAuthor({ author, showUpdateTrigBtn = true, showDelBtn = true  }) {
   const { refreshTable }  = useContext(DataTableContext)
 
   const [ openSheet, setOpenSheet ] = useState(false)
@@ -82,17 +82,19 @@ export default function ActionFieldAuthor({ author }) {
               <Eye />
             </Button>
           </SheetTrigger>
-          <SheetTrigger asChild>
-            <Button 
-              type="button" 
-              variant='ghost' 
-              size='icon' 
-              className='size-7'
-              onClick={() => handleOpenSheet('edit')}
-            >
-              <SquarePen />
-            </Button>
-          </SheetTrigger>
+          {showUpdateTrigBtn && (
+            <SheetTrigger asChild>
+              <Button 
+                type="button" 
+                variant='ghost' 
+                size='icon' 
+                className='size-7'
+                onClick={() => handleOpenSheet('edit')}
+              >
+                <SquarePen />
+              </Button>
+            </SheetTrigger>
+          )}
         </div>
         <SheetContentMain
           preventPointerDownOutside={action.isEditOpen}
@@ -102,6 +104,7 @@ export default function ActionFieldAuthor({ author }) {
             cbSuccess={handleSuccess}
             author={author} 
             viewOnly={action.isViewOpen} 
+            showDelBtn={showDelBtn}
           >
             {action.isViewOpen && (
               <div className="grid gap-3">

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, SquarePen, Trash } from "lucide-react";
 import Link from "next/link";
 
-export default function ActionFieldBook({ book }) {
+export default function ActionFieldBook({ book, showUpdateBtn = true }) {
   return (
    <div>
       <Button 
@@ -18,17 +18,19 @@ export default function ActionFieldBook({ book }) {
           <Eye />
         </Link>
       </Button>
-      <Button 
-        type="button" 
-        variant='ghost' 
-        size='icon' 
-        className='size-7'
-        asChild={true}
-      >
-        <Link href={`./books/${book.id}/update`}>
-          <SquarePen />
-        </Link>
-      </Button>
+      {showUpdateBtn && (
+        <Button 
+          type="button" 
+          variant='ghost' 
+          size='icon' 
+          className='size-7'
+          asChild={true}
+        >
+          <Link href={`./books/${book.id}/update`}>
+            <SquarePen />
+          </Link>
+        </Button>
+      )}
    </div> 
   )
 }

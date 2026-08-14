@@ -10,53 +10,65 @@ import { DATETIME_PATTERN } from "@/lib/constants/datetime-pattern";
 
 const columnHelper = createColumnHelper()
 
-const columnsDefBookLoanHistSpe = [
-  columnHelper.accessor(row => format(new Date(row.finishedDate), DATETIME_PATTERN.INDO_PRIMARY), {
-    id: 'finished_date',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Pengembalian' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => row.memberFullName, {
-    id: 'member_full_name',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Anggota' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => row.memberEmail, {
-    id: 'member_email',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Email Anggota' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => format(new Date(row.startDate), DATE_PATTERN.INDO_PRIMARY), {
-    id: 'start_date',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Mulai' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-  columnHelper.accessor(row => format(new Date(row.endDate), DATE_PATTERN.INDO_PRIMARY), {
-    id: 'end_date',
-    header: ({ column }) => (
-      <ColHeader>
-        <ColSortingHeader column={column} headerName='Tanggal Selesai' />
-      </ColHeader>
-    ),
-    cell: props => props.getValue(),
-  }),
-]
+const colsDefBookLoanHistSpe = {
+  items: [],
+
+  setDefaultCols() {
+    this.items = [
+      columnHelper.accessor(row => format(new Date(row.finishedDate), DATETIME_PATTERN.INDO_PRIMARY), {
+        id: 'finished_date',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Pengembalian' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => row.memberFullName, {
+        id: 'member_full_name',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Anggota' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => row.memberEmail, {
+        id: 'member_email',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Email Anggota' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => format(new Date(row.startDate), DATE_PATTERN.INDO_PRIMARY), {
+        id: 'start_date',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Mulai' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+      columnHelper.accessor(row => format(new Date(row.endDate), DATE_PATTERN.INDO_PRIMARY), {
+        id: 'end_date',
+        header: ({ column }) => (
+          <ColHeader>
+            <ColSortingHeader column={column} headerName='Tanggal Selesai' />
+          </ColHeader>
+        ),
+        cell: props => props.getValue(),
+      }),
+    ]
+
+    return this
+  },
+
+  get() {
+    return this.items
+  }
+}
 
 const searchingItems = [
   {
@@ -74,7 +86,7 @@ const getSearchItemsId = (separator = ',') => searchingItems.map(item => item.id
 const defaultColFilters = []
 
 export {
-  columnsDefBookLoanHistSpe,
+  colsDefBookLoanHistSpe,
   searchingItems,
   getSearchItemsId,
   defaultColFilters

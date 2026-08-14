@@ -13,6 +13,7 @@ export default async function MemberDetailPage({ params }) {
 
   const memberPerm = await MemberPerm.validation(session)
     .validateView()
+    .validateViewListPageInclLoanHist()
     .exec()
 
   if (!memberPerm.canView) {
@@ -29,8 +30,7 @@ export default async function MemberDetailPage({ params }) {
       <ContentHead pageTitle='Detail Anggota'></ContentHead>
       <section className="flex flex-col gap-6">
         <CardMemberInfo member={member} />
-        {/* TODO: validate component ini */}
-        <CardMemberLoanHist memberId={member.id} /> 
+        {memberPerm.canViewListPageInclLoanHist && (<CardMemberLoanHist memberId={member.id} /> )}
       </section>
     </>
   )

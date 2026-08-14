@@ -14,6 +14,8 @@ export default async function AuthorPage() {
   const authorPerm = await AuthorPerm.validation(session)
     .validateCreate()
     .validateViewListPage()
+    .validateUpdate()
+    .validateDelete()
     .validateExportExcelListAll()
     .exec()
 
@@ -26,7 +28,7 @@ export default async function AuthorPage() {
           {authorPerm.canExportExcelListAll && (<DownloadExcelButton />)}
           {authorPerm.canCreate && (<SaveSheetAuthor />)}
         </ContentHead>
-        {authorPerm.canViewListPage && (<AuthorDataTable />)}
+        {authorPerm.canViewListPage && (<AuthorDataTable canDelData={authorPerm.canDelete} canOpenUpdate={authorPerm.canUpdate}  />)}
       </DataTableContextProvider>
     </>
   )
