@@ -9,8 +9,6 @@ import InfoTimestamp from "@/components/common/info-timestamp";
 import Auth from "@/lib/auth/auth";
 import UserPerm from "@/lib/auth/permission/user-perm";
 
-// TODO: tentukan logic authorization nya, spertinya perlu diperbaiki harus ditambahkan data user nya agar tidak update akun orang lain
-// TODO: authorize data user profile nya juga
 export default async function userProfilePage() {
   const auth = await Auth.validateSession()
   const session = auth.getSession()
