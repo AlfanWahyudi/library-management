@@ -1,27 +1,17 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, useSidebar } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu } from "@/components/ui/sidebar";
 
-import AppLogo from "../common/app-logo";
 import NavMain from "./nav/nav-main";
 import NavProfile from "./nav/nav-profile";
 import NavLogout from "./nav/nav-logout";
+import NavHeader from "./nav/nav-header";
 
 export default function DashSidebar({ userFullName, userRole }) {
-	const {
-		state,
-		open,
-		setOpen,
-		openMobile,
-		setOpenMobile,
-		isMobile,
-		toggleSidebar,
-	} = useSidebar();
-
 	return (
 		<Sidebar collapsible="icon">
 			<SidebarHeader>
-				<AppLogo />
+				<NavHeader />
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain />
