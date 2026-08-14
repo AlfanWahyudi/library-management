@@ -11,7 +11,7 @@ export default function AppLogo() {
         <SquareLibrary size={18} />
       </div>
       <div>
-        <span className="font-semibold text-lg">Library</span>
+        <span className="font-semibold text-lg">Library App</span>
       </div>
     </div>
   )
