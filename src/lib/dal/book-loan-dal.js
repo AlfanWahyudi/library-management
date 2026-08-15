@@ -1,26 +1,37 @@
 import 'server-only'
+
 import { BOOK_LOAN } from '../constants/book-loan'
 import { add, endOfDay } from 'date-fns'
-import { getPaginatedList } from '../utils/server/datatable'
+import { dataNotDeleted } from '../utils/server/sql'
+
+import { tableName as tableBook } from './book-dal'
 
 const tableName = 'book_loans'
-
-
-const findByQuery = async ({ sql, field, value }) => {
-  return await sql`
-    SELECT * FROM ${ sql(tableName) }
-    WHERE ${ sql(field) } = ${value}
-  `
-}
 
 const BookLoanDAL = {
   findStillLoanById: async (sql, id) => {
     if (typeof(id) !== 'number') throw new Error('id must be a number.')
 
     return await sql`
-      SELECT * FROM ${ sql(tableName) }
+      SELECT 
+        bl.id,
+        bl.member_id,
+        bl.book_id,
+        bl.start_date,
+        bl.end_date,
+        bl.finished_date,
+        bl.created_by,
+        bl.created_at,
+        bl.updated_by,
+        bl.updated_at
+      FROM 
+        ${ sql(tableName) } bl
+      JOIN 
+        ${ sql(tableBook) } as b ON bl.book_id = b.id
       WHERE 
-        id = ${id} AND finished_date IS NULL
+        bl.id = ${id} AND 
+        bl.finished_date IS NULL AND
+        ${ dataNotDeleted('b') };  
     `
   },
 
@@ -28,16 +39,26 @@ const BookLoanDAL = {
     if (typeof(id) !== 'number') throw new Error('id must be a number.')
 
     return await sql`
-      SELECT * FROM ${ sql(tableName) }
+      SELECT 
+        bl.id,
+        bl.member_id,
+        bl.book_id,
+        bl.start_date,
+        bl.end_date,
+        bl.finished_date,
+        bl.created_by,
+        bl.created_at,
+        bl.updated_by,
+        bl.updated_at
+      FROM 
+        ${ sql(tableName) } bl
+      JOIN 
+        ${ sql(tableBook) } as b ON bl.book_id = b.id
       WHERE 
-        id = ${id} AND finished_date IS NOT NULL
+        bl.id = ${id} AND 
+        bl.finished_date IS NOT NULL AND
+        ${ dataNotDeleted('b') };
     `
-  },
-
-  findByBookId: async (sql, bookId) => {
-    if (typeof(bookId) !== 'number') throw new Error('bookId must be a number.')
-
-    return await findByQuery({ sql, field: 'book_id', value: bookId })
   },
 
   save: async (
@@ -94,53 +115,35 @@ const BookLoanDAL = {
   total: async (sql) => {
     return await sql`
       SELECT 
-        COUNT(id) as total 
-      FROM ${ sql(tableName) }
-      WHERE finished_date IS NOT NULL;
+        COUNT(bl.id) as total 
+      FROM 
+        ${ sql(tableName) } bl
+      JOIN 
+        ${ sql(tableBook) } as b ON bl.book_id = b.id
+      WHERE 
+        finished_date IS NOT NULL AND
+        ${ dataNotDeleted('b') }
+      ;
     `
   },
 
   totalCompleteYearAll: async (sql) => {
     return await sql`
       SELECT
-        EXTRACT(YEAR FROM start_date) AS year,
-        COUNT(id) AS total
-      FROM ${ sql(tableName) } 
-      WHERE finished_date IS NOT NULL
-      GROUP BY EXTRACT(YEAR FROM start_date)
+        EXTRACT(YEAR FROM bl.start_date) AS year,
+        COUNT(bl.id) AS total
+      FROM 
+        ${ sql(tableName) } as bl
+      JOIN 
+        ${ sql(tableBook) } as b ON bl.book_id = b.id
+      WHERE 
+        bl.finished_date IS NOT NULL AND
+        ${ dataNotDeleted('b') }
+      GROUP BY 
+        EXTRACT(YEAR FROM bl.start_date)
       ORDER BY year;
     `
   },
-  
-  totalCompleteYear: async (sql, year) => {
-    return await sql`
-      SELECT
-        EXTRACT(MONTH FROM start_date) AS month,
-        COUNT(id) AS total
-      FROM ${ sql(tableName) } 
-      WHERE 
-        finished_date IS NOT NULL AND 
-        EXTRACT(YEAR FROM start_date) = ${ year }
-      GROUP BY EXTRACT(MONTH FROM start_date)
-      ORDER BY month;
-    `
-  },
-
-  totalCompleteMonth: async (sql, year, month) => {
-    return await sql`
-      SELECT
-          EXTRACT(DAY FROM start_date) AS day,
-          COUNT(id) AS total
-      FROM ${ sql(tableName) }
-      WHERE 
-        finished_date IS NOT NULL AND 
-        EXTRACT(YEAR FROM start_date) = ${ year } AND 
-        EXTRACT(MONTH FROM start_date) = ${ month }
-      GROUP BY EXTRACT(DAY FROM start_date)
-      ORDER BY day;
-    `
-  },
-
 }
 
 export default BookLoanDAL

@@ -43,7 +43,6 @@ const BookLoanHistViewDAL = {
 
     return await getPaginatedList(sql, paginatedData)
   },
-  
 }
 
 export default BookLoanHistViewDAL
