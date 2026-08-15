@@ -1,0 +1,1935 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict 4GPhuuoR22tEFLTf0VCJlhvstUlnkcFkEc5uyrXrfXuTWWXubvEobdg785fVVHY
+
+-- Dumped from database version 18.4 (Ubuntu 18.4-0ubuntu0.26.04.1)
+-- Dumped by pg_dump version 18.4 (Ubuntu 18.4-0ubuntu0.26.04.1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: genderenum; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.genderenum AS ENUM (
+    'm',
+    'f'
+);
+
+
+ALTER TYPE public.genderenum OWNER TO postgres;
+
+--
+-- Name: violationlevel; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.violationlevel AS ENUM (
+    'minor',
+    'moderate',
+    'high'
+);
+
+
+ALTER TYPE public.violationlevel OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: authors; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.authors (
+    id integer NOT NULL,
+    full_name character varying(255) NOT NULL,
+    country_code character(2),
+    active_since integer,
+    about text,
+    created_by character varying(25),
+    created_at timestamp without time zone,
+    updated_by character varying(25),
+    updated_at timestamp without time zone,
+    deleted_by character varying(25) DEFAULT NULL::character varying,
+    deleted_at timestamp without time zone
+);
+
+
+ALTER TABLE public.authors OWNER TO postgres;
+
+--
+-- Name: authors_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.authors_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.authors_id_seq OWNER TO postgres;
+
+--
+-- Name: authors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.authors_id_seq OWNED BY public.authors.id;
+
+
+--
+-- Name: authors_view; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.authors_view AS
+SELECT
+    NULL::integer AS id,
+    NULL::character varying(255) AS full_name,
+    NULL::bigint AS book_count,
+    NULL::character(2) AS country_code,
+    NULL::character varying(255) AS country_name,
+    NULL::integer AS active_since,
+    NULL::text AS about,
+    NULL::timestamp without time zone AS created_at,
+    NULL::timestamp without time zone AS updated_at;
+
+
+ALTER VIEW public.authors_view OWNER TO postgres;
+
+--
+-- Name: book_authors; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.book_authors (
+    author_id integer NOT NULL,
+    book_id integer NOT NULL,
+    created_by character varying(25),
+    created_at timestamp without time zone
+);
+
+
+ALTER TABLE public.book_authors OWNER TO postgres;
+
+--
+-- Name: book_loans; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.book_loans (
+    id integer NOT NULL,
+    member_id integer,
+    book_id integer,
+    start_date timestamp without time zone NOT NULL,
+    end_date timestamp without time zone NOT NULL,
+    finished_date timestamp without time zone,
+    created_by character varying(25),
+    created_at timestamp without time zone,
+    updated_by character varying(25) DEFAULT NULL::character varying,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.book_loans OWNER TO postgres;
+
+--
+-- Name: books; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.books (
+    id integer NOT NULL,
+    isbn character varying(50) NOT NULL,
+    title character varying(255) NOT NULL,
+    sub_title character varying(255),
+    publisher character varying(255),
+    publication_date date NOT NULL,
+    page integer,
+    language character varying(255),
+    edition integer,
+    created_by character varying(25),
+    created_at timestamp without time zone,
+    updated_by character varying(25),
+    updated_at timestamp without time zone,
+    deleted_by character varying(25) DEFAULT NULL::character varying,
+    deleted_at timestamp without time zone
+);
+
+
+ALTER TABLE public.books OWNER TO postgres;
+
+--
+-- Name: members; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.members (
+    id integer NOT NULL,
+    full_name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    phone character varying(20) NOT NULL,
+    address text NOT NULL,
+    birth_date date NOT NULL,
+    gender public.genderenum NOT NULL,
+    created_by character varying(25),
+    created_at timestamp without time zone,
+    updated_by character varying(25),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE public.members OWNER TO postgres;
+
+--
+-- Name: book_loan_hist_view; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.book_loan_hist_view AS
+ SELECT bl.id,
+    bl.book_id,
+    b.title AS book_title,
+    b.isbn AS book_isbn,
+    bl.member_id,
+    m.full_name AS member_full_name,
+    m.email AS member_email,
+    bl.start_date,
+    bl.end_date,
+    bl.finished_date,
+    bl.created_by,
+    bl.created_at,
+    bl.updated_by,
+    bl.updated_at
+   FROM ((public.book_loans bl
+     LEFT JOIN public.books b ON ((bl.book_id = b.id)))
+     LEFT JOIN public.members m ON ((bl.member_id = m.id)))
+  WHERE ((bl.finished_date IS NOT NULL) AND (b.deleted_by IS NULL) AND (b.deleted_at IS NULL));
+
+
+ALTER VIEW public.book_loan_hist_view OWNER TO postgres;
+
+--
+-- Name: book_loans_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.book_loans_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.book_loans_id_seq OWNER TO postgres;
+
+--
+-- Name: book_loans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.book_loans_id_seq OWNED BY public.book_loans.id;
+
+
+--
+-- Name: books_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.books_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.books_id_seq OWNER TO postgres;
+
+--
+-- Name: books_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.books_id_seq OWNED BY public.books.id;
+
+
+--
+-- Name: books_on_loan_view; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.books_on_loan_view AS
+ SELECT bl.id,
+    bl.book_id,
+    b.title AS book_title,
+    b.isbn AS book_isbn,
+    bl.member_id,
+    m.full_name AS member_full_name,
+    m.email AS member_email,
+    bl.start_date,
+    bl.end_date,
+    bl.created_by,
+    bl.created_at,
+    bl.updated_by,
+    bl.updated_at
+   FROM ((public.book_loans bl
+     LEFT JOIN public.books b ON ((bl.book_id = b.id)))
+     LEFT JOIN public.members m ON ((bl.member_id = m.id)))
+  WHERE ((bl.finished_date IS NULL) AND ((b.deleted_by IS NULL) AND (b.deleted_at IS NULL)));
+
+
+ALTER VIEW public.books_on_loan_view OWNER TO postgres;
+
+--
+-- Name: countries; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.countries (
+    code character(2) NOT NULL,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.countries OWNER TO postgres;
+
+--
+-- Name: members_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.members_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.members_id_seq OWNER TO postgres;
+
+--
+-- Name: members_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.members_id_seq OWNED BY public.members.id;
+
+
+--
+-- Name: permissions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.permissions (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    description text
+);
+
+
+ALTER TABLE public.permissions OWNER TO postgres;
+
+--
+-- Name: permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.permissions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.permissions_id_seq OWNER TO postgres;
+
+--
+-- Name: permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.permissions_id_seq OWNED BY public.permissions.id;
+
+
+--
+-- Name: role_permissions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.role_permissions (
+    role_id integer NOT NULL,
+    permission_id integer NOT NULL,
+    created_by character varying(25),
+    created_at timestamp without time zone,
+    updated_by character varying(25),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE public.role_permissions OWNER TO postgres;
+
+--
+-- Name: roles; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.roles (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    created_by character varying(25),
+    created_at timestamp without time zone,
+    updated_by character varying(25),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE public.roles OWNER TO postgres;
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.roles_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.roles_id_seq OWNER TO postgres;
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
+
+
+--
+-- Name: user_roles; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.user_roles (
+    user_id integer NOT NULL,
+    role_id integer NOT NULL,
+    created_by character varying(25),
+    created_at timestamp without time zone,
+    updated_by character varying(25),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE public.user_roles OWNER TO postgres;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    username character varying(25) NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    full_name character varying(255) NOT NULL,
+    address text,
+    gender public.genderenum NOT NULL,
+    created_by character varying(25),
+    created_at timestamp without time zone,
+    updated_by character varying(25),
+    updated_at timestamp without time zone,
+    deleted_by character varying(25) DEFAULT NULL::character varying,
+    deleted_at timestamp without time zone
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_id_seq OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: authors id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.authors ALTER COLUMN id SET DEFAULT nextval('public.authors_id_seq'::regclass);
+
+
+--
+-- Name: book_loans id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.book_loans ALTER COLUMN id SET DEFAULT nextval('public.book_loans_id_seq'::regclass);
+
+
+--
+-- Name: books id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.books ALTER COLUMN id SET DEFAULT nextval('public.books_id_seq'::regclass);
+
+
+--
+-- Name: members id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.members ALTER COLUMN id SET DEFAULT nextval('public.members_id_seq'::regclass);
+
+
+--
+-- Name: permissions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.permissions ALTER COLUMN id SET DEFAULT nextval('public.permissions_id_seq'::regclass);
+
+
+--
+-- Name: roles id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.authors (id, full_name, country_code, active_since, about, created_by, created_at, updated_by, updated_at, deleted_by, deleted_at) FROM stdin;
+152	Benjamin Crawford	AU	1997	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+157	Julien Mercier	FR	1981	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+1	Asti Musman	ID	\N	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+2	Wahidah Murriska	ID	\N	Memiliki pengalaman kerja sebagai English translator di Perpustakaan Ganesa, Sukoharjo (2015), English teacher di Erje Privat (2016), dan Writer di Sanggar Bahasa Yogyakarta (2017). Latar belakang pendidikannya adalah Sastra Inggris, Fakultas Ilmu Budaya, Universitas Sebelas Maret, dan Ilmu Linguistik, Fakultas Ilmu Budaya, Universitas Gadjah Mada	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+3	Greg McKeown	GB	\N	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+135	Kim Seo-jun	KR	1998	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+156	Nakamura Sora	JP	1998	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+144	Park Min-jun	KR	1983	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+145	Fujimoto Reina	JP	1999	Lorem ipsum dolor sit amet, consectetur adipiscing elit.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+161	Thomas Ellington	AU	1992	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+158	Zhao Wenjie	CN	1990	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+132	Eleanor Whitmore	AU	1989	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+142	Dimas Pranowo	ID	2000	Lorem ipsum dolor sit amet, consectetur adipiscing elit.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+139	Klara Hoffmann	DE	1988	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+134	Lucía Valderrama	ES	1986	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+136	Akiyama Haruto	JP	1991	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+130	Johannes Falkner	DE	1984	Lorem ipsum dolor sit amet, consectetur adipiscing elit.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+128	Claire Beaumont	FR	1987	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+138	Chen Yuxuan	CN	1997	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+143	Mateo Castañeda	ES	1990	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+137	Margot Delacroix	FR	1982	Lorem ipsum dolor sit amet, consectetur adipiscing elit.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+150	Friedrich Neumann	DE	1983	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+149	Li Meiying	CN	1995	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+140	Matteo Bellini	IT	1993	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+131	Giulia Moretti	IT	1996	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+141	Oliver Harrington	AU	1985	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+154	Valeria Montoya	ES	1994	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+133	Rizky Adinata	ID	1994	Lorem ipsum dolor sit amet, consectetur adipiscing elit.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+162	Sari Wulandari	ID	1999	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+129	Wang Lianhua	CN	1992	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+146	Sophie Laurent	FR	1995	\N	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+153	Nadia Kusumawardani	ID	1988	Lorem ipsum dolor sit amet.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+155	Choi Eun-woo	KR	1986	Lorem ipsum dolor sit amet, consectetur adipiscing elit.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+159	Anneliese Weber	DE	1996	Lorem ipsum dolor sit amet, consectetur adipiscing elit.	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+\.
+
+
+--
+-- Data for Name: book_authors; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.book_authors (author_id, book_id, created_by, created_at) FROM stdin;
+1	1	1	2025-06-01 08:05:20
+2	2	1	2025-06-01 08:05:20
+3	3	1	2025-06-01 08:05:20
+3	1	1	2025-06-01 08:05:20
+3	2	1	2025-06-01 08:05:20
+132	34	1	2025-06-01 08:05:20
+133	35	1	2025-06-01 08:05:20
+152	36	1	2025-06-01 08:05:20
+161	38	1	2025-06-01 08:05:20
+153	39	1	2025-06-01 08:05:20
+155	40	1	2025-06-01 08:05:20
+161	41	1	2025-06-01 08:05:20
+130	42	1	2025-06-01 08:05:20
+134	43	1	2025-06-01 08:05:20
+132	44	1	2025-06-01 08:05:20
+142	45	1	2025-06-01 08:05:20
+137	47	1	2025-06-01 08:05:20
+132	48	1	2025-06-01 08:05:20
+139	49	1	2025-06-01 08:05:20
+143	50	1	2025-06-01 08:05:20
+132	51	1	2025-06-01 08:05:20
+162	52	1	2025-06-01 08:05:20
+161	54	1	2025-06-01 08:05:20
+146	55	1	2025-06-01 08:05:20
+161	57	1	2025-06-01 08:05:20
+131	58	1	2025-06-01 08:05:20
+153	59	1	2025-06-01 08:05:20
+141	60	1	2025-06-01 08:05:20
+154	61	1	2025-06-01 08:05:20
+161	63	1	2025-06-01 08:05:20
+157	64	1	2025-06-01 08:05:20
+153	65	1	2025-06-01 08:05:20
+141	67	1	2025-06-01 08:05:20
+150	68	1	2025-06-01 08:05:20
+140	69	1	2025-06-01 08:05:20
+142	70	1	2025-06-01 08:05:20
+141	71	1	2025-06-01 08:05:20
+133	73	1	2025-06-01 08:05:20
+128	74	1	2025-06-01 08:05:20
+133	75	1	2025-06-01 08:05:20
+133	77	1	2025-06-01 08:05:20
+154	78	1	2025-06-01 08:05:20
+159	79	1	2025-06-01 08:05:20
+141	80	1	2025-06-01 08:05:20
+133	81	1	2025-06-01 08:05:20
+141	83	1	2025-06-01 08:05:20
+\.
+
+
+--
+-- Data for Name: book_loans; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.book_loans (id, member_id, book_id, start_date, end_date, finished_date, created_by, created_at, updated_by, updated_at) FROM stdin;
+55	5	1	2026-04-20 13:28:43.551475	2026-04-27 23:59:59.999	2026-04-21 17:12:36.306951	1	2026-04-20 13:28:43.551475	1	2026-04-21 17:12:36.306951
+57	4	3	2026-05-18 14:19:49.238052	2026-05-25 23:59:59.999	2026-05-21 20:54:34.922463	1	2026-05-18 14:19:49.238052	1	2026-05-21 20:54:34.922463
+5	5	2	2025-06-13 11:30:01	2025-06-20 23:59:59	2025-06-20 09:00:00	2	2025-06-13 11:30:01	1	2025-06-20 09:00:00
+4	4	1	2025-06-07 15:50:01	2025-06-14 23:59:59	2025-06-14 23:59:59	3	2025-06-07 15:50:01	1	2025-06-14 23:59:59
+3	3	3	2025-06-06 15:50:01	2025-06-13 23:59:59	2025-06-13 09:10:13	3	2025-06-06 15:50:01	3	2025-06-13 09:10:13
+1	1	1	2025-06-06 15:50:01	2025-06-13 23:59:59	2025-06-13 11:00:00	2	2025-06-06 15:50:01	2	2025-06-13 11:00:00
+2	2	2	2025-06-06 15:50:01	2025-06-13 23:59:59	2025-06-13 15:21:33	2	2025-06-06 15:50:01	2	2025-06-13 15:21:33
+39	7	1	2026-03-30 16:51:40.166827	2026-04-06 23:59:59.999	2026-04-05 09:10:13	1	2026-03-30 16:51:40.166827	1	2026-04-05 09:10:13
+40	7	2	2026-03-30 16:57:36.2932	2026-04-06 23:59:59.999	2026-04-06 09:16:13	1	2026-03-30 16:57:36.2932	1	2026-04-06 09:16:13
+43	19	3	2026-03-30 16:58:15.25984	2026-04-06 23:59:59.999	2026-04-05 10:00:13	1	2026-03-30 16:58:15.25984	1	2026-04-05 10:00:13
+61	2	2	2026-08-14 14:37:56.395304	2026-08-21 23:59:59.999	2026-08-15 07:47:21.224807	2	2026-08-14 14:37:56.395304	1	2026-08-15 07:47:21.224807
+62	2	3	2026-08-14 14:37:56.395304	2026-08-21 23:59:59.999	2026-08-15 07:47:24.529207	2	2026-08-14 14:37:56.395304	1	2026-08-15 07:47:24.529207
+65	19	2	2025-06-02 10:59:00	2025-06-09 23:59:59	2025-06-09 10:00:00	1	2025-06-02 10:59:00	2	2025-06-09 10:00:00
+66	1	42	2025-06-02 11:22:00	2025-06-09 23:59:59	2025-06-09 12:00:00	1	2025-06-02 11:22:00	2	2025-06-09 12:00:00
+67	1	69	2025-06-02 11:28:00	2025-06-09 23:59:59	2025-06-09 12:00:00	1	2025-06-02 11:28:00	1	2025-06-09 12:00:00
+68	1	55	2025-06-02 13:51:00	2025-06-09 23:59:59	2025-06-09 10:00:00	2	2025-06-02 13:51:00	2	2025-06-09 10:00:00
+69	10	3	2025-06-02 14:21:00	2025-06-09 23:59:59	2025-06-09 15:00:00	1	2025-06-02 14:21:00	1	2025-06-09 15:00:00
+70	10	43	2025-06-02 17:43:00	2025-06-09 23:59:59	2025-06-09 14:00:00	1	2025-06-02 17:43:00	2	2025-06-09 14:00:00
+71	10	34	2025-06-03 12:42:00	2025-06-10 23:59:59	2025-06-10 09:00:00	2	2025-06-03 12:42:00	1	2025-06-10 09:00:00
+72	15	62	2025-06-02 08:41:00	2025-06-09 23:59:59	2025-06-09 08:00:00	2	2025-06-02 08:41:00	2	2025-06-09 08:00:00
+73	15	79	2025-06-03 15:44:00	2025-06-10 23:59:59	2025-06-10 14:00:00	2	2025-06-03 15:44:00	2	2025-06-10 14:00:00
+74	27	39	2025-06-02 12:24:00	2025-06-09 23:59:59	2025-06-09 09:00:00	2	2025-06-02 12:24:00	1	2025-06-09 09:00:00
+75	27	59	2025-06-04 17:19:00	2025-06-11 23:59:59	2025-06-11 14:00:00	2	2025-06-04 17:19:00	2	2025-06-11 14:00:00
+76	6	36	2025-06-02 08:51:00	2025-06-09 23:59:59	2025-06-09 09:00:00	2	2025-06-02 08:51:00	1	2025-06-09 09:00:00
+77	6	78	2025-06-03 08:29:00	2025-06-10 23:59:59	2025-06-10 14:00:00	2	2025-06-03 08:29:00	1	2025-06-10 14:00:00
+78	6	50	2025-06-03 11:23:00	2025-06-10 23:59:59	2025-06-10 13:00:00	1	2025-06-03 11:23:00	2	2025-06-10 13:00:00
+79	5	75	2025-06-02 11:08:00	2025-06-09 23:59:59	2025-06-09 08:00:00	2	2025-06-02 11:08:00	1	2025-06-09 08:00:00
+80	5	74	2025-06-03 16:36:00	2025-06-10 23:59:59	2025-06-10 12:00:00	2	2025-06-03 16:36:00	2	2025-06-10 12:00:00
+81	7	49	2025-06-02 16:42:00	2025-06-09 23:59:59	2025-06-09 12:00:00	1	2025-06-02 16:42:00	1	2025-06-09 12:00:00
+82	18	63	2025-06-02 10:21:00	2025-06-09 23:59:59	2025-06-09 10:00:00	2	2025-06-02 10:21:00	2	2025-06-09 10:00:00
+83	18	58	2025-06-02 14:04:00	2025-06-09 23:59:59	2025-06-09 11:00:00	1	2025-06-02 14:04:00	2	2025-06-09 11:00:00
+84	9	46	2025-06-02 10:11:00	2025-06-09 23:59:59	2025-06-09 08:00:00	1	2025-06-02 10:11:00	1	2025-06-09 08:00:00
+85	14	64	2025-06-02 13:25:00	2025-06-09 23:59:59	2025-06-09 11:00:00	1	2025-06-02 13:25:00	1	2025-06-09 11:00:00
+86	20	56	2025-06-02 12:42:00	2025-06-09 23:59:59	2025-06-09 13:00:00	1	2025-06-02 12:42:00	1	2025-06-09 13:00:00
+87	26	48	2025-06-02 10:22:00	2025-06-09 23:59:59	2025-06-09 11:00:00	1	2025-06-02 10:22:00	2	2025-06-09 11:00:00
+88	26	77	2025-06-03 11:52:00	2025-06-10 23:59:59	2025-06-10 09:00:00	1	2025-06-03 11:52:00	2	2025-06-10 09:00:00
+89	26	76	2025-06-04 16:16:00	2025-06-11 23:59:59	2025-06-11 13:00:00	1	2025-06-04 16:16:00	1	2025-06-11 13:00:00
+90	28	1	2025-06-03 14:34:00	2025-06-10 23:59:59	2025-06-10 08:00:00	2	2025-06-03 14:34:00	2	2025-06-10 08:00:00
+91	28	66	2025-06-03 12:11:00	2025-06-10 23:59:59	2025-06-10 11:00:00	2	2025-06-03 12:11:00	2	2025-06-10 11:00:00
+92	3	81	2025-06-03 09:58:00	2025-06-10 23:59:59	2025-06-10 13:00:00	2	2025-06-03 09:58:00	2	2025-06-10 13:00:00
+93	16	56	2025-07-01 08:11:00	2025-07-08 23:59:59	2025-07-08 10:00:00	2	2025-07-01 08:11:00	1	2025-07-08 10:00:00
+94	16	61	2025-07-01 10:39:00	2025-07-08 23:59:59	2025-07-08 14:00:00	2	2025-07-01 10:39:00	1	2025-07-08 14:00:00
+95	16	77	2025-07-04 14:53:00	2025-07-11 23:59:59	2025-07-11 14:00:00	1	2025-07-04 14:53:00	2	2025-07-11 14:00:00
+96	3	75	2025-07-01 10:23:00	2025-07-08 23:59:59	2025-07-08 10:00:00	2	2025-07-01 10:23:00	2	2025-07-08 10:00:00
+97	3	41	2025-07-03 13:42:00	2025-07-10 23:59:59	2025-07-10 09:00:00	1	2025-07-03 13:42:00	2	2025-07-10 09:00:00
+98	2	83	2025-07-01 10:35:00	2025-07-08 23:59:59	2025-07-08 11:00:00	1	2025-07-01 10:35:00	1	2025-07-08 11:00:00
+99	2	59	2025-07-02 16:27:00	2025-07-09 23:59:59	2025-07-09 08:00:00	1	2025-07-02 16:27:00	2	2025-07-09 08:00:00
+100	2	73	2025-07-05 14:43:00	2025-07-12 23:59:59	2025-07-12 13:00:00	1	2025-07-05 14:43:00	2	2025-07-12 13:00:00
+101	15	72	2025-07-01 10:08:00	2025-07-08 23:59:59	2025-07-08 13:00:00	2	2025-07-01 10:08:00	1	2025-07-08 13:00:00
+102	15	38	2025-07-02 12:55:00	2025-07-09 23:59:59	2025-07-09 09:00:00	2	2025-07-02 12:55:00	1	2025-07-09 09:00:00
+103	10	74	2025-07-02 09:49:00	2025-07-09 23:59:59	2025-07-09 14:00:00	1	2025-07-02 09:49:00	2	2025-07-09 14:00:00
+104	10	39	2025-07-04 14:32:00	2025-07-11 23:59:59	2025-07-11 10:00:00	2	2025-07-04 14:32:00	1	2025-07-11 10:00:00
+105	9	82	2025-07-02 10:05:00	2025-07-09 23:59:59	2025-07-09 14:00:00	2	2025-07-02 10:05:00	1	2025-07-09 14:00:00
+106	9	2	2025-07-04 16:19:00	2025-07-11 23:59:59	2025-07-11 08:00:00	1	2025-07-04 16:19:00	1	2025-07-11 08:00:00
+107	19	57	2025-07-02 10:36:00	2025-07-09 23:59:59	2025-07-09 14:00:00	1	2025-07-02 10:36:00	1	2025-07-09 14:00:00
+108	19	47	2025-07-03 10:14:00	2025-07-10 23:59:59	2025-07-10 12:00:00	2	2025-07-03 10:14:00	2	2025-07-10 12:00:00
+109	19	35	2025-07-03 15:14:00	2025-07-10 23:59:59	2025-07-10 14:00:00	1	2025-07-03 15:14:00	1	2025-07-10 14:00:00
+110	1	70	2025-07-02 12:24:00	2025-07-09 23:59:59	2025-07-09 12:00:00	2	2025-07-02 12:24:00	2	2025-07-09 12:00:00
+111	1	53	2025-07-03 14:42:00	2025-07-10 23:59:59	2025-07-10 11:00:00	1	2025-07-03 14:42:00	2	2025-07-10 11:00:00
+112	8	37	2025-07-03 16:13:00	2025-07-10 23:59:59	2025-07-10 10:00:00	2	2025-07-03 16:13:00	1	2025-07-10 10:00:00
+113	8	34	2025-07-04 16:40:00	2025-07-11 23:59:59	2025-07-11 14:00:00	2	2025-07-04 16:40:00	2	2025-07-11 14:00:00
+114	20	3	2025-07-03 11:50:00	2025-07-10 23:59:59	2025-07-10 11:00:00	2	2025-07-03 11:50:00	2	2025-07-10 11:00:00
+115	20	58	2025-07-03 09:30:00	2025-07-10 23:59:59	2025-07-10 11:00:00	2	2025-07-03 09:30:00	2	2025-07-10 11:00:00
+116	20	79	2025-07-04 13:06:00	2025-07-11 23:59:59	2025-07-11 11:00:00	1	2025-07-04 13:06:00	2	2025-07-11 11:00:00
+117	26	76	2025-07-03 11:30:00	2025-07-10 23:59:59	2025-07-10 15:00:00	2	2025-07-03 11:30:00	1	2025-07-10 15:00:00
+118	28	60	2025-07-03 09:19:00	2025-07-10 23:59:59	2025-07-10 14:00:00	1	2025-07-03 09:19:00	2	2025-07-10 14:00:00
+119	28	54	2025-07-04 10:08:00	2025-07-11 23:59:59	2025-07-11 11:00:00	1	2025-07-04 10:08:00	2	2025-07-11 11:00:00
+120	14	51	2025-07-03 08:54:00	2025-07-10 23:59:59	2025-07-10 12:00:00	1	2025-07-03 08:54:00	2	2025-07-10 12:00:00
+121	27	69	2025-07-03 10:45:00	2025-07-10 23:59:59	2025-07-10 10:00:00	1	2025-07-03 10:45:00	2	2025-07-10 10:00:00
+122	27	48	2025-07-04 15:34:00	2025-07-11 23:59:59	2025-07-11 10:00:00	1	2025-07-04 15:34:00	2	2025-07-11 10:00:00
+123	27	55	2025-07-04 09:13:00	2025-07-11 23:59:59	2025-07-11 09:00:00	2	2025-07-04 09:13:00	1	2025-07-11 09:00:00
+124	29	80	2025-07-03 11:45:00	2025-07-10 23:59:59	2025-07-10 12:00:00	1	2025-07-03 11:45:00	2	2025-07-10 12:00:00
+125	4	66	2025-07-03 09:58:00	2025-07-10 23:59:59	2025-07-10 09:00:00	2	2025-07-03 09:58:00	1	2025-07-10 09:00:00
+126	7	81	2025-07-03 17:19:00	2025-07-10 23:59:59	2025-07-10 13:00:00	2	2025-07-03 17:19:00	1	2025-07-10 13:00:00
+127	18	46	2025-07-04 16:17:00	2025-07-11 23:59:59	2025-07-11 09:00:00	1	2025-07-04 16:17:00	1	2025-07-11 09:00:00
+128	6	42	2025-07-04 15:34:00	2025-07-11 23:59:59	2025-07-11 13:00:00	2	2025-07-04 15:34:00	2	2025-07-11 13:00:00
+129	15	83	2025-08-01 10:42:00	2025-08-08 23:59:59	2025-08-08 14:00:00	2	2025-08-01 10:42:00	2	2025-08-08 14:00:00
+130	15	82	2025-08-01 15:34:00	2025-08-08 23:59:59	2025-08-08 13:00:00	2	2025-08-01 15:34:00	2	2025-08-08 13:00:00
+131	15	52	2025-08-01 09:09:00	2025-08-08 23:59:59	2025-08-08 09:00:00	2	2025-08-01 09:09:00	1	2025-08-08 09:00:00
+132	4	50	2025-08-01 09:04:00	2025-08-08 23:59:59	2025-08-08 09:00:00	2	2025-08-01 09:04:00	1	2025-08-08 09:00:00
+133	4	56	2025-08-01 12:43:00	2025-08-08 23:59:59	2025-08-08 08:00:00	1	2025-08-01 12:43:00	2	2025-08-08 08:00:00
+134	4	68	2025-08-04 15:28:00	2025-08-11 23:59:59	2025-08-11 09:00:00	2	2025-08-04 15:28:00	2	2025-08-11 09:00:00
+135	6	36	2025-08-01 10:06:00	2025-08-08 23:59:59	2025-08-08 11:00:00	2	2025-08-01 10:06:00	1	2025-08-08 11:00:00
+136	6	43	2025-08-02 16:59:00	2025-08-09 23:59:59	2025-08-09 09:00:00	1	2025-08-02 16:59:00	2	2025-08-09 09:00:00
+137	7	42	2025-08-01 10:58:00	2025-08-08 23:59:59	2025-08-08 10:00:00	1	2025-08-01 10:58:00	1	2025-08-08 10:00:00
+138	18	47	2025-08-01 13:59:00	2025-08-08 23:59:59	2025-08-08 10:00:00	2	2025-08-01 13:59:00	2	2025-08-08 10:00:00
+139	18	44	2025-08-05 11:53:00	2025-08-12 23:59:59	2025-08-12 10:00:00	1	2025-08-05 11:53:00	2	2025-08-12 10:00:00
+140	18	49	2025-08-05 08:32:00	2025-08-12 23:59:59	2025-08-12 12:00:00	2	2025-08-05 08:32:00	1	2025-08-12 12:00:00
+141	8	78	2025-08-01 10:11:00	2025-08-08 23:59:59	2025-08-08 13:00:00	2	2025-08-01 10:11:00	1	2025-08-08 13:00:00
+142	8	80	2025-08-01 14:03:00	2025-08-08 23:59:59	2025-08-08 09:00:00	2	2025-08-01 14:03:00	2	2025-08-08 09:00:00
+143	8	45	2025-08-04 08:39:00	2025-08-11 23:59:59	2025-08-11 11:00:00	2	2025-08-04 08:39:00	2	2025-08-11 11:00:00
+144	9	40	2025-08-01 15:21:00	2025-08-08 23:59:59	2025-08-08 12:00:00	1	2025-08-01 15:21:00	1	2025-08-08 12:00:00
+145	2	46	2025-08-01 17:03:00	2025-08-08 23:59:59	2025-08-08 08:00:00	1	2025-08-01 17:03:00	1	2025-08-08 08:00:00
+146	14	74	2025-08-02 17:03:00	2025-08-09 23:59:59	2025-08-09 11:00:00	2	2025-08-02 17:03:00	1	2025-08-09 11:00:00
+147	28	53	2025-08-02 14:29:00	2025-08-09 23:59:59	2025-08-09 10:00:00	2	2025-08-02 14:29:00	1	2025-08-09 10:00:00
+148	28	48	2025-08-05 08:17:00	2025-08-12 23:59:59	2025-08-12 14:00:00	2	2025-08-05 08:17:00	1	2025-08-12 14:00:00
+149	28	58	2025-08-05 11:42:00	2025-08-12 23:59:59	2025-08-12 09:00:00	2	2025-08-05 11:42:00	2	2025-08-12 09:00:00
+150	26	1	2025-08-04 16:07:00	2025-08-11 23:59:59	2025-08-11 15:00:00	2	2025-08-04 16:07:00	2	2025-08-11 15:00:00
+151	26	39	2025-08-04 11:35:00	2025-08-11 23:59:59	2025-08-11 12:00:00	1	2025-08-04 11:35:00	1	2025-08-11 12:00:00
+152	20	76	2025-08-04 14:58:00	2025-08-11 23:59:59	2025-08-11 14:00:00	1	2025-08-04 14:58:00	1	2025-08-11 14:00:00
+153	20	81	2025-08-05 09:20:00	2025-08-12 23:59:59	2025-08-12 11:00:00	1	2025-08-05 09:20:00	2	2025-08-12 11:00:00
+154	20	62	2025-08-05 17:20:00	2025-08-12 23:59:59	2025-08-12 11:00:00	2	2025-08-05 17:20:00	2	2025-08-12 11:00:00
+155	26	45	2025-09-01 17:18:00	2025-09-08 23:59:59	2025-09-08 15:00:00	1	2025-09-01 17:18:00	2	2025-09-08 15:00:00
+156	27	47	2025-09-01 16:52:00	2025-09-08 23:59:59	2025-09-08 11:00:00	1	2025-09-01 16:52:00	1	2025-09-08 11:00:00
+157	27	44	2025-09-04 14:11:00	2025-09-11 23:59:59	2025-09-11 12:00:00	1	2025-09-04 14:11:00	2	2025-09-11 12:00:00
+158	29	50	2025-09-01 10:36:00	2025-09-08 23:59:59	2025-09-08 10:00:00	2	2025-09-01 10:36:00	2	2025-09-08 10:00:00
+159	29	41	2025-09-02 11:03:00	2025-09-09 23:59:59	2025-09-09 12:00:00	2	2025-09-02 11:03:00	1	2025-09-09 12:00:00
+160	29	52	2025-09-04 16:42:00	2025-09-11 23:59:59	2025-09-11 09:00:00	1	2025-09-04 16:42:00	1	2025-09-11 09:00:00
+161	28	75	2025-09-02 15:26:00	2025-09-09 23:59:59	2025-09-09 14:00:00	2	2025-09-02 15:26:00	2	2025-09-09 14:00:00
+162	28	78	2025-09-03 15:21:00	2025-09-10 23:59:59	2025-09-10 14:00:00	2	2025-09-03 15:21:00	1	2025-09-10 14:00:00
+163	2	56	2025-09-02 09:18:00	2025-09-09 23:59:59	2025-09-09 15:00:00	2	2025-09-02 09:18:00	2	2025-09-09 15:00:00
+164	19	42	2025-09-02 17:59:00	2025-09-09 23:59:59	2025-09-09 09:00:00	2	2025-09-02 17:59:00	1	2025-09-09 09:00:00
+165	19	76	2025-09-02 11:48:00	2025-09-09 23:59:59	2025-09-09 11:00:00	1	2025-09-02 11:48:00	1	2025-09-09 11:00:00
+166	19	69	2025-09-04 12:56:00	2025-09-11 23:59:59	2025-09-11 08:00:00	1	2025-09-04 12:56:00	1	2025-09-11 08:00:00
+167	5	1	2025-09-02 12:58:00	2025-09-09 23:59:59	2025-09-09 08:00:00	1	2025-09-02 12:58:00	1	2025-09-09 08:00:00
+168	5	63	2025-09-02 11:03:00	2025-09-09 23:59:59	2025-09-09 11:00:00	1	2025-09-02 11:03:00	2	2025-09-09 11:00:00
+169	5	62	2025-09-03 17:20:00	2025-09-10 23:59:59	2025-09-10 12:00:00	1	2025-09-03 17:20:00	2	2025-09-10 12:00:00
+170	16	82	2025-09-02 13:28:00	2025-09-09 23:59:59	2025-09-09 10:00:00	1	2025-09-02 13:28:00	2	2025-09-09 10:00:00
+171	16	72	2025-09-04 13:11:00	2025-09-11 23:59:59	2025-09-11 08:00:00	1	2025-09-04 13:11:00	1	2025-09-11 08:00:00
+172	16	57	2025-09-04 10:39:00	2025-09-11 23:59:59	2025-09-11 13:00:00	1	2025-09-04 10:39:00	2	2025-09-11 13:00:00
+173	20	39	2025-09-02 13:26:00	2025-09-09 23:59:59	2025-09-09 14:00:00	2	2025-09-02 13:26:00	1	2025-09-09 14:00:00
+174	20	36	2025-09-03 14:41:00	2025-09-10 23:59:59	2025-09-10 10:00:00	1	2025-09-03 14:41:00	2	2025-09-10 10:00:00
+175	20	77	2025-09-03 10:52:00	2025-09-10 23:59:59	2025-09-10 10:00:00	2	2025-09-03 10:52:00	2	2025-09-10 10:00:00
+176	4	80	2025-09-02 13:55:00	2025-09-09 23:59:59	2025-09-09 08:00:00	2	2025-09-02 13:55:00	2	2025-09-09 08:00:00
+177	4	49	2025-09-03 12:11:00	2025-09-10 23:59:59	2025-09-10 13:00:00	2	2025-09-03 12:11:00	1	2025-09-10 13:00:00
+178	4	59	2025-09-04 09:16:00	2025-09-11 23:59:59	2025-09-11 12:00:00	1	2025-09-04 09:16:00	1	2025-09-11 12:00:00
+179	7	71	2025-09-02 11:44:00	2025-09-09 23:59:59	2025-09-09 11:00:00	2	2025-09-02 11:44:00	2	2025-09-09 11:00:00
+180	9	48	2025-09-02 11:12:00	2025-09-09 23:59:59	2025-09-09 09:00:00	2	2025-09-02 11:12:00	2	2025-09-09 09:00:00
+181	1	58	2025-09-02 16:42:00	2025-09-09 23:59:59	2025-09-09 13:00:00	2	2025-09-02 16:42:00	2	2025-09-09 13:00:00
+182	1	74	2025-09-02 08:48:00	2025-09-09 23:59:59	2025-09-09 08:00:00	1	2025-09-02 08:48:00	1	2025-09-09 08:00:00
+183	8	46	2025-09-02 15:30:00	2025-09-09 23:59:59	2025-09-09 13:00:00	1	2025-09-02 15:30:00	1	2025-09-09 13:00:00
+184	8	2	2025-09-03 10:05:00	2025-09-10 23:59:59	2025-09-10 10:00:00	2	2025-09-03 10:05:00	2	2025-09-10 10:00:00
+185	10	79	2025-09-03 08:35:00	2025-09-10 23:59:59	2025-09-10 15:00:00	2	2025-09-03 08:35:00	2	2025-09-10 15:00:00
+186	10	67	2025-09-03 16:06:00	2025-09-10 23:59:59	2025-09-10 14:00:00	2	2025-09-03 16:06:00	2	2025-09-10 14:00:00
+187	6	60	2025-09-04 09:56:00	2025-09-11 23:59:59	2025-09-11 14:00:00	2	2025-09-04 09:56:00	1	2025-09-11 14:00:00
+188	15	34	2025-09-04 11:39:00	2025-09-11 23:59:59	2025-09-11 10:00:00	2	2025-09-04 11:39:00	2	2025-09-11 10:00:00
+189	1	52	2025-10-01 12:41:00	2025-10-08 23:59:59	2025-10-08 13:00:00	1	2025-10-01 12:41:00	2	2025-10-08 13:00:00
+190	1	40	2025-10-01 13:52:00	2025-10-08 23:59:59	2025-10-08 10:00:00	2	2025-10-01 13:52:00	2	2025-10-08 10:00:00
+191	1	50	2025-10-06 08:40:00	2025-10-13 23:59:59	2025-10-13 09:00:00	2	2025-10-06 08:40:00	1	2025-10-13 09:00:00
+192	3	64	2025-10-01 11:13:00	2025-10-08 23:59:59	2025-10-08 15:00:00	2	2025-10-01 11:13:00	2	2025-10-08 15:00:00
+193	3	3	2025-10-03 14:50:00	2025-10-10 23:59:59	2025-10-10 12:00:00	1	2025-10-03 14:50:00	2	2025-10-10 12:00:00
+194	3	61	2025-10-04 17:37:00	2025-10-11 23:59:59	2025-10-11 09:00:00	1	2025-10-04 17:37:00	1	2025-10-11 09:00:00
+195	6	68	2025-10-01 10:23:00	2025-10-08 23:59:59	2025-10-08 13:00:00	1	2025-10-01 10:23:00	2	2025-10-08 13:00:00
+196	6	35	2025-10-03 15:14:00	2025-10-10 23:59:59	2025-10-10 10:00:00	1	2025-10-03 15:14:00	1	2025-10-10 10:00:00
+197	28	47	2025-10-01 13:31:00	2025-10-08 23:59:59	2025-10-08 08:00:00	1	2025-10-01 13:31:00	2	2025-10-08 08:00:00
+198	28	42	2025-10-02 09:55:00	2025-10-09 23:59:59	2025-10-09 13:00:00	1	2025-10-02 09:55:00	2	2025-10-09 13:00:00
+199	7	63	2025-10-01 09:18:00	2025-10-08 23:59:59	2025-10-08 15:00:00	1	2025-10-01 09:18:00	2	2025-10-08 15:00:00
+200	7	51	2025-10-04 11:16:00	2025-10-11 23:59:59	2025-10-11 08:00:00	1	2025-10-04 11:16:00	2	2025-10-11 08:00:00
+201	27	72	2025-10-01 09:22:00	2025-10-08 23:59:59	2025-10-08 09:00:00	1	2025-10-01 09:22:00	1	2025-10-08 09:00:00
+202	27	69	2025-10-03 09:38:00	2025-10-10 23:59:59	2025-10-10 12:00:00	2	2025-10-03 09:38:00	2	2025-10-10 12:00:00
+203	27	34	2025-10-03 08:45:00	2025-10-10 23:59:59	2025-10-10 10:00:00	1	2025-10-03 08:45:00	2	2025-10-10 10:00:00
+204	29	70	2025-10-01 14:25:00	2025-10-08 23:59:59	2025-10-08 15:00:00	2	2025-10-01 14:25:00	2	2025-10-08 15:00:00
+205	29	67	2025-10-03 14:23:00	2025-10-10 23:59:59	2025-10-10 08:00:00	1	2025-10-03 14:23:00	2	2025-10-10 08:00:00
+206	29	74	2025-10-04 17:54:00	2025-10-11 23:59:59	2025-10-11 14:00:00	1	2025-10-04 17:54:00	2	2025-10-11 14:00:00
+207	8	38	2025-10-01 08:28:00	2025-10-08 23:59:59	2025-10-08 13:00:00	2	2025-10-01 08:28:00	1	2025-10-08 13:00:00
+208	10	43	2025-10-01 11:37:00	2025-10-08 23:59:59	2025-10-08 09:00:00	2	2025-10-01 11:37:00	1	2025-10-08 09:00:00
+209	10	79	2025-10-02 16:51:00	2025-10-09 23:59:59	2025-10-09 14:00:00	2	2025-10-02 16:51:00	2	2025-10-09 14:00:00
+210	10	77	2025-10-02 17:03:00	2025-10-09 23:59:59	2025-10-09 13:00:00	1	2025-10-02 17:03:00	2	2025-10-09 13:00:00
+211	26	54	2025-10-01 14:24:00	2025-10-08 23:59:59	2025-10-08 09:00:00	1	2025-10-01 14:24:00	1	2025-10-08 09:00:00
+212	18	37	2025-10-02 14:28:00	2025-10-09 23:59:59	2025-10-09 11:00:00	1	2025-10-02 14:28:00	2	2025-10-09 11:00:00
+213	18	1	2025-10-03 08:32:00	2025-10-10 23:59:59	2025-10-10 15:00:00	2	2025-10-03 08:32:00	2	2025-10-10 15:00:00
+214	18	56	2025-10-03 13:28:00	2025-10-10 23:59:59	2025-10-10 15:00:00	2	2025-10-03 13:28:00	2	2025-10-10 15:00:00
+215	19	76	2025-10-02 13:43:00	2025-10-09 23:59:59	2025-10-09 14:00:00	1	2025-10-02 13:43:00	2	2025-10-09 14:00:00
+216	19	59	2025-10-04 13:55:00	2025-10-11 23:59:59	2025-10-11 15:00:00	2	2025-10-04 13:55:00	1	2025-10-11 15:00:00
+217	15	41	2025-10-02 14:21:00	2025-10-09 23:59:59	2025-10-09 13:00:00	2	2025-10-02 14:21:00	2	2025-10-09 13:00:00
+218	2	44	2025-10-03 08:47:00	2025-10-10 23:59:59	2025-10-10 10:00:00	2	2025-10-03 08:47:00	2	2025-10-10 10:00:00
+219	4	66	2025-10-03 09:52:00	2025-10-10 23:59:59	2025-10-10 09:00:00	1	2025-10-03 09:52:00	2	2025-10-10 09:00:00
+220	16	83	2025-10-04 15:47:00	2025-10-11 23:59:59	2025-10-11 14:00:00	1	2025-10-04 15:47:00	2	2025-10-11 14:00:00
+221	8	40	2025-11-01 17:50:00	2025-11-08 23:59:59	2025-11-08 14:00:00	1	2025-11-01 17:50:00	1	2025-11-08 14:00:00
+222	8	38	2025-11-03 15:29:00	2025-11-10 23:59:59	2025-11-10 08:00:00	2	2025-11-03 15:29:00	1	2025-11-10 08:00:00
+223	6	77	2025-11-01 08:34:00	2025-11-08 23:59:59	2025-11-08 09:00:00	2	2025-11-01 08:34:00	2	2025-11-08 09:00:00
+224	6	62	2025-11-01 11:14:00	2025-11-08 23:59:59	2025-11-08 15:00:00	2	2025-11-01 11:14:00	1	2025-11-08 15:00:00
+225	6	67	2025-11-01 17:59:00	2025-11-08 23:59:59	2025-11-08 11:00:00	2	2025-11-01 17:59:00	1	2025-11-08 11:00:00
+226	10	52	2025-11-01 14:38:00	2025-11-08 23:59:59	2025-11-08 10:00:00	2	2025-11-01 14:38:00	2	2025-11-08 10:00:00
+227	10	42	2025-11-01 14:02:00	2025-11-08 23:59:59	2025-11-08 11:00:00	2	2025-11-01 14:02:00	2	2025-11-08 11:00:00
+228	10	55	2025-11-03 08:19:00	2025-11-10 23:59:59	2025-11-10 14:00:00	1	2025-11-03 08:19:00	1	2025-11-10 14:00:00
+229	29	81	2025-11-01 15:52:00	2025-11-08 23:59:59	2025-11-08 09:00:00	2	2025-11-01 15:52:00	2	2025-11-08 09:00:00
+230	29	73	2025-11-03 15:02:00	2025-11-10 23:59:59	2025-11-10 08:00:00	2	2025-11-03 15:02:00	1	2025-11-10 08:00:00
+231	7	49	2025-11-01 12:13:00	2025-11-08 23:59:59	2025-11-08 12:00:00	2	2025-11-01 12:13:00	2	2025-11-08 12:00:00
+232	26	51	2025-11-01 10:12:00	2025-11-08 23:59:59	2025-11-08 10:00:00	1	2025-11-01 10:12:00	2	2025-11-08 10:00:00
+233	2	78	2025-11-01 10:41:00	2025-11-08 23:59:59	2025-11-08 14:00:00	1	2025-11-01 10:41:00	1	2025-11-08 14:00:00
+234	2	69	2025-11-03 11:39:00	2025-11-10 23:59:59	2025-11-10 15:00:00	1	2025-11-03 11:39:00	1	2025-11-10 15:00:00
+235	2	35	2025-11-04 16:39:00	2025-11-11 23:59:59	2025-11-11 10:00:00	2	2025-11-04 16:39:00	2	2025-11-11 10:00:00
+236	9	70	2025-11-01 11:46:00	2025-11-08 23:59:59	2025-11-08 08:00:00	1	2025-11-01 11:46:00	1	2025-11-08 08:00:00
+237	3	72	2025-11-03 17:03:00	2025-11-10 23:59:59	2025-11-10 11:00:00	2	2025-11-03 17:03:00	1	2025-11-10 11:00:00
+238	15	59	2025-11-03 10:15:00	2025-11-10 23:59:59	2025-11-10 11:00:00	2	2025-11-03 10:15:00	1	2025-11-10 11:00:00
+239	15	39	2025-11-03 13:16:00	2025-11-10 23:59:59	2025-11-10 08:00:00	2	2025-11-03 13:16:00	1	2025-11-10 08:00:00
+240	27	61	2025-11-03 11:36:00	2025-11-10 23:59:59	2025-11-10 11:00:00	2	2025-11-03 11:36:00	2	2025-11-10 11:00:00
+241	27	71	2025-11-03 10:06:00	2025-11-10 23:59:59	2025-11-10 14:00:00	2	2025-11-03 10:06:00	1	2025-11-10 14:00:00
+242	28	56	2025-11-03 11:16:00	2025-11-10 23:59:59	2025-11-10 12:00:00	1	2025-11-03 11:16:00	2	2025-11-10 12:00:00
+243	28	47	2025-11-03 16:10:00	2025-11-10 23:59:59	2025-11-10 15:00:00	1	2025-11-03 16:10:00	2	2025-11-10 15:00:00
+244	16	34	2025-11-03 09:28:00	2025-11-10 23:59:59	2025-11-10 10:00:00	1	2025-11-03 09:28:00	1	2025-11-10 10:00:00
+245	14	83	2025-11-04 09:02:00	2025-11-11 23:59:59	2025-11-11 15:00:00	1	2025-11-04 09:02:00	2	2025-11-11 15:00:00
+246	10	81	2025-12-01 12:22:00	2025-12-08 23:59:59	2025-12-08 15:00:00	2	2025-12-01 12:22:00	2	2025-12-08 15:00:00
+247	10	82	2025-12-02 10:33:00	2025-12-09 23:59:59	2025-12-09 08:00:00	2	2025-12-02 10:33:00	2	2025-12-09 08:00:00
+248	10	74	2025-12-04 10:08:00	2025-12-11 23:59:59	2025-12-11 13:00:00	1	2025-12-04 10:08:00	2	2025-12-11 13:00:00
+249	6	64	2025-12-01 08:18:00	2025-12-08 23:59:59	2025-12-08 08:00:00	2	2025-12-01 08:18:00	1	2025-12-08 08:00:00
+250	6	49	2025-12-02 08:14:00	2025-12-09 23:59:59	2025-12-09 14:00:00	1	2025-12-02 08:14:00	1	2025-12-09 14:00:00
+251	28	35	2025-12-01 15:31:00	2025-12-08 23:59:59	2025-12-08 10:00:00	1	2025-12-01 15:31:00	2	2025-12-08 10:00:00
+252	28	47	2025-12-02 15:52:00	2025-12-09 23:59:59	2025-12-09 15:00:00	2	2025-12-02 15:52:00	2	2025-12-09 15:00:00
+253	7	38	2025-12-01 13:06:00	2025-12-08 23:59:59	2025-12-08 10:00:00	2	2025-12-01 13:06:00	2	2025-12-08 10:00:00
+254	7	53	2025-12-03 12:30:00	2025-12-10 23:59:59	2025-12-10 09:00:00	1	2025-12-03 12:30:00	1	2025-12-10 09:00:00
+255	14	45	2025-12-02 09:36:00	2025-12-09 23:59:59	2025-12-09 08:00:00	1	2025-12-02 09:36:00	2	2025-12-09 08:00:00
+256	5	44	2025-12-02 17:45:00	2025-12-09 23:59:59	2025-12-09 09:00:00	2	2025-12-02 17:45:00	1	2025-12-09 09:00:00
+257	5	62	2025-12-02 13:22:00	2025-12-09 23:59:59	2025-12-09 11:00:00	1	2025-12-02 13:22:00	1	2025-12-09 11:00:00
+258	2	56	2025-12-02 10:51:00	2025-12-09 23:59:59	2025-12-09 14:00:00	2	2025-12-02 10:51:00	2	2025-12-09 14:00:00
+259	1	71	2025-12-02 15:31:00	2025-12-09 23:59:59	2025-12-09 13:00:00	1	2025-12-02 15:31:00	2	2025-12-09 13:00:00
+260	1	76	2025-12-02 11:53:00	2025-12-09 23:59:59	2025-12-09 09:00:00	2	2025-12-02 11:53:00	2	2025-12-09 09:00:00
+261	1	52	2025-12-02 12:43:00	2025-12-09 23:59:59	2025-12-09 10:00:00	2	2025-12-02 12:43:00	1	2025-12-09 10:00:00
+262	15	83	2025-12-02 12:28:00	2025-12-09 23:59:59	2025-12-09 14:00:00	1	2025-12-02 12:28:00	1	2025-12-09 14:00:00
+263	15	66	2025-12-04 14:31:00	2025-12-11 23:59:59	2025-12-11 09:00:00	2	2025-12-04 14:31:00	2	2025-12-11 09:00:00
+264	15	58	2025-12-04 11:19:00	2025-12-11 23:59:59	2025-12-11 13:00:00	1	2025-12-04 11:19:00	1	2025-12-11 13:00:00
+265	20	61	2025-12-02 09:47:00	2025-12-09 23:59:59	2025-12-09 08:00:00	2	2025-12-02 09:47:00	1	2025-12-09 08:00:00
+266	20	68	2025-12-02 11:05:00	2025-12-09 23:59:59	2025-12-09 15:00:00	2	2025-12-02 11:05:00	2	2025-12-09 15:00:00
+267	27	57	2025-12-02 16:50:00	2025-12-09 23:59:59	2025-12-09 08:00:00	1	2025-12-02 16:50:00	1	2025-12-09 08:00:00
+268	27	80	2025-12-04 12:37:00	2025-12-11 23:59:59	2025-12-11 15:00:00	1	2025-12-04 12:37:00	2	2025-12-11 15:00:00
+269	27	3	2025-12-04 08:06:00	2025-12-11 23:59:59	2025-12-11 14:00:00	2	2025-12-04 08:06:00	2	2025-12-11 14:00:00
+270	18	2	2025-12-02 15:02:00	2025-12-09 23:59:59	2025-12-09 09:00:00	2	2025-12-02 15:02:00	2	2025-12-09 09:00:00
+271	19	40	2025-12-03 15:59:00	2025-12-10 23:59:59	2025-12-10 08:00:00	1	2025-12-03 15:59:00	1	2025-12-10 08:00:00
+272	4	42	2025-12-04 08:31:00	2025-12-11 23:59:59	2025-12-11 13:00:00	1	2025-12-04 08:31:00	1	2025-12-11 13:00:00
+273	20	70	2026-01-01 10:53:00	2026-01-08 23:59:59	2026-01-08 12:00:00	2	2026-01-01 10:53:00	1	2026-01-08 12:00:00
+274	20	63	2026-01-02 17:14:00	2026-01-09 23:59:59	2026-01-09 08:00:00	2	2026-01-02 17:14:00	1	2026-01-09 08:00:00
+275	20	43	2026-01-03 08:36:00	2026-01-10 23:59:59	2026-01-10 09:00:00	2	2026-01-03 08:36:00	2	2026-01-10 09:00:00
+276	3	52	2026-01-01 08:25:00	2026-01-08 23:59:59	2026-01-08 13:00:00	2	2026-01-01 08:25:00	1	2026-01-08 13:00:00
+277	3	75	2026-01-01 15:10:00	2026-01-08 23:59:59	2026-01-08 08:00:00	2	2026-01-01 15:10:00	2	2026-01-08 08:00:00
+278	3	38	2026-01-02 17:44:00	2026-01-09 23:59:59	2026-01-09 10:00:00	2	2026-01-02 17:44:00	2	2026-01-09 10:00:00
+279	10	51	2026-01-01 15:15:00	2026-01-08 23:59:59	2026-01-08 09:00:00	1	2026-01-01 15:15:00	1	2026-01-08 09:00:00
+280	26	46	2026-01-01 08:42:00	2026-01-08 23:59:59	2026-01-08 13:00:00	1	2026-01-01 08:42:00	1	2026-01-08 13:00:00
+281	26	34	2026-01-01 17:02:00	2026-01-08 23:59:59	2026-01-08 10:00:00	2	2026-01-01 17:02:00	1	2026-01-08 10:00:00
+282	8	81	2026-01-01 09:02:00	2026-01-08 23:59:59	2026-01-08 09:00:00	2	2026-01-01 09:02:00	2	2026-01-08 09:00:00
+283	8	77	2026-01-01 15:36:00	2026-01-08 23:59:59	2026-01-08 14:00:00	1	2026-01-01 15:36:00	1	2026-01-08 14:00:00
+284	9	66	2026-01-01 17:10:00	2026-01-08 23:59:59	2026-01-08 12:00:00	2	2026-01-01 17:10:00	2	2026-01-08 12:00:00
+285	9	48	2026-01-01 08:22:00	2026-01-08 23:59:59	2026-01-08 14:00:00	2	2026-01-01 08:22:00	1	2026-01-08 14:00:00
+286	9	3	2026-01-01 10:55:00	2026-01-08 23:59:59	2026-01-08 14:00:00	1	2026-01-01 10:55:00	1	2026-01-08 14:00:00
+287	14	76	2026-01-01 16:19:00	2026-01-08 23:59:59	2026-01-08 09:00:00	2	2026-01-01 16:19:00	2	2026-01-08 09:00:00
+288	15	54	2026-01-01 10:12:00	2026-01-08 23:59:59	2026-01-08 15:00:00	1	2026-01-01 10:12:00	1	2026-01-08 15:00:00
+289	1	71	2026-01-01 10:57:00	2026-01-08 23:59:59	2026-01-08 15:00:00	1	2026-01-01 10:57:00	1	2026-01-08 15:00:00
+290	28	56	2026-01-01 11:12:00	2026-01-08 23:59:59	2026-01-08 13:00:00	1	2026-01-01 11:12:00	2	2026-01-08 13:00:00
+291	28	2	2026-01-03 11:39:00	2026-01-10 23:59:59	2026-01-10 15:00:00	1	2026-01-03 11:39:00	1	2026-01-10 15:00:00
+292	6	41	2026-01-02 09:54:00	2026-01-09 23:59:59	2026-01-09 14:00:00	2	2026-01-02 09:54:00	2	2026-01-09 14:00:00
+293	18	44	2026-01-02 14:01:00	2026-01-09 23:59:59	2026-01-09 13:00:00	2	2026-01-02 14:01:00	1	2026-01-09 13:00:00
+294	28	53	2026-02-02 14:16:00	2026-02-09 23:59:59	2026-02-09 08:00:00	1	2026-02-02 14:16:00	1	2026-02-09 08:00:00
+295	28	44	2026-02-05 11:41:00	2026-02-12 23:59:59	2026-02-12 13:00:00	1	2026-02-05 11:41:00	2	2026-02-12 13:00:00
+296	18	46	2026-02-02 16:27:00	2026-02-09 23:59:59	2026-02-09 14:00:00	1	2026-02-02 16:27:00	2	2026-02-09 14:00:00
+297	18	51	2026-02-03 12:29:00	2026-02-10 23:59:59	2026-02-10 15:00:00	2	2026-02-03 12:29:00	2	2026-02-10 15:00:00
+298	20	74	2026-02-02 12:57:00	2026-02-09 23:59:59	2026-02-09 15:00:00	2	2026-02-02 12:57:00	2	2026-02-09 15:00:00
+299	20	83	2026-02-05 10:02:00	2026-02-12 23:59:59	2026-02-12 11:00:00	1	2026-02-05 10:02:00	2	2026-02-12 11:00:00
+300	5	69	2026-02-02 08:44:00	2026-02-09 23:59:59	2026-02-09 14:00:00	2	2026-02-02 08:44:00	2	2026-02-09 14:00:00
+301	5	55	2026-02-04 09:19:00	2026-02-11 23:59:59	2026-02-11 13:00:00	1	2026-02-04 09:19:00	1	2026-02-11 13:00:00
+302	14	66	2026-02-02 13:51:00	2026-02-09 23:59:59	2026-02-09 14:00:00	1	2026-02-02 13:51:00	2	2026-02-09 14:00:00
+303	14	47	2026-02-02 09:30:00	2026-02-09 23:59:59	2026-02-09 14:00:00	2	2026-02-02 09:30:00	1	2026-02-09 14:00:00
+304	15	78	2026-02-02 09:19:00	2026-02-09 23:59:59	2026-02-09 10:00:00	2	2026-02-02 09:19:00	2	2026-02-09 10:00:00
+305	7	68	2026-02-02 17:20:00	2026-02-09 23:59:59	2026-02-09 14:00:00	2	2026-02-02 17:20:00	1	2026-02-09 14:00:00
+306	27	73	2026-02-03 11:38:00	2026-02-10 23:59:59	2026-02-10 12:00:00	1	2026-02-03 11:38:00	2	2026-02-10 12:00:00
+307	8	67	2026-02-03 09:52:00	2026-02-10 23:59:59	2026-02-10 13:00:00	2	2026-02-03 09:52:00	2	2026-02-10 13:00:00
+308	9	82	2026-02-03 15:03:00	2026-02-10 23:59:59	2026-02-10 13:00:00	1	2026-02-03 15:03:00	1	2026-02-10 13:00:00
+309	9	36	2026-02-05 13:47:00	2026-02-12 23:59:59	2026-02-12 09:00:00	2	2026-02-05 13:47:00	1	2026-02-12 09:00:00
+310	4	49	2026-02-03 16:13:00	2026-02-10 23:59:59	2026-02-10 08:00:00	1	2026-02-03 16:13:00	1	2026-02-10 08:00:00
+311	4	52	2026-02-06 16:01:00	2026-02-13 23:59:59	2026-02-13 14:00:00	2	2026-02-06 16:01:00	1	2026-02-13 14:00:00
+312	16	61	2026-02-05 13:24:00	2026-02-12 23:59:59	2026-02-12 08:00:00	2	2026-02-05 13:24:00	1	2026-02-12 08:00:00
+313	16	34	2026-02-05 11:16:00	2026-02-12 23:59:59	2026-02-12 15:00:00	2	2026-02-05 11:16:00	1	2026-02-12 15:00:00
+314	3	62	2026-02-05 11:15:00	2026-02-12 23:59:59	2026-02-12 08:00:00	1	2026-02-05 11:15:00	2	2026-02-12 08:00:00
+315	3	45	2026-02-06 11:29:00	2026-02-13 23:59:59	2026-02-13 11:00:00	2	2026-02-06 11:29:00	1	2026-02-13 11:00:00
+316	1	3	2026-02-06 13:56:00	2026-02-13 23:59:59	2026-02-13 15:00:00	2	2026-02-06 13:56:00	2	2026-02-13 15:00:00
+317	14	61	2026-03-02 12:47:00	2026-03-09 23:59:59	2026-03-09 09:00:00	1	2026-03-02 12:47:00	2	2026-03-09 09:00:00
+318	14	40	2026-03-02 09:17:00	2026-03-09 23:59:59	2026-03-09 14:00:00	1	2026-03-02 09:17:00	2	2026-03-09 14:00:00
+319	14	51	2026-03-02 12:45:00	2026-03-09 23:59:59	2026-03-09 10:00:00	1	2026-03-02 12:45:00	2	2026-03-09 10:00:00
+320	20	1	2026-03-02 08:28:00	2026-03-09 23:59:59	2026-03-09 15:00:00	1	2026-03-02 08:28:00	2	2026-03-09 15:00:00
+321	20	57	2026-03-02 14:14:00	2026-03-09 23:59:59	2026-03-09 13:00:00	2	2026-03-02 14:14:00	2	2026-03-09 13:00:00
+322	20	37	2026-03-04 08:31:00	2026-03-11 23:59:59	2026-03-11 12:00:00	1	2026-03-04 08:31:00	2	2026-03-11 12:00:00
+323	16	69	2026-03-02 10:01:00	2026-03-09 23:59:59	2026-03-09 08:00:00	2	2026-03-02 10:01:00	2	2026-03-09 08:00:00
+324	16	77	2026-03-02 14:07:00	2026-03-09 23:59:59	2026-03-09 13:00:00	1	2026-03-02 14:07:00	2	2026-03-09 13:00:00
+325	1	78	2026-03-02 15:48:00	2026-03-09 23:59:59	2026-03-09 12:00:00	1	2026-03-02 15:48:00	1	2026-03-09 12:00:00
+326	1	76	2026-03-06 16:21:00	2026-03-13 23:59:59	2026-03-13 13:00:00	1	2026-03-06 16:21:00	1	2026-03-13 13:00:00
+327	26	62	2026-03-02 15:37:00	2026-03-09 23:59:59	2026-03-09 14:00:00	2	2026-03-02 15:37:00	1	2026-03-09 14:00:00
+328	26	64	2026-03-03 13:53:00	2026-03-10 23:59:59	2026-03-10 15:00:00	2	2026-03-03 13:53:00	2	2026-03-10 15:00:00
+329	10	53	2026-03-02 09:16:00	2026-03-09 23:59:59	2026-03-09 13:00:00	2	2026-03-02 09:16:00	2	2026-03-09 13:00:00
+330	10	42	2026-03-03 10:49:00	2026-03-10 23:59:59	2026-03-10 12:00:00	2	2026-03-03 10:49:00	2	2026-03-10 12:00:00
+331	28	71	2026-03-02 12:52:00	2026-03-09 23:59:59	2026-03-09 08:00:00	2	2026-03-02 12:52:00	2	2026-03-09 08:00:00
+332	28	50	2026-03-07 13:30:00	2026-03-14 23:59:59	2026-03-14 14:00:00	2	2026-03-07 13:30:00	2	2026-03-14 14:00:00
+333	15	39	2026-03-02 11:39:00	2026-03-09 23:59:59	2026-03-09 09:00:00	2	2026-03-02 11:39:00	1	2026-03-09 09:00:00
+334	8	59	2026-03-02 14:42:00	2026-03-09 23:59:59	2026-03-09 09:00:00	1	2026-03-02 14:42:00	1	2026-03-09 09:00:00
+335	8	43	2026-03-03 17:05:00	2026-03-10 23:59:59	2026-03-10 09:00:00	1	2026-03-03 17:05:00	1	2026-03-10 09:00:00
+336	8	49	2026-03-03 08:58:00	2026-03-10 23:59:59	2026-03-10 11:00:00	1	2026-03-03 08:58:00	1	2026-03-10 11:00:00
+337	4	67	2026-03-02 10:48:00	2026-03-09 23:59:59	2026-03-09 10:00:00	2	2026-03-02 10:48:00	2	2026-03-09 10:00:00
+338	4	41	2026-03-07 11:09:00	2026-03-14 23:59:59	2026-03-14 14:00:00	1	2026-03-07 11:09:00	2	2026-03-14 14:00:00
+339	29	58	2026-03-02 13:13:00	2026-03-09 23:59:59	2026-03-09 14:00:00	1	2026-03-02 13:13:00	1	2026-03-09 14:00:00
+340	29	56	2026-03-07 12:44:00	2026-03-14 23:59:59	2026-03-14 13:00:00	1	2026-03-07 12:44:00	1	2026-03-14 13:00:00
+341	27	47	2026-03-06 13:09:00	2026-03-13 23:59:59	2026-03-13 12:00:00	2	2026-03-06 13:09:00	1	2026-03-13 12:00:00
+342	5	3	2026-03-06 15:58:00	2026-03-13 23:59:59	2026-03-13 10:00:00	1	2026-03-06 15:58:00	1	2026-03-13 10:00:00
+343	5	38	2026-03-06 10:47:00	2026-03-13 23:59:59	2026-03-13 09:00:00	1	2026-03-06 10:47:00	1	2026-03-13 09:00:00
+344	7	75	2026-03-06 10:53:00	2026-03-13 23:59:59	2026-03-13 08:00:00	2	2026-03-06 10:53:00	2	2026-03-13 08:00:00
+345	7	48	2026-03-06 14:21:00	2026-03-13 23:59:59	2026-03-13 10:00:00	1	2026-03-06 14:21:00	2	2026-03-13 10:00:00
+346	7	70	2026-03-07 17:21:00	2026-03-14 23:59:59	2026-03-14 14:00:00	2	2026-03-07 17:21:00	1	2026-03-14 14:00:00
+347	3	54	2026-03-07 10:17:00	2026-03-14 23:59:59	2026-03-14 09:00:00	2	2026-03-07 10:17:00	2	2026-03-14 09:00:00
+348	10	38	2026-04-01 09:21:00	2026-04-08 23:59:59	2026-04-08 15:00:00	2	2026-04-01 09:21:00	1	2026-04-08 15:00:00
+349	10	37	2026-04-01 13:19:00	2026-04-08 23:59:59	2026-04-08 08:00:00	1	2026-04-01 13:19:00	2	2026-04-08 08:00:00
+350	26	81	2026-04-01 09:23:00	2026-04-08 23:59:59	2026-04-08 11:00:00	2	2026-04-01 09:23:00	2	2026-04-08 11:00:00
+351	27	77	2026-04-01 17:20:00	2026-04-08 23:59:59	2026-04-08 13:00:00	2	2026-04-01 17:20:00	1	2026-04-08 13:00:00
+352	27	47	2026-04-02 11:56:00	2026-04-09 23:59:59	2026-04-09 11:00:00	2	2026-04-02 11:56:00	1	2026-04-09 11:00:00
+353	6	58	2026-04-01 11:41:00	2026-04-08 23:59:59	2026-04-08 11:00:00	1	2026-04-01 11:41:00	1	2026-04-08 11:00:00
+354	6	63	2026-04-02 14:52:00	2026-04-09 23:59:59	2026-04-09 14:00:00	1	2026-04-02 14:52:00	2	2026-04-09 14:00:00
+355	28	57	2026-04-01 11:43:00	2026-04-08 23:59:59	2026-04-08 08:00:00	2	2026-04-01 11:43:00	1	2026-04-08 08:00:00
+356	28	44	2026-04-02 12:58:00	2026-04-09 23:59:59	2026-04-09 14:00:00	1	2026-04-02 12:58:00	1	2026-04-09 14:00:00
+357	16	66	2026-04-01 17:19:00	2026-04-08 23:59:59	2026-04-08 11:00:00	1	2026-04-01 17:19:00	1	2026-04-08 11:00:00
+358	4	48	2026-04-01 09:08:00	2026-04-08 23:59:59	2026-04-08 11:00:00	1	2026-04-01 09:08:00	2	2026-04-08 11:00:00
+359	4	69	2026-04-02 15:38:00	2026-04-09 23:59:59	2026-04-09 08:00:00	2	2026-04-02 15:38:00	2	2026-04-09 08:00:00
+360	7	54	2026-04-01 14:39:00	2026-04-08 23:59:59	2026-04-08 14:00:00	1	2026-04-01 14:39:00	2	2026-04-08 14:00:00
+361	7	82	2026-04-01 08:18:00	2026-04-08 23:59:59	2026-04-08 10:00:00	1	2026-04-01 08:18:00	1	2026-04-08 10:00:00
+362	7	55	2026-04-02 09:45:00	2026-04-09 23:59:59	2026-04-09 14:00:00	1	2026-04-02 09:45:00	2	2026-04-09 14:00:00
+363	15	65	2026-04-01 16:26:00	2026-04-08 23:59:59	2026-04-08 10:00:00	1	2026-04-01 16:26:00	1	2026-04-08 10:00:00
+364	15	35	2026-04-01 14:44:00	2026-04-08 23:59:59	2026-04-08 11:00:00	2	2026-04-01 14:44:00	2	2026-04-08 11:00:00
+365	2	67	2026-04-01 09:10:00	2026-04-08 23:59:59	2026-04-08 11:00:00	2	2026-04-01 09:10:00	1	2026-04-08 11:00:00
+366	2	46	2026-04-01 11:24:00	2026-04-08 23:59:59	2026-04-08 12:00:00	1	2026-04-01 11:24:00	2	2026-04-08 12:00:00
+367	2	2	2026-04-01 10:09:00	2026-04-08 23:59:59	2026-04-08 13:00:00	1	2026-04-01 10:09:00	2	2026-04-08 13:00:00
+368	9	39	2026-04-01 13:24:00	2026-04-08 23:59:59	2026-04-08 11:00:00	2	2026-04-01 13:24:00	1	2026-04-08 11:00:00
+369	9	68	2026-04-02 09:24:00	2026-04-09 23:59:59	2026-04-09 15:00:00	1	2026-04-02 09:24:00	1	2026-04-09 15:00:00
+370	3	41	2026-04-01 09:19:00	2026-04-08 23:59:59	2026-04-08 13:00:00	1	2026-04-01 09:19:00	1	2026-04-08 13:00:00
+371	5	43	2026-04-01 12:37:00	2026-04-08 23:59:59	2026-04-08 12:00:00	1	2026-04-01 12:37:00	1	2026-04-08 12:00:00
+372	5	83	2026-04-02 09:24:00	2026-04-09 23:59:59	2026-04-09 12:00:00	2	2026-04-02 09:24:00	2	2026-04-09 12:00:00
+373	14	51	2026-04-02 15:48:00	2026-04-09 23:59:59	2026-04-09 13:00:00	2	2026-04-02 15:48:00	1	2026-04-09 13:00:00
+374	19	80	2026-04-02 13:51:00	2026-04-09 23:59:59	2026-04-09 14:00:00	1	2026-04-02 13:51:00	1	2026-04-09 14:00:00
+375	19	36	2026-04-02 09:12:00	2026-04-09 23:59:59	2026-04-09 11:00:00	1	2026-04-02 09:12:00	1	2026-04-09 11:00:00
+376	18	64	2026-04-02 11:39:00	2026-04-09 23:59:59	2026-04-09 08:00:00	1	2026-04-02 11:39:00	2	2026-04-09 08:00:00
+377	18	45	2026-04-02 11:56:00	2026-04-09 23:59:59	2026-04-09 09:00:00	2	2026-04-02 11:56:00	1	2026-04-09 09:00:00
+378	1	78	2026-04-02 09:35:00	2026-04-09 23:59:59	2026-04-09 15:00:00	1	2026-04-02 09:35:00	1	2026-04-09 15:00:00
+379	5	62	2026-05-01 13:19:00	2026-05-08 23:59:59	2026-05-08 08:00:00	1	2026-05-01 13:19:00	1	2026-05-08 08:00:00
+380	5	46	2026-05-01 16:35:00	2026-05-08 23:59:59	2026-05-08 13:00:00	2	2026-05-01 16:35:00	2	2026-05-08 13:00:00
+381	26	75	2026-05-01 16:31:00	2026-05-08 23:59:59	2026-05-08 14:00:00	1	2026-05-01 16:31:00	2	2026-05-08 14:00:00
+382	26	79	2026-05-01 08:23:00	2026-05-08 23:59:59	2026-05-08 09:00:00	1	2026-05-01 08:23:00	1	2026-05-08 09:00:00
+383	26	55	2026-05-04 13:23:00	2026-05-11 23:59:59	2026-05-11 09:00:00	2	2026-05-04 13:23:00	1	2026-05-11 09:00:00
+384	18	82	2026-05-01 16:20:00	2026-05-08 23:59:59	2026-05-08 12:00:00	1	2026-05-01 16:20:00	2	2026-05-08 12:00:00
+385	6	76	2026-05-01 16:43:00	2026-05-08 23:59:59	2026-05-08 11:00:00	2	2026-05-01 16:43:00	1	2026-05-08 11:00:00
+386	2	34	2026-05-01 13:22:00	2026-05-08 23:59:59	2026-05-08 14:00:00	1	2026-05-01 13:22:00	2	2026-05-08 14:00:00
+387	2	53	2026-05-02 16:50:00	2026-05-09 23:59:59	2026-05-09 09:00:00	1	2026-05-02 16:50:00	1	2026-05-09 09:00:00
+388	10	47	2026-05-01 14:29:00	2026-05-08 23:59:59	2026-05-08 12:00:00	1	2026-05-01 14:29:00	2	2026-05-08 12:00:00
+389	14	67	2026-05-01 13:16:00	2026-05-08 23:59:59	2026-05-08 11:00:00	2	2026-05-01 13:16:00	2	2026-05-08 11:00:00
+390	14	36	2026-05-02 09:43:00	2026-05-09 23:59:59	2026-05-09 08:00:00	2	2026-05-02 09:43:00	1	2026-05-09 08:00:00
+391	29	65	2026-05-01 12:09:00	2026-05-08 23:59:59	2026-05-08 15:00:00	2	2026-05-01 12:09:00	2	2026-05-08 15:00:00
+392	28	83	2026-05-01 09:59:00	2026-05-08 23:59:59	2026-05-08 08:00:00	1	2026-05-01 09:59:00	1	2026-05-08 08:00:00
+393	28	45	2026-05-02 17:08:00	2026-05-09 23:59:59	2026-05-09 11:00:00	2	2026-05-02 17:08:00	2	2026-05-09 11:00:00
+394	8	72	2026-05-01 16:17:00	2026-05-08 23:59:59	2026-05-08 12:00:00	2	2026-05-01 16:17:00	2	2026-05-08 12:00:00
+395	8	37	2026-05-01 11:09:00	2026-05-08 23:59:59	2026-05-08 12:00:00	2	2026-05-01 11:09:00	2	2026-05-08 12:00:00
+396	16	77	2026-05-01 15:50:00	2026-05-08 23:59:59	2026-05-08 09:00:00	1	2026-05-01 15:50:00	1	2026-05-08 09:00:00
+397	27	73	2026-05-01 11:52:00	2026-05-08 23:59:59	2026-05-08 12:00:00	2	2026-05-01 11:52:00	2	2026-05-08 12:00:00
+398	3	1	2026-05-01 14:33:00	2026-05-08 23:59:59	2026-05-08 15:00:00	2	2026-05-01 14:33:00	2	2026-05-08 15:00:00
+399	15	35	2026-05-02 16:19:00	2026-05-09 23:59:59	2026-05-09 12:00:00	1	2026-05-02 16:19:00	2	2026-05-09 12:00:00
+400	7	80	2026-05-02 15:06:00	2026-05-09 23:59:59	2026-05-09 14:00:00	2	2026-05-02 15:06:00	2	2026-05-09 14:00:00
+401	18	42	2026-06-01 17:34:00	2026-06-08 23:59:59	2026-06-08 09:00:00	2	2026-06-01 17:34:00	1	2026-06-08 09:00:00
+402	7	74	2026-06-01 13:39:00	2026-06-08 23:59:59	2026-06-08 13:00:00	2	2026-06-01 13:39:00	1	2026-06-08 13:00:00
+403	7	63	2026-06-01 15:55:00	2026-06-08 23:59:59	2026-06-08 15:00:00	2	2026-06-01 15:55:00	1	2026-06-08 15:00:00
+404	8	66	2026-06-01 09:56:00	2026-06-08 23:59:59	2026-06-08 15:00:00	1	2026-06-01 09:56:00	2	2026-06-08 15:00:00
+405	8	50	2026-06-04 11:30:00	2026-06-11 23:59:59	2026-06-11 14:00:00	1	2026-06-04 11:30:00	1	2026-06-11 14:00:00
+406	14	73	2026-06-01 17:10:00	2026-06-08 23:59:59	2026-06-08 09:00:00	1	2026-06-01 17:10:00	1	2026-06-08 09:00:00
+407	6	53	2026-06-01 16:15:00	2026-06-08 23:59:59	2026-06-08 12:00:00	2	2026-06-01 16:15:00	2	2026-06-08 12:00:00
+408	6	54	2026-06-01 08:29:00	2026-06-08 23:59:59	2026-06-08 10:00:00	2	2026-06-01 08:29:00	1	2026-06-08 10:00:00
+409	6	69	2026-06-02 09:08:00	2026-06-09 23:59:59	2026-06-09 15:00:00	2	2026-06-02 09:08:00	1	2026-06-09 15:00:00
+410	19	57	2026-06-01 14:38:00	2026-06-08 23:59:59	2026-06-08 09:00:00	2	2026-06-01 14:38:00	1	2026-06-08 09:00:00
+411	20	36	2026-06-01 10:04:00	2026-06-08 23:59:59	2026-06-08 09:00:00	2	2026-06-01 10:04:00	1	2026-06-08 09:00:00
+412	20	71	2026-06-02 13:37:00	2026-06-09 23:59:59	2026-06-09 09:00:00	1	2026-06-02 13:37:00	2	2026-06-09 09:00:00
+413	2	52	2026-06-01 17:42:00	2026-06-08 23:59:59	2026-06-08 11:00:00	1	2026-06-01 17:42:00	1	2026-06-08 11:00:00
+414	2	2	2026-06-02 11:11:00	2026-06-09 23:59:59	2026-06-09 10:00:00	1	2026-06-02 11:11:00	1	2026-06-09 10:00:00
+415	2	58	2026-06-05 09:27:00	2026-06-12 23:59:59	2026-06-12 13:00:00	2	2026-06-05 09:27:00	1	2026-06-12 13:00:00
+416	10	65	2026-06-01 10:05:00	2026-06-08 23:59:59	2026-06-08 08:00:00	1	2026-06-01 10:05:00	1	2026-06-08 08:00:00
+417	10	75	2026-06-04 09:56:00	2026-06-11 23:59:59	2026-06-11 13:00:00	1	2026-06-04 09:56:00	2	2026-06-11 13:00:00
+418	27	80	2026-06-01 12:39:00	2026-06-08 23:59:59	2026-06-08 09:00:00	1	2026-06-01 12:39:00	2	2026-06-08 09:00:00
+419	1	43	2026-06-01 13:15:00	2026-06-08 23:59:59	2026-06-08 13:00:00	2	2026-06-01 13:15:00	1	2026-06-08 13:00:00
+420	16	49	2026-06-02 14:33:00	2026-06-09 23:59:59	2026-06-09 14:00:00	1	2026-06-02 14:33:00	1	2026-06-09 14:00:00
+421	26	55	2026-06-02 17:14:00	2026-06-09 23:59:59	2026-06-09 15:00:00	1	2026-06-02 17:14:00	1	2026-06-09 15:00:00
+422	26	35	2026-06-02 09:33:00	2026-06-09 23:59:59	2026-06-09 13:00:00	2	2026-06-02 09:33:00	1	2026-06-09 13:00:00
+423	26	48	2026-06-04 17:04:00	2026-06-11 23:59:59	2026-06-11 11:00:00	1	2026-06-04 17:04:00	2	2026-06-11 11:00:00
+424	15	68	2026-06-02 09:32:00	2026-06-09 23:59:59	2026-06-09 15:00:00	1	2026-06-02 09:32:00	2	2026-06-09 15:00:00
+425	15	83	2026-06-03 17:05:00	2026-06-10 23:59:59	2026-06-10 14:00:00	2	2026-06-03 17:05:00	1	2026-06-10 14:00:00
+426	15	78	2026-06-04 14:10:00	2026-06-11 23:59:59	2026-06-11 13:00:00	1	2026-06-04 14:10:00	1	2026-06-11 13:00:00
+427	9	70	2026-06-02 14:50:00	2026-06-09 23:59:59	2026-06-09 11:00:00	2	2026-06-02 14:50:00	2	2026-06-09 11:00:00
+428	28	37	2026-06-02 16:35:00	2026-06-09 23:59:59	2026-06-09 13:00:00	2	2026-06-02 16:35:00	2	2026-06-09 13:00:00
+429	5	72	2026-06-02 09:32:00	2026-06-09 23:59:59	2026-06-09 09:00:00	1	2026-06-02 09:32:00	2	2026-06-09 09:00:00
+430	3	44	2026-06-04 16:06:00	2026-06-11 23:59:59	2026-06-11 13:00:00	2	2026-06-04 16:06:00	2	2026-06-11 13:00:00
+431	29	60	2026-06-04 09:31:00	2026-06-11 23:59:59	2026-06-11 13:00:00	2	2026-06-04 09:31:00	2	2026-06-11 13:00:00
+432	7	62	2026-07-01 13:05:00	2026-07-08 23:59:59	2026-07-08 14:00:00	1	2026-07-01 13:05:00	2	2026-07-08 14:00:00
+433	7	60	2026-07-01 13:36:00	2026-07-08 23:59:59	2026-07-08 11:00:00	2	2026-07-01 13:36:00	1	2026-07-08 11:00:00
+434	7	43	2026-07-02 17:04:00	2026-07-09 23:59:59	2026-07-09 11:00:00	1	2026-07-02 17:04:00	2	2026-07-09 11:00:00
+435	26	53	2026-07-01 14:06:00	2026-07-08 23:59:59	2026-07-08 08:00:00	1	2026-07-01 14:06:00	2	2026-07-08 08:00:00
+436	26	35	2026-07-01 17:22:00	2026-07-08 23:59:59	2026-07-08 08:00:00	1	2026-07-01 17:22:00	1	2026-07-08 08:00:00
+437	26	44	2026-07-01 11:07:00	2026-07-08 23:59:59	2026-07-08 13:00:00	2	2026-07-01 11:07:00	2	2026-07-08 13:00:00
+438	14	73	2026-07-01 12:54:00	2026-07-08 23:59:59	2026-07-08 08:00:00	1	2026-07-01 12:54:00	1	2026-07-08 08:00:00
+439	14	67	2026-07-03 15:51:00	2026-07-10 23:59:59	2026-07-10 12:00:00	2	2026-07-03 15:51:00	2	2026-07-10 12:00:00
+440	18	70	2026-07-01 13:06:00	2026-07-08 23:59:59	2026-07-08 12:00:00	1	2026-07-01 13:06:00	1	2026-07-08 12:00:00
+441	18	81	2026-07-01 08:57:00	2026-07-08 23:59:59	2026-07-08 12:00:00	2	2026-07-01 08:57:00	1	2026-07-08 12:00:00
+442	29	64	2026-07-01 09:26:00	2026-07-08 23:59:59	2026-07-08 14:00:00	2	2026-07-01 09:26:00	1	2026-07-08 14:00:00
+443	29	54	2026-07-03 08:17:00	2026-07-10 23:59:59	2026-07-10 09:00:00	1	2026-07-03 08:17:00	2	2026-07-10 09:00:00
+444	29	50	2026-07-03 16:27:00	2026-07-10 23:59:59	2026-07-10 08:00:00	1	2026-07-03 16:27:00	1	2026-07-10 08:00:00
+445	19	47	2026-07-01 11:30:00	2026-07-08 23:59:59	2026-07-08 08:00:00	1	2026-07-01 11:30:00	1	2026-07-08 08:00:00
+446	19	1	2026-07-04 08:46:00	2026-07-11 23:59:59	2026-07-11 15:00:00	1	2026-07-04 08:46:00	1	2026-07-11 15:00:00
+447	15	58	2026-07-01 16:33:00	2026-07-08 23:59:59	2026-07-08 12:00:00	1	2026-07-01 16:33:00	2	2026-07-08 12:00:00
+448	5	46	2026-07-01 11:01:00	2026-07-08 23:59:59	2026-07-08 08:00:00	1	2026-07-01 11:01:00	2	2026-07-08 08:00:00
+449	5	37	2026-07-01 12:36:00	2026-07-08 23:59:59	2026-07-08 09:00:00	2	2026-07-01 12:36:00	1	2026-07-08 09:00:00
+450	4	59	2026-07-01 13:15:00	2026-07-08 23:59:59	2026-07-08 11:00:00	1	2026-07-01 13:15:00	1	2026-07-08 11:00:00
+451	4	36	2026-07-03 15:59:00	2026-07-10 23:59:59	2026-07-10 14:00:00	2	2026-07-03 15:59:00	2	2026-07-10 14:00:00
+452	9	65	2026-07-02 15:05:00	2026-07-09 23:59:59	2026-07-09 13:00:00	1	2026-07-02 15:05:00	2	2026-07-09 13:00:00
+453	9	56	2026-07-02 13:28:00	2026-07-09 23:59:59	2026-07-09 11:00:00	1	2026-07-02 13:28:00	2	2026-07-09 11:00:00
+454	9	71	2026-07-03 16:23:00	2026-07-10 23:59:59	2026-07-10 12:00:00	1	2026-07-03 16:23:00	2	2026-07-10 12:00:00
+455	28	83	2026-07-02 10:04:00	2026-07-09 23:59:59	2026-07-09 08:00:00	2	2026-07-02 10:04:00	1	2026-07-09 08:00:00
+456	1	69	2026-07-02 09:11:00	2026-07-09 23:59:59	2026-07-09 15:00:00	1	2026-07-02 09:11:00	1	2026-07-09 15:00:00
+457	20	57	2026-07-03 16:27:00	2026-07-10 23:59:59	2026-07-10 11:00:00	1	2026-07-03 16:27:00	1	2026-07-10 11:00:00
+458	16	78	2026-07-03 15:29:00	2026-07-10 23:59:59	2026-07-10 15:00:00	1	2026-07-03 15:29:00	2	2026-07-10 15:00:00
+459	16	66	2026-07-03 17:30:00	2026-07-10 23:59:59	2026-07-10 12:00:00	1	2026-07-03 17:30:00	2	2026-07-10 12:00:00
+460	3	63	2026-07-03 10:31:00	2026-07-10 23:59:59	2026-07-10 14:00:00	2	2026-07-03 10:31:00	1	2026-07-10 14:00:00
+461	8	2	2026-07-03 14:55:00	2026-07-10 23:59:59	2026-07-10 11:00:00	2	2026-07-03 14:55:00	1	2026-07-10 11:00:00
+462	6	38	2026-07-04 15:11:00	2026-07-11 23:59:59	2026-07-11 10:00:00	2	2026-07-04 15:11:00	1	2026-07-11 10:00:00
+463	6	3	2026-08-01 09:23:00	2026-08-08 23:59:59	2026-08-08 09:00:00	2	2026-08-01 09:23:00	2	2026-08-08 09:00:00
+464	1	79	2026-08-01 14:05:00	2026-08-08 23:59:59	2026-08-08 09:00:00	1	2026-08-01 14:05:00	2	2026-08-08 09:00:00
+465	5	57	2026-08-01 08:44:00	2026-08-08 23:59:59	2026-08-08 10:00:00	1	2026-08-01 08:44:00	2	2026-08-08 10:00:00
+466	5	82	2026-08-01 12:23:00	2026-08-08 23:59:59	2026-08-08 08:00:00	2	2026-08-01 12:23:00	1	2026-08-08 08:00:00
+467	5	52	2026-08-03 11:06:00	2026-08-10 23:59:59	2026-08-10 15:00:00	1	2026-08-03 11:06:00	2	2026-08-10 15:00:00
+468	27	59	2026-08-01 17:18:00	2026-08-08 23:59:59	2026-08-08 15:00:00	1	2026-08-01 17:18:00	2	2026-08-08 15:00:00
+469	27	80	2026-08-03 14:58:00	2026-08-10 23:59:59	2026-08-10 10:00:00	2	2026-08-03 14:58:00	1	2026-08-10 10:00:00
+470	4	76	2026-08-01 15:22:00	2026-08-08 23:59:59	2026-08-08 14:00:00	1	2026-08-01 15:22:00	2	2026-08-08 14:00:00
+471	4	35	2026-08-04 08:37:00	2026-08-11 23:59:59	2026-08-11 12:00:00	2	2026-08-04 08:37:00	1	2026-08-11 12:00:00
+472	4	72	2026-08-04 16:59:00	2026-08-11 23:59:59	2026-08-11 13:00:00	2	2026-08-04 16:59:00	2	2026-08-11 13:00:00
+473	20	50	2026-08-01 16:35:00	2026-08-08 23:59:59	2026-08-08 09:00:00	1	2026-08-01 16:35:00	2	2026-08-08 09:00:00
+474	18	2	2026-08-01 16:01:00	2026-08-08 23:59:59	2026-08-08 15:00:00	1	2026-08-01 16:01:00	2	2026-08-08 15:00:00
+475	10	83	2026-08-03 12:40:00	2026-08-10 23:59:59	2026-08-10 10:00:00	2	2026-08-03 12:40:00	1	2026-08-10 10:00:00
+476	10	69	2026-08-03 15:13:00	2026-08-10 23:59:59	2026-08-10 12:00:00	2	2026-08-03 15:13:00	1	2026-08-10 12:00:00
+477	14	53	2026-08-03 15:09:00	2026-08-10 23:59:59	2026-08-10 12:00:00	1	2026-08-03 15:09:00	2	2026-08-10 12:00:00
+478	19	71	2026-08-03 14:12:00	2026-08-10 23:59:59	2026-08-10 10:00:00	1	2026-08-03 14:12:00	2	2026-08-10 10:00:00
+479	26	34	2026-08-03 13:22:00	2026-08-10 23:59:59	2026-08-10 09:00:00	1	2026-08-03 13:22:00	1	2026-08-10 09:00:00
+480	3	55	2026-08-04 16:08:00	2026-08-11 23:59:59	2026-08-11 15:00:00	1	2026-08-04 16:08:00	1	2026-08-11 15:00:00
+481	9	42	2026-08-04 16:25:00	2026-08-11 23:59:59	2026-08-11 13:00:00	2	2026-08-04 16:25:00	1	2026-08-11 13:00:00
+482	2	39	2026-08-04 13:36:00	2026-08-11 23:59:59	2026-08-11 09:00:00	2	2026-08-04 13:36:00	1	2026-08-11 09:00:00
+483	29	81	2026-08-15 14:16:08.67673	2026-08-22 23:59:59.999	\N	1	2026-08-15 14:16:08.67673	1	2026-08-15 14:16:08.67673
+\.
+
+
+--
+-- Data for Name: books; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.books (id, isbn, title, sub_title, publisher, publication_date, page, language, edition, created_by, created_at, updated_by, updated_at, deleted_by, deleted_at) FROM stdin;
+40	9781234500007	月影の森	月影の森	Kitsune House	2022-06-09	233	Japanese	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+47	9781234500014	La Maison des Brumes	La Maison des Brumes	Étoile Press	2021-10-08	319	French	1	1	2026-08-14 16:46:22	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+51	9781234500018	A River Between Worlds	A River Between Worlds	Cedar House Publishing	2018-07-02	358	English	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	9786237661535	Buku Praktis Belajar Bahasa Inggris	Cara mudah dan singkat kuasai bahasa inggris	Checklist	2014-06-20	312	Indonesian	6	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+3	9786020656151	Esensialisme	Pentingkan yang penting saja	Gramedia Pustaka Utama	2022-02-16	354	Indonesian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+1	9786231648303	Arsitektur Rumah Jawa	Mengungkap Filosofi Makna dan Simbologinya	Anak Hebat Indonesia	2024-06-18	230	Indonesian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+62	9781234500029	夜明けの記憶	夜明けの記憶	Sakura Moon Press	2019-06-18	274	Japanese	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:56:52.394299
+46	9781234500013	星のない夜	星のない夜	Hoshi Publishing	2017-03-22	188	Japanese	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:56:56.822608
+56	9781234500023	바람이 머문 자리	바람이 머문 자리	Han River Press	2021-02-15	217	Korean	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:57:00.345908
+53	9781234500020	海边的旧灯塔	海边的旧灯塔	Blue Crane Books	2020-03-07	245	Mandarin	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:57:06.635663
+42	9781234500009	Der letzte Wintergarten	Der letzte Wintergarten	Nordstern Verlag	2018-12-03	291	German	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+54	9781234500021	The Glass Astronomer	The Glass Astronomer	Orchid Crown Publishing	2023-05-11	412	English	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+41	9781234500008	Letters from a Distant Shore	Letters from a Distant Shore	Harborlight Books	2015-10-27	347	English	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+55	9781234500022	Le Voyageur de Minuit	Le Voyageur de Minuit	Belle Nuit Éditions	2017-08-24	283	French	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+48	9781234500015	The Last Cartographer	The Last Cartographer	Northwind Books	2016-06-25	276	English	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+52	9781234500019	Rahasia Rumah Tua	Rahasia Rumah Tua	Bintang Pustaka	2015-11-29	167	Indonesian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+44	9781234500011	The Paper Kingdom	The Paper Kingdom	Willow & Ink	2023-01-19	389	English	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+57	9781234500024	The Orchard Beyond the Hill	The Orchard Beyond the Hill	Greenstone Books	2019-04-28	334	English	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+49	9781234500016	Die Stadt am Morgen	Die Stadt am Morgen	Berglicht Verlag	2019-01-14	224	German	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+59	9781234500026	Bayang di Balik Jendela	Bayang di Balik Jendela	Kencana Literasi	2022-01-26	193	Indonesian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+35	9781234500002	Malam di Kota Hujan	Malam di Kota Hujan	Nusantara Books	2020-07-21	312	Indonesian	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+34	9781234500001	The Silent Garden	The Silent Garden	Moonleaf Press	2018-03-14	284	English	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+38	9781234500005	The Clockmaker of Eldoria	The Clockmaker of Eldoria	Starforge Publishing	2019-09-30	421	English	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+50	9781234500017	El Jardín de Cristal	El Jardín de Cristal	Sol Dorado Press	2022-09-17	301	Spanish	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+58	9781234500025	Il Segreto del Lago	Il Segreto del Lago	Stella Editori	2018-10-13	259	Italian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+83	9781234500050	The Forgotten Mapmaker	The Forgotten Mapmaker	Old Compass Press	2018-11-15	316	English	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+64	9781234500031	Les Ombres du Jardin	Les Ombres du Jardin	Maison Lumière	2017-05-09	235	French	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+67	9781234500034	The Lantern at the End of the Road	The Lantern at the End of the Road	Foxglove Press	2015-07-31	321	English	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+80	9781234500047	The Kingdom of Hollow Bells	The Kingdom of Hollow Bells	Ironwood Press	2021-09-10	428	English	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+81	9781234500048	Cerita dari Ujung Jalan	Cerita dari Ujung Jalan	Pelita Nusantara	2015-05-03	182	Indonesian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+74	9781234500041	La Danse des Lucioles	La Danse des Lucioles	Petit Soleil Éditions	2018-05-12	187	French	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+60	9781234500027	The City Beneath the Rain	The City Beneath the Rain	Rainfall House	2016-09-04	367	English	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+78	9781234500045	El Silencio del Bosque	El Silencio del Bosque	Bosque Azul	2022-04-25	243	Spanish	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+70	9781234500037	Pulau yang Hilang	Pulau yang Hilang	Samudra Pustaka	2016-04-17	352	Indonesian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+45	9781234500012	Suara dari Utara	Suara dari Utara	Arunika Media	2019-08-12	204	Indonesian	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+79	9781234500046	Der Mond über dem See	Der Mond über dem See	Abendstern Verlag	2016-08-19	211	German	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+65	9781234500032	Jejak di Tanah Basah	Jejak di Tanah Basah	Pustaka Merah Putih	2018-02-20	286	Indonesian	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+75	9781234500042	Hujan di Balik Musim	Hujan di Balik Musim	Cakrawala Pustaka	2019-03-08	267	Indonesian	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+63	9781234500030	The Weaver of Forgotten Dreams	The Weaver of Forgotten Dreams	Dreamforge Books	2021-11-02	446	English	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+61	9781234500028	La Última Estación	La Última Estación	Mariposa Editorial	2020-12-19	228	Spanish	1	1	2026-08-14 16:46:42	1	2025-06-01 08:05:20	\N	\N
+77	9781234500044	The Ocean Between Us	The Ocean Between Us	Tideglass Publishing	2017-12-16	338	English	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+36	9781234500003	Whispers of the Blue River	Whispers of the Blue River	Silver Oak Publishing	2017-11-05	198	English	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+72	9781234500039	云上的小镇	云上的小镇	White Cloud Press	2021-07-14	218	Mandarin	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:57:20.25752
+66	9781234500033	바다의 작은 집	바다의 작은 집	Morning Star Publishing	2023-03-13	198	Korean	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:57:26.192704
+37	9781234500004	春天的最后一封信	春天的最后一封信	Jade Lantern Press	2021-04-18	256	Mandarin	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:57:32.546508
+39	9781234500006	Langit Tanpa Bintang	Langit Tanpa Bintang	Pustaka Senja	2016-02-11	175	Indonesian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+68	9781234500035	Der Garten der Erinnerungen	Der Garten der Erinnerungen	Silberwald Verlag	2022-08-06	307	German	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+69	9781234500036	Il Canto delle Foglie	Il Canto delle Foglie	Vento Nuovo	2019-11-23	249	Italian	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+71	9781234500038	The House of Seven Windows	The House of Seven Windows	Ravenwood Publishing	2020-10-01	375	English	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+73	9781234500040	The Midnight Library of Stars	The Midnight Library of Stars	Astral Ink	2023-09-21	403	English	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+43	9781234500010	El Camino de las Estrellas	El Camino de las Estrellas	Luna Azul Editorial	2020-05-16	265	Spanish	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+76	9781234500043	夢の向こう側	夢の向こう側	Yume Press	2020-01-30	295	Japanese	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:57:39.569709
+82	9781234500049	달빛 아래의 약속	달빛 아래의 약속	Silver Han Publishing	2023-06-27	254	Korean	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	1	2026-08-15 13:57:45.075267
+\.
+
+
+--
+-- Data for Name: countries; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.countries (code, name) FROM stdin;
+AF	Afghanistan
+AX	Åland Islands
+AL	Albania
+DZ	Algeria
+AS	American Samoa
+AD	Andorra
+AO	Angola
+AI	Anguilla
+AQ	Antarctica
+AG	Antigua and Barbuda
+AR	Argentina
+AM	Armenia
+AW	Aruba
+AU	Australia
+AT	Austria
+AZ	Azerbaijan
+BS	Bahamas
+BH	Bahrain
+BD	Bangladesh
+BB	Barbados
+BY	Belarus
+BE	Belgium
+BZ	Belize
+BJ	Benin
+BM	Bermuda
+BT	Bhutan
+BO	Bolivia (Plurinational State of)
+BQ	Bonaire, Sint Eustatius and Saba
+BA	Bosnia and Herzegovina
+BW	Botswana
+BV	Bouvet Island
+BR	Brazil
+IO	British Indian Ocean Territory
+BN	Brunei Darussalam
+BG	Bulgaria
+BF	Burkina Faso
+BI	Burundi
+CV	Cabo Verde
+KH	Cambodia
+CM	Cameroon
+CA	Canada
+KY	Cayman Islands
+CF	Central African Republic
+TD	Chad
+CL	Chile
+CN	China
+CX	Christmas Island
+CC	Cocos (Keeling) Islands
+CO	Colombia
+KM	Comoros
+CG	Congo
+CD	Congo (Democratic Republic of the)
+CK	Cook Islands
+CR	Costa Rica
+CI	Côte d'Ivoire
+HR	Croatia
+CU	Cuba
+CW	Curaçao
+CY	Cyprus
+CZ	Czechia
+DK	Denmark
+DJ	Djibouti
+DM	Dominica
+DO	Dominican Republic
+EC	Ecuador
+EG	Egypt
+SV	El Salvador
+GQ	Equatorial Guinea
+ER	Eritrea
+EE	Estonia
+SZ	Eswatini
+ET	Ethiopia
+FK	Falkland Islands (Malvinas)
+FO	Faroe Islands
+FJ	Fiji
+FI	Finland
+FR	France
+GF	French Guiana
+PF	French Polynesia
+TF	French Southern Territories
+GA	Gabon
+GM	Gambia
+GE	Georgia
+DE	Germany
+GH	Ghana
+GI	Gibraltar
+GR	Greece
+GL	Greenland
+GD	Grenada
+GP	Guadeloupe
+GU	Guam
+GT	Guatemala
+GG	Guernsey
+GN	Guinea
+GW	Guinea-Bissau
+GY	Guyana
+HT	Haiti
+HM	Heard Island and McDonald Islands
+VA	Holy See
+HN	Honduras
+HK	Hong Kong
+HU	Hungary
+IS	Iceland
+IN	India
+ID	Indonesia
+IR	Iran (Islamic Republic of)
+IQ	Iraq
+IE	Ireland
+IM	Isle of Man
+IL	Israel
+IT	Italy
+JM	Jamaica
+JP	Japan
+JE	Jersey
+JO	Jordan
+KZ	Kazakhstan
+KE	Kenya
+KI	Kiribati
+KP	Korea (Democratic People's Republic of)
+KR	Korea, Republic of
+KW	Kuwait
+KG	Kyrgyzstan
+LA	Lao People's Democratic Republic
+LV	Latvia
+LB	Lebanon
+LS	Lesotho
+LR	Liberia
+LY	Libya
+LI	Liechtenstein
+LT	Lithuania
+LU	Luxembourg
+MO	Macao
+MG	Madagascar
+MW	Malawi
+MY	Malaysia
+MV	Maldives
+ML	Mali
+MT	Malta
+MH	Marshall Islands
+MQ	Martinique
+MR	Mauritania
+MU	Mauritius
+YT	Mayotte
+MX	Mexico
+FM	Micronesia (Federated States of)
+MD	Moldova (Republic of)
+MC	Monaco
+MN	Mongolia
+ME	Montenegro
+MS	Montserrat
+MA	Morocco
+MZ	Mozambique
+MM	Myanmar
+NA	Namibia
+NR	Nauru
+NP	Nepal
+NL	Netherlands
+NC	New Caledonia
+NZ	New Zealand
+NI	Nicaragua
+NE	Niger
+NG	Nigeria
+NU	Niue
+NF	Norfolk Island
+MK	North Macedonia
+MP	Northern Mariana Islands
+NO	Norway
+OM	Oman
+PK	Pakistan
+PW	Palau
+PS	Palestine, State of
+PA	Panama
+PG	Papua New Guinea
+PY	Paraguay
+PE	Peru
+PH	Philippines
+PN	Pitcairn
+PL	Poland
+PT	Portugal
+PR	Puerto Rico
+QA	Qatar
+RE	Réunion
+RO	Romania
+RU	Russian Federation
+RW	Rwanda
+BL	Saint Barthélemy
+SH	Saint Helena, Ascension and Tristan da Cunha
+KN	Saint Kitts and Nevis
+LC	Saint Lucia
+MF	Saint Martin (French part)
+PM	Saint Pierre and Miquelon
+VC	Saint Vincent and the Grenadines
+WS	Samoa
+SM	San Marino
+ST	Sao Tome and Principe
+SA	Saudi Arabia
+SN	Senegal
+RS	Serbia
+SC	Seychelles
+SL	Sierra Leone
+SG	Singapore
+SX	Sint Maarten (Dutch part)
+SK	Slovakia
+SI	Slovenia
+SB	Solomon Islands
+SO	Somalia
+ZA	South Africa
+GS	South Georgia and the South Sandwich Islands
+SS	South Sudan
+ES	Spain
+LK	Sri Lanka
+SD	Sudan
+SR	Suriname
+SJ	Svalbard and Jan Mayen
+SE	Sweden
+CH	Switzerland
+SY	Syrian Arab Republic
+TW	Taiwan, Province of China
+TJ	Tajikistan
+TZ	Tanzania, United Republic of
+TH	Thailand
+TL	Timor-Leste
+TG	Togo
+TK	Tokelau
+TO	Tonga
+TT	Trinidad and Tobago
+TN	Tunisia
+TR	Türkiye
+TM	Turkmenistan
+TC	Turks and Caicos Islands
+TV	Tuvalu
+UG	Uganda
+UA	Ukraine
+AE	United Arab Emirates
+GB	United Kingdom of Great Britain and Northern Ireland
+US	United States of America
+UM	United States Minor Outlying Islands
+UY	Uruguay
+UZ	Uzbekistan
+VU	Vanuatu
+VE	Venezuela (Bolivarian Republic of)
+VN	Viet Nam
+VG	Virgin Islands (British)
+VI	Virgin Islands (U.S.)
+WF	Wallis and Futuna
+EH	Western Sahara
+YE	Yemen
+ZM	Zambia
+ZW	Zimbabwe
+\.
+
+
+--
+-- Data for Name: members; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.members (id, full_name, email, phone, address, birth_date, gender, created_by, created_at, updated_by, updated_at) FROM stdin;
+1	Siti Nurhaliza	siti@gmail.com	081234567890	Bandung	1995-04-12	f	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	Arif Prasetyo	arif@gmail.com	082133445566	Bandung	1999-03-20	m	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	Dewi Lestari	dewi@gmail.com	087722119988	Bandung	2000-01-01	f	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+4	Budi Santoso	budi@gmail.com	081322223333	Bandung	1997-05-25	m	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+5	Nina Kartini	nina@gmail.com	085688990011	Bandung	1998-09-10	f	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+6	Rizky Andika	rizky@gmail.com	082244112299	Bandung	2000-05-27	m	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+7	Melati Ayu	melati@gmail.com	088855556666	Bandung	2000-08-24	f	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+8	Hendra Wirawan	hendra@gmail.com	081211117777	Bandung	1995-02-10	m	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+9	Putri Maharani	putri@gmail.com	086533558822	Bandung	1995-03-22	f	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+10	Yoga Pranata	yoga@gmail.com	083877778888	Bandung	1996-09-19	m	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+14	Tiara Ayu	tiara@gmail.com	082222222299	Jalan Bandung Telah Berhasil di Update	2000-12-10	f	1	2025-12-20 10:09:14.959838	1	2025-12-20 13:09:04.179442
+15	Rian Hermawan	rian@gmail.com	081111122222	Jakarta	2006-02-15	m	1	2025-12-20 13:47:56.331958	1	2025-12-20 13:47:56.331958
+18	John Ryan	john@gmail.com	081111155555	Bekasi	1991-03-05	m	1	2025-12-23 07:54:15.810248	1	2025-12-23 09:11:30.232011
+16	Lina Dewi	lina@gmail.com	085555555333	Jakarta	2005-06-05	f	1	2025-12-20 13:48:58.122055	1	2025-12-23 09:16:33.410728
+19	Rahmat	rahmat@gmail.com	085555599999	Jakarta	1980-02-04	m	1	2025-12-23 15:04:29.862527	1	2025-12-23 15:08:31.215531
+20	Sabrina	sabrina@gmail.com	087412421534	Jakarta	1990-01-10	f	1	2025-12-23 15:04:29.862527	1	2025-12-23 15:08:31.215531
+26	Andika Pratama	andika@gmail.com	084124553311	Jakarta	1980-02-20	m	1	2025-12-23 15:04:29.862527	1	2025-12-23 15:08:31.215531
+27	Reynaldi	rey@gmail.com	085555111141	Jakarta	1988-05-20	m	1	2025-12-23 15:04:29.862527	1	2025-12-23 15:08:31.215531
+28	Ilyas Gunawan	ilyas@gmail.com	084411551122	Jakarta	1999-03-22	m	1	2025-12-23 15:04:29.862527	1	2025-12-23 15:08:31.215531
+29	Widia Dewi	widia@gmail.com	085511223311	Bandung	1995-10-01	f	1	2025-12-23 15:04:29.862527	1	2025-12-23 15:08:31.215531
+\.
+
+
+--
+-- Data for Name: permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.permissions (id, name, description) FROM stdin;
+1	create_member	Can create members
+2	update_member	Can update members
+101	view_list_country	Can view list all of country
+4	view_member	Can view members
+5	create_book	Can create books
+6	update_book	Can update books
+7	delete_book	Can delete books
+8	view_book	Can view books
+102	view_list_page_incl_loan_hist_member	Can view list panigated history of loan a book by member
+13	create_book_loan	Can create book loans
+16	view_book_loan	Can view book loans
+21	create_author	Can create authors
+22	update_author	Can update authors
+23	delete_author	Can delete authors
+24	view_author	Can view authors
+54	view_top_ten_loan_book_member	Can view top ten member that loaning a book
+56	view_total_book_loan	Can view total book loan
+57	view_total_member	Can view total member
+58	view_total_book	Can view total book
+59	view_top_ten_loaned_book	Can view chart top ten loaned book by member
+60	view_history_book_loan	Can view histories of book loan data
+61	view_list_book	Can view list of all book data
+62	view_list_member	Can view list of all member data
+63	view_list_author	Can view list of all author data
+64	view_list_on_going_book_loan	Can view list of on going book loan data
+65	complete_book_loan	Can complete the book loan process
+55	view_total_yer_all_book_loan	Can view total book loan each all
+66	view_own_user	Can view own user
+67	update_own_username	Can update own username
+68	update_own_user	Can update own user
+69	export_excel_list_all_member	Can export list all of member data as excel file
+70	export_excel_list_all_author	Can export list all of author data as excel file
+71	export_excel_list_all_history_book_loan	Can export list all of book loan history data as excel file
+87	view_list_page_book	Can view list paginated book
+88	view_list_page_member	Can view list paginated member
+89	view_list_page_book_loan	Can view list paginated book loan
+90	view_list_page_history_book_loan	Can view list paginated history book loan
+91	view_list_page_author	Can view list paginated author
+92	find_dup_user	Can find duplicate user
+93	find_dup_member	Can find duplicate member
+94	find_dup_book	Can find duplicate book
+95	view_list_searchable_icl_loan_member	Can view list all of member searchable include loan
+96	view_list_incl_loan_book	Can view list all of book include loan
+97	restore_book	Can restore soft deleted book
+98	restore_author	Can restore soft deleted author
+99	verify_can_del_data_author	Verify data can be deleted or not for author
+100	verify_can_del_data_book	Verify data can be deleted or not for book
+\.
+
+
+--
+-- Data for Name: role_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.role_permissions (role_id, permission_id, created_by, created_at, updated_by, updated_at) FROM stdin;
+1	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	4	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	5	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	6	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	7	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	8	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	54	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	55	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	56	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	57	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	13	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	16	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	58	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	59	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	60	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	61	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	21	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	22	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	23	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	24	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	62	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	63	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	64	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	65	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	66	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	67	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	68	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	69	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	70	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	71	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	54	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	56	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	57	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	58	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	59	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	60	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	61	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	62	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	63	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	64	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	65	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	66	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	67	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	68	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	69	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	70	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	71	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	55	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	4	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	5	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	6	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	7	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	8	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	56	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	57	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	58	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	59	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	13	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	16	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	60	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	61	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	62	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	63	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	21	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	22	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	23	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	24	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	64	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	66	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	67	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	68	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	69	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	70	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	71	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	88	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	89	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	90	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	91	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	92	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	4	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	8	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	16	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	96	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	24	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	88	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	89	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	90	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	91	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	92	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	93	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	94	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	95	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	96	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	97	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	98	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	99	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	100	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	88	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	89	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	90	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	91	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	92	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	93	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	94	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	95	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	96	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	97	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	98	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	99	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	100	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	101	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	101	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	101	1	2026-08-12 16:22:36	1	2025-06-01 08:05:20
+3	54	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	55	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	87	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	87	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	87	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	102	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	102	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	102	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+\.
+
+
+--
+-- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.roles (id, name, created_by, created_at, updated_by, updated_at) FROM stdin;
+1	Super Admin	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	Pustakawan	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	Viewer	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+\.
+
+
+--
+-- Data for Name: user_roles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.user_roles (user_id, role_id, created_by, created_at, updated_by, updated_at) FROM stdin;
+1	1	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+4	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+5	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+6	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+7	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+8	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+1	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+3	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+2	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+9	2	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+9	3	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.users (id, username, email, password, full_name, address, gender, created_by, created_at, updated_by, updated_at, deleted_by, deleted_at) FROM stdin;
+3	pustakawan2	pustakawan2@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Pustakawan 2	Jl. Melawai 5, RT.3/RW.1, Melawai, Kec. Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12160	m	1	2025-06-01 08:05:20	3	2025-06-16 05:15:19	superadmin1	2025-06-17 19:42:36
+4	viewer1	viewer1@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Viewer 1	Jl. Pintu Satu Senayan, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270	m	1	2025-06-01 08:05:20	4	2025-06-15 15:50:01	\N	\N
+8	viewer5	viewer5@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Viewer 5	Jl. Pintu Satu Senayan, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270	f	1	2025-06-01 08:05:20	8	2025-06-12 15:50:01	\N	\N
+6	viewer3	viewer3@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Viewer 3	Jl. Pintu Satu Senayan, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270	m	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+1	superadmin1	superadmin1@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Super Admin Test	Jl. Raya Halim Perdanakusuma, Halim Perdanakusuma, Kec. Makasar, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13610	m	1	2025-06-01 08:05:20	1	2026-02-02 13:17:23.002717	\N	\N
+2	pustakawan1	pustakawan1update@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Pustakawan 1 Update	Jl. Raya Halim Perdanakusuma No.1, RT.3/RW.8, Kb. Pala, Kec. Makasar, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13610	m	1	2025-06-01 08:05:20	2	2026-08-13 09:24:04.540312	\N	\N
+5	viewer2	viewer2@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Viewer 2 Update	Jl. Pintu Satu Senayan, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270	f	1	2025-06-01 08:05:20	5	2026-08-14 13:44:52.899467	\N	\N
+7	viewer4	viewer4@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Viewer 4	Jl. Pintu Satu Senayan, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270	f	1	2025-06-01 08:05:20	7	2026-08-14 14:29:56.159	\N	\N
+9	pustakawan3	pustakawan3@gmail.com	$2b$10$PNjl/rWLE8aTObKqeufbTujfFDxuxD6Bhku5.2l0MUqsoYvYxT9V6	Pustakawan 3	Jl. Pintu Satu Senayan, Gelora, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10270	f	1	2025-06-01 08:05:20	1	2025-06-01 08:05:20	\N	\N
+\.
+
+
+--
+-- Name: authors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.authors_id_seq', 163, true);
+
+
+--
+-- Name: book_loans_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.book_loans_id_seq', 483, true);
+
+
+--
+-- Name: books_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.books_id_seq', 83, true);
+
+
+--
+-- Name: members_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.members_id_seq', 29, true);
+
+
+--
+-- Name: permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.permissions_id_seq', 102, true);
+
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.roles_id_seq', 3, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 9, true);
+
+
+--
+-- Name: authors authors_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.authors
+    ADD CONSTRAINT authors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: book_authors book_authors_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.book_authors
+    ADD CONSTRAINT book_authors_pkey PRIMARY KEY (author_id, book_id);
+
+
+--
+-- Name: book_loans book_loans_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.book_loans
+    ADD CONSTRAINT book_loans_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: books books_isbn_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.books
+    ADD CONSTRAINT books_isbn_key UNIQUE (isbn);
+
+
+--
+-- Name: books books_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.books
+    ADD CONSTRAINT books_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: countries countries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.countries
+    ADD CONSTRAINT countries_pkey PRIMARY KEY (code);
+
+
+--
+-- Name: members members_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.members
+    ADD CONSTRAINT members_email_key UNIQUE (email);
+
+
+--
+-- Name: members members_phone_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.members
+    ADD CONSTRAINT members_phone_key UNIQUE (phone);
+
+
+--
+-- Name: members members_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.members
+    ADD CONSTRAINT members_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: permissions permissions_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.permissions
+    ADD CONSTRAINT permissions_name_key UNIQUE (name);
+
+
+--
+-- Name: permissions permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.permissions
+    ADD CONSTRAINT permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: role_permissions role_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_permissions
+    ADD CONSTRAINT role_permissions_pkey PRIMARY KEY (role_id, permission_id);
+
+
+--
+-- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.roles
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_roles user_roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_roles
+    ADD CONSTRAINT user_roles_pkey PRIMARY KEY (user_id, role_id);
+
+
+--
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_username_key UNIQUE (username);
+
+
+--
+-- Name: authors_full_name_index; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX authors_full_name_index ON public.authors USING btree (full_name);
+
+
+--
+-- Name: authors_view _RETURN; Type: RULE; Schema: public; Owner: postgres
+--
+
+CREATE OR REPLACE VIEW public.authors_view AS
+ SELECT a.id,
+    a.full_name,
+    count(ba.book_id) AS book_count,
+    a.country_code,
+    c.name AS country_name,
+    a.active_since,
+    a.about,
+    a.created_at,
+    a.updated_at
+   FROM ((public.authors a
+     JOIN public.countries c ON ((c.code = a.country_code)))
+     LEFT JOIN ( SELECT ba1.author_id,
+            ba1.book_id
+           FROM (public.book_authors ba1
+             LEFT JOIN public.books b ON ((b.id = ba1.book_id)))
+          WHERE ((b.deleted_at IS NULL) AND (b.deleted_by IS NULL))) ba ON ((ba.author_id = a.id)))
+  GROUP BY a.id, c.name
+ HAVING ((a.deleted_at IS NULL) AND (a.deleted_by IS NULL));
+
+
+--
+-- Name: authors authors_country_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.authors
+    ADD CONSTRAINT authors_country_code_fkey FOREIGN KEY (country_code) REFERENCES public.countries(code);
+
+
+--
+-- Name: book_authors book_authors_author_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.book_authors
+    ADD CONSTRAINT book_authors_author_id_fkey FOREIGN KEY (author_id) REFERENCES public.authors(id) ON DELETE CASCADE;
+
+
+--
+-- Name: book_authors book_authors_book_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.book_authors
+    ADD CONSTRAINT book_authors_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.books(id) ON DELETE CASCADE;
+
+
+--
+-- Name: book_loans book_loans_book_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.book_loans
+    ADD CONSTRAINT book_loans_book_id_fkey FOREIGN KEY (book_id) REFERENCES public.books(id) ON DELETE CASCADE;
+
+
+--
+-- Name: book_loans book_loans_member_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.book_loans
+    ADD CONSTRAINT book_loans_member_id_fkey FOREIGN KEY (member_id) REFERENCES public.members(id) ON DELETE CASCADE;
+
+
+--
+-- Name: role_permissions role_permissions_permission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_permissions
+    ADD CONSTRAINT role_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES public.permissions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: role_permissions role_permissions_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.role_permissions
+    ADD CONSTRAINT role_permissions_role_id_fkey FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_roles user_roles_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_roles
+    ADD CONSTRAINT user_roles_role_id_fkey FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_roles user_roles_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.user_roles
+    ADD CONSTRAINT user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict 4GPhuuoR22tEFLTf0VCJlhvstUlnkcFkEc5uyrXrfXuTWWXubvEobdg785fVVHY
+
