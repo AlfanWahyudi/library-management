@@ -2,7 +2,23 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+### Set up database
+
+Database using **PostgreSQL**, after that you can import the sql backup file inside `./database/final-db` folder. Choose the latest version to import. For the migration files are not updated to the latest like in sql backup file, so don't use it to database.
+
+```bash
+database/
+  - final-db/
+    - sql_backup_file.sql
+```
+
+### Environment File
+
+Make a new file `.env` on a root folder, to put configurations for tha app. All of the config example save in `env.example.txt`, that can be copy and paste to `.env` file.
+
+### Run Project
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -16,21 +32,51 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+To login application with user data that stored inside `users` table, with given roles. Roles that used are "Super Admin, Pustakawan and Viewer". Then for the password use `123` to all users data.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+Root folder
 
-To learn more about Next.js, take a look at the following resources:
+![Root Folder](/assets/images/library-root-folder.png "Root folder")
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Outdated Folder / Files
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Folder or files that are not update are :
 
-## Deploy on Vercel
+- `route-handler` folder
+- database seed, schema sql query
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### App Images
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### Login
+
+![Login to Library Management](/assets/images/library-login.png "Login Page")
+
+#### Dashboard
+
+![Dashboard page](/assets/images/library-dashboard.png "Dashboard Page")
+
+#### Anggota
+
+![Anggota page that display list data](/assets/images/library-anggota.png "Anggota Page")
+
+#### Detail Anggota
+
+![Detail anggota page to view more detail about anggota data](/assets/images/library-anggota-detail.png "Detail Anggota Page")
+
+#### Buku
+
+![Buku page that display list data](/assets/images/library-buku.png "Buku Page")
+
+#### Tambah Buku
+
+![Tambah Buku page to save a new book data](/assets/images/library-tambah-buku.png "Tambah Buku Page")
+
+#### Riwayat Peminjaman Buku
+
+![Riwayat Peminjaman Buku page for display list data](/assets/images/library-riwayat-peminjaman-buku.png "Riwayat Peminjaman Buku Page")
+
+#### User Profile
+
+![User Profile page that view a user data and also can update or change a username](/assets/images/library-user-profile.png "User Profile Page")
