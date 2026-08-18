@@ -47,7 +47,7 @@ Folder or files that are not update are :
 - `route-handler` folder
 - database seed, schema sql query
 
-### App Images
+### Images
 
 #### Login
 
